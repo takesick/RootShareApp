@@ -36,7 +36,7 @@ public class RootsFragment extends Fragment implements LocationsAdapter.OnLocati
         mRecyclerView = view.findViewById(R.id.LocationList);;
 
         mFirestore = FirebaseFirestore.getInstance();
-        mQuery = mFirestore.collection("locations")
+        mQuery = mFirestore.collection("locations/{location}")
                 .orderBy("created_at")
                 .limit(LIMIT);
 
@@ -63,7 +63,6 @@ public class RootsFragment extends Fragment implements LocationsAdapter.OnLocati
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
 
-        Log.e("mAdapter", String.valueOf(mAdapter));
         return view;
     }
 

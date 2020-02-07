@@ -29,19 +29,23 @@ public abstract class FirestoreAdapter<VH extends RecyclerView.ViewHolder> exten
     private ListenerRegistration mRegistration;
     private ArrayList<DocumentSnapshot> mSnapshots = new ArrayList<>();
 
+    // コンストラクタ？
     public FirestoreAdapter(Query query) {
         mQuery = query;
     }
 
+    // Documentスナップショットの変更イベントに対する処理と、Exception(例外)の処理
     @Override
     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+        // 例外処理(3種類以外の変更など)
         if (e != null) {
             Log.w(TAG, "onEvent:error", e);
             onError(e);
             return;
         }
 
-        // Dispatch the event
+        // Dispatch the event(=スナップショットの変更の詳細を3種に分類し、それぞれに対応したメソッドを実行する)
         Log.d(TAG, "onEvent:numChanges:" + documentSnapshots.getDocumentChanges().size());
         for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
             switch (change.getType()) {
@@ -98,6 +102,7 @@ public abstract class FirestoreAdapter<VH extends RecyclerView.ViewHolder> exten
         return mSnapshots.get(index);
     }
 
+    // ドキュメントの変更に対する処理、以下3種
     protected void onDocumentAdded(DocumentChange change) {
         mSnapshots.add(change.getNewIndex(), change.getDocument());
         notifyItemInserted(change.getNewIndex());
@@ -125,5 +130,7 @@ public abstract class FirestoreAdapter<VH extends RecyclerView.ViewHolder> exten
         Log.w(TAG, "onError", e);
     };
 
+    // データが変更された時の処理
+    // 具体的にはFirestoreAdapterの継承先で処理内容を定義するため、空で良い
     protected void onDataChanged() {}
 }
