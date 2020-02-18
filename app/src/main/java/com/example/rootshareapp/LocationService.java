@@ -6,9 +6,14 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Entity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -20,13 +25,26 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.room.Room;
 
+import com.example.rootshareapp.dao.LocationDataDao;
+import com.example.rootshareapp.db.LocationRoomDatabase;
 import com.example.rootshareapp.model.LocationData;
+import com.example.rootshareapp.model.local.Local_LocationData;
+import com.example.rootshareapp.sqlite.Local_Location;
+import com.example.rootshareapp.sqlite.LocationAdapter;
+import com.example.rootshareapp.sqlite.LocationContract;
+import com.example.rootshareapp.sqlite.LocationOpenHelper;
+import com.example.rootshareapp.viewmodel.LocationDataViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -50,6 +68,7 @@ public class LocationService extends Service implements LocationListener {
     private double accuracy;
     private String created_at;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -57,6 +76,37 @@ public class LocationService extends Service implements LocationListener {
         // LocationManager インスタンス生成
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         startDate = getNowDate();
+
+//        open db
+        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(this);
+//        データベースファイルの削除
+        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
+        SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
+
+//        処理(select, insert, delete, update)
+        Cursor cursor = null;
+        cursor = db.query(
+                LocationContract.Locations.TABLE_NAME,
+                null,
+                LocationContract.Locations.COL_UID + " = ?",
+                new String[] { "2" },
+                null,
+                null,
+                LocationContract.Locations.COL_CREATED_AT + " desc",
+                "2"
+        );
+        Log.e("DB_TEST", "Count: " + cursor.getCount());
+        while(cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(LocationContract.Locations._ID));
+            double latitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LATITUDE));
+            double longitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LONGITUDE));
+            Log.e("DB_TEST", "id: " + id + ", latitude: " + latitude + ", longitude: " + longitude);
+        }
+        cursor.close();
+
+//        close db
+        db.close();
+
     }
 
     @Override
@@ -152,13 +202,8 @@ public class LocationService extends Service implements LocationListener {
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
         String currentTime = sdf.format(location.getTime());
         created_at = currentTime;
-        Log.d("test", created_at);
-
 
         writeToDatabase(latitude, longitude, accuracy, created_at);
-
-
-
 
     }
 
@@ -230,7 +275,51 @@ public class LocationService extends Service implements LocationListener {
         final String tag = startDate;
         final String uid = getUid();
 
-        LocationData location = new LocationData(tag, latitude, longitude, accuracy, created_at, uid);
+        Local_Location location = new Local_Location(tag, latitude, longitude, accuracy, created_at, uid);
+        //        open db
+        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(this);
+//        データベースファイルの削除
+//        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
+        SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
+
+//        処理(select, insert, delete, update)
+        ContentValues newLocation = new ContentValues();
+//        newLocation.put(LocationContract.Locations.COL_TAG, tag);
+        newLocation.put(LocationContract.Locations.COL_LATITUDE, latitude);
+        newLocation.put(LocationContract.Locations.COL_LONGITUDE, longitude);
+        newLocation.put(LocationContract.Locations.COL_ACCURACY, accuracy);
+        newLocation.put(LocationContract.Locations.COL_CREATED_AT, created_at);
+        newLocation.put(LocationContract.Locations.COL_UID, uid);
+        long newId = db.insert(
+                LocationContract.Locations.TABLE_NAME,
+                null,
+                newLocation
+        );
+        Cursor cursor = null;
+        cursor = db.query(
+                LocationContract.Locations.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                LocationContract.Locations._ID + " desc",
+                "1"
+        );
+        Log.e("DB_TEST", "Count: " + cursor.getCount());
+        while(cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(LocationContract.Locations._ID));
+            double db_latitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LATITUDE));
+            double db_longitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LONGITUDE));
+            String db_created_at = cursor.getString(cursor.getColumnIndex(LocationContract.Locations.COL_CREATED_AT));
+            Log.e("DB_TEST", "id: " + id + ", created_at: " + db_created_at + ", latitude: " + db_latitude + ", longitude: " + db_longitude);
+        }
+
+        cursor.close();
+
+//        close db
+        db.close();
+
 //        Map<String, Object> locationData = location.toMap();
 
 // Add a new document with a generated ID
@@ -249,19 +338,26 @@ public class LocationService extends Service implements LocationListener {
                     }
                 });
 
-        mDatabase.collection("roots").document(uid)
-                .collection(tag)
-                .add(location)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        mDatabase.collection("locations")
+                .whereEqualTo("title", startDate)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+
+                                final String uid = getUid();
+                                final String lid = document.getId();
+
+                                mDatabase.collection("roots").document(uid)
+                                        .collection(document.getString("title")).document(lid)
+                                        .set(document.getData());
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
                     }
                 });
 
@@ -277,4 +373,15 @@ public class LocationService extends Service implements LocationListener {
     public String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
+
+//    public void swapCursor(Cursor mCursor, Cursor newCursor) {
+//        if (mCursor != null) {
+//            mCursor.close();
+//        }
+//
+//        mCursor = newCursor;
+//        if (newCursor != null){
+//            notifyDataSetChanged();
+//        }
+//    }
 }

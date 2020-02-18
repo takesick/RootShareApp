@@ -1,4 +1,4 @@
-package com.example.rootshareapp.Adapter;
+package com.example.rootshareapp.adapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;

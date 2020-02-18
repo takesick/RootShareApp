@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.rootshareapp.fragment.RootsFragment;
@@ -23,9 +25,6 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_MULTI_PERMISSIONS = 101;
-
-    private RootsFragment mfragment_roots;
-    private FloatingActionButton mStartRecordingFab, mStopRecordingFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,19 +39,21 @@ public class MainActivity extends AppCompatActivity {
             startLocationService();
         }
 
-//        if(savedInstanceState == null){
-//            // FragmentManagerのインスタンス生成
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//            // FragmentTransactionのインスタンスを取得
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//            // インスタンスに対して張り付け方を指定する
-//            fragmentTransaction.replace(R.id.container, new RootsFragment());
-//
-//            // 張り付けを実行
-//            fragmentTransaction.commit();
-//        }
+        if(savedInstanceState == null){
+            // FragmentManagerのインスタンス生成
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            // FragmentTransactionのインスタンスを取得
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+
+            // インスタンスに対して張り付け方を指定する
+            fragmentTransaction.replace(R.id.container, new RootsFragment());
+
+            // 張り付けを実行
+            fragmentTransaction.commit();
+        }
+
 
     }
 
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 //                        }
 //                    }
                 }
-                startLocationService();
+//                startLocationService();
             }
         }
         else{
@@ -127,40 +128,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startLocationService() {
-        setContentView(R.layout.roots_frag);
-
-//        textView = findViewById(R.id.log_text);
-        mStartRecordingFab = findViewById(R.id.StartRecordingFab);
-        mStartRecordingFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplication(), LocationService.class);
-
-                // API 26 以降
-                startForegroundService(intent);
-
-                // Activityを終了させる
-            }
-        });
-
-
-//        Button buttonLog = findViewById(R.id.button_log);
-//        buttonLog.setOnClickListener(new View.OnClickListener() {
+//        setContentView(R.layout.roots_frag);
+//
+////        textView = findViewById(R.id.log_text);
+//        mStartRecordingFab = findViewById(R.id.StartRecordingFab);
+//        mStartRecordingFab.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                textView.setText(fileReadWrite.readFile());
+//                Intent intent = new Intent(getApplication(), LocationService.class);
+//
+//                // API 26 以降
+//                startForegroundService(intent);
+//
+//                // Activityを終了させる
 //            }
 //        });
-
-        mStopRecordingFab  = findViewById(R.id.StopRecordingFab);
-        mStopRecordingFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Serviceの停止
-                Intent intent = new Intent(getApplication(), LocationService.class);
-                stopService(intent);
-            }
-        });
+//
+//
+////        Button buttonLog = findViewById(R.id.button_log);
+////        buttonLog.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+////                textView.setText(fileReadWrite.r
+////                eadFile());
+////            }
+////        });
+//
+//        mStopRecordingFab  = findViewById(R.id.StopRecordingFab);
+//        mStopRecordingFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Serviceの停止
+//                Intent intent = new Intent(getApplication(), LocationService.class);
+//                stopService(intent);
+//            }
+//        });
     }
 
     // トーストの生成
@@ -170,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
         toast.setGravity(Gravity.CENTER, 0, 200);
         toast.show();
     }
+
+
 
 }
 

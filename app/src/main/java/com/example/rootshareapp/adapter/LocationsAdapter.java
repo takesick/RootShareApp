@@ -1,7 +1,5 @@
-package com.example.rootshareapp.Adapter;
+package com.example.rootshareapp.adapter;
 
-import android.content.res.Resources;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +34,8 @@ public class LocationsAdapter extends FirestoreAdapter<LocationsAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new ViewHolder(inflater.inflate(R.layout.list_location, parent, false));
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_location_item, parent, false);
+        return new ViewHolder(v);
     }
 
     @Override
@@ -65,10 +63,10 @@ public class LocationsAdapter extends FirestoreAdapter<LocationsAdapter.ViewHold
 
             LocationData locationData = snapshot.toObject(LocationData.class);
 
-            timeView.setText("計測日時：" + String.format("%.5f", locationData.getCreated_at()));
-            accuracyView.setText("|精度：" + String.format("%.5f", locationData.getAccuracy()));
-            latitudeView.setText("|緯度："+ String.format("%.5f", locationData.getLatitude()));
-            longitudeView.setText("|経度："+ String.format("%.5f", locationData.getLongitude()));
+            timeView.setText("計測日時：" + locationData.getCreated_at());
+            accuracyView.setText("|精度：" + locationData.getAccuracy());
+            latitudeView.setText("|緯度："+ locationData.getLatitude());
+            longitudeView.setText("|経度："+ locationData.getLongitude());
 
             // Click listener
             itemView.setOnClickListener(new View.OnClickListener() {
