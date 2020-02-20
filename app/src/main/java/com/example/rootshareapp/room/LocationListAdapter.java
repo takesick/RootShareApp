@@ -1,4 +1,4 @@
-package com.example.rootshareapp.adapter;
+package com.example.rootshareapp.room;
 
 import android.content.Context;
 import android.util.Log;

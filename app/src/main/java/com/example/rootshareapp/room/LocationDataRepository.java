@@ -1,16 +1,16 @@
-package com.example.rootshareapp.db;
+package com.example.rootshareapp.room;
 
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.rootshareapp.dao.LocationDataDao;
 import com.example.rootshareapp.model.local.Local_LocationData;
 
 import java.util.List;
 
 public class LocationDataRepository {
     private LocationDataDao mLocationDataDao;
+
     private LiveData<List<Local_LocationData>> mLatestRootData;
 
     // Note that in order to unit test the WordRepository, you have to remove the Application

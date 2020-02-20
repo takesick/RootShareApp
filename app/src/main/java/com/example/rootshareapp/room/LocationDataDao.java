@@ -1,4 +1,4 @@
-package com.example.rootshareapp.dao;
+package com.example.rootshareapp.room;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

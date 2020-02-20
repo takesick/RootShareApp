@@ -17,7 +17,6 @@ public class Local_Location {
     public double accuracy;
     public String created_at;
     public String uid;
-
     public Local_Location() {}
 
     public Local_Location(String tag, double latitude, double longitude,double accuracy, String created_at, String uid) {

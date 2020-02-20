@@ -8,12 +8,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Entity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -25,17 +23,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.room.Room;
 
-import com.example.rootshareapp.dao.LocationDataDao;
-import com.example.rootshareapp.db.LocationRoomDatabase;
-import com.example.rootshareapp.model.LocationData;
-import com.example.rootshareapp.model.local.Local_LocationData;
 import com.example.rootshareapp.sqlite.Local_Location;
-import com.example.rootshareapp.sqlite.LocationAdapter;
 import com.example.rootshareapp.sqlite.LocationContract;
 import com.example.rootshareapp.sqlite.LocationOpenHelper;
-import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,6 +53,8 @@ public class LocationService extends Service implements LocationListener {
 
 //    private StorageReadWrite fileReadWrite;
     private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+    private SQLiteDatabase db;
+
     private String startDate;
     private double latitude;
     private double longitude;
@@ -76,37 +69,6 @@ public class LocationService extends Service implements LocationListener {
         // LocationManager インスタンス生成
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         startDate = getNowDate();
-
-//        open db
-        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(this);
-//        データベースファイルの削除
-        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
-        SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
-
-//        処理(select, insert, delete, update)
-        Cursor cursor = null;
-        cursor = db.query(
-                LocationContract.Locations.TABLE_NAME,
-                null,
-                LocationContract.Locations.COL_UID + " = ?",
-                new String[] { "2" },
-                null,
-                null,
-                LocationContract.Locations.COL_CREATED_AT + " desc",
-                "2"
-        );
-        Log.e("DB_TEST", "Count: " + cursor.getCount());
-        while(cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(LocationContract.Locations._ID));
-            double latitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LATITUDE));
-            double longitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LONGITUDE));
-            Log.e("DB_TEST", "id: " + id + ", latitude: " + latitude + ", longitude: " + longitude);
-        }
-        cursor.close();
-
-//        close db
-        db.close();
-
     }
 
     @Override
@@ -280,7 +242,7 @@ public class LocationService extends Service implements LocationListener {
         LocationOpenHelper locationOpenHelper = new LocationOpenHelper(this);
 //        データベースファイルの削除
 //        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
-        SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
+        db = locationOpenHelper.getWritableDatabase();
 
 //        処理(select, insert, delete, update)
         ContentValues newLocation = new ContentValues();
@@ -289,6 +251,7 @@ public class LocationService extends Service implements LocationListener {
         newLocation.put(LocationContract.Locations.COL_LONGITUDE, longitude);
         newLocation.put(LocationContract.Locations.COL_ACCURACY, accuracy);
         newLocation.put(LocationContract.Locations.COL_CREATED_AT, created_at);
+        newLocation.put(LocationContract.Locations.COL_COMMENT, "");
         newLocation.put(LocationContract.Locations.COL_UID, uid);
         long newId = db.insert(
                 LocationContract.Locations.TABLE_NAME,

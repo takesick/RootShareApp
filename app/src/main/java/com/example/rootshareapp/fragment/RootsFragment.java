@@ -3,7 +3,6 @@ package com.example.rootshareapp.fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,39 +12,26 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.LocationDetailActivity;
 import com.example.rootshareapp.LocationService;
-import com.example.rootshareapp.MainActivity;
-import com.example.rootshareapp.adapter.LocationListAdapter;
-import com.example.rootshareapp.adapter.LocationsAdapter;
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.model.local.Local_LocationData;
 import com.example.rootshareapp.sqlite.LocationAdapter;
 import com.example.rootshareapp.sqlite.LocationContract;
 import com.example.rootshareapp.sqlite.LocationOpenHelper;
-import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 
-import java.util.List;
-
-public class RootsFragment extends Fragment implements LocationsAdapter.OnLocationsSelectedListener {
+public class RootsFragment extends Fragment implements LocationAdapter.OnLocationSelectedListener {
 
     private View view;
     private FloatingActionButton mStartRecordingFab, mStopRecordingFab;
     private RecyclerView mRecyclerView;
     private LocationAdapter mAdapter;
 //    private FirebaseFirestore mFirestore;
-    private Query mQuery;
-    private int LIMIT = 10;
+//    private Query mQuery;
+//    private int LIMIT = 10;
 
 //    private LocationDataViewModel mLocationDataViewModel;
 
@@ -87,8 +73,8 @@ public class RootsFragment extends Fragment implements LocationsAdapter.OnLocati
         LocationOpenHelper locationOpenHelper = new LocationOpenHelper(getActivity());
         //        データベースファイルの削除
 //        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
-        SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
-        mAdapter = new LocationAdapter(getContext(),getAllItems(db));
+        final SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
+        mAdapter = new LocationAdapter(getContext(),getAllItems(db), this);
         mRecyclerView.setAdapter(mAdapter);
 
         mStartRecordingFab = getActivity().findViewById(R.id.StartRecordingFab);
@@ -109,6 +95,7 @@ public class RootsFragment extends Fragment implements LocationsAdapter.OnLocati
                 // Serviceの停止
                 Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
                 getActivity().stopService(intent);
+                mAdapter.swapCursor(getAllItems(db));
             }
         });
     }
@@ -121,11 +108,12 @@ public class RootsFragment extends Fragment implements LocationsAdapter.OnLocati
 
 
     @Override
-    public void onLocationsSelected(DocumentSnapshot locationData) {
-//        Intent intent = new Intent(this, LocationDetailActivity.class);
-//        intent.putExtra(LocationDetailActivity.KEY_LOCATION_ID, locationData.getId());
-//
-//        startActivity(intent);
+    public void onLocationSelected(View view, int position) {
+        long id = (long) view.getTag();
+        Log.e("test2", String.valueOf(id));
+        Intent intent = new Intent(getActivity(), LocationDetailActivity.class);
+        intent.putExtra(LocationDetailActivity.KEY_LOCATION_ID, id);
+        startActivity(intent);
     }
 
     private Cursor getAllItems(SQLiteDatabase db) {

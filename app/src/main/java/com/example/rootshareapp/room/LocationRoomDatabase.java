@@ -1,7 +1,6 @@
-package com.example.rootshareapp.db;
+package com.example.rootshareapp.room;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -10,7 +9,6 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.rootshareapp.dao.LocationDataDao;
 import com.example.rootshareapp.model.local.Local_LocationData;
 
 import java.util.concurrent.ExecutorService;

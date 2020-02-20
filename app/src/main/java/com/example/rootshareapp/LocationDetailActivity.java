@@ -1,6 +1,8 @@
 package com.example.rootshareapp;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,13 +10,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.example.rootshareapp.db.LocationRoomDatabase;
-import com.example.rootshareapp.model.local.Local_LocationData;
+import com.example.rootshareapp.fragment.LocationDetailFragment;
 
-public class LocationDetailActivity extends AppCompatActivity implements
-        View.OnClickListener{
+public class LocationDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "LocationDetail";
 
@@ -24,26 +25,36 @@ public class LocationDetailActivity extends AppCompatActivity implements
     private TextView accuracyView;
     private TextView latitudeView;
     private TextView longitudeView;
+    private SQLiteDatabase db;
 
-    LocationRoomDatabase db = Room.databaseBuilder(getApplicationContext(), LocationRoomDatabase.class, "Location_database").build();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_detail);
 
-        timeView = findViewById(R.id.created_at);
-        accuracyView = findViewById(R.id.accuracy);
-        latitudeView = findViewById(R.id.lat);
-        longitudeView = findViewById(R.id.lng);
+        if(savedInstanceState == null){
+            // FragmentManagerのインスタンス生成
+            FragmentManager fragmentManager = getSupportFragmentManager();
 
-        findViewById(R.id.saveFab).setOnClickListener(this);
+            // FragmentTransactionのインスタンスを取得
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+
+            // インスタンスに対して張り付け方を指定する
+            fragmentTransaction.replace(R.id.container2, new LocationDetailFragment());
+
+            // 張り付けを実行
+            fragmentTransaction.commit();
+        }
+
 
         // Get restaurant ID from extras
-        String locationsId = getIntent().getExtras().getString(KEY_LOCATION_ID);
-        if (locationsId == null) {
-            throw new IllegalArgumentException("Must pass extra " + KEY_LOCATION_ID);
-        }
+
+//        if (locationsId == null) {
+//            throw new IllegalArgumentException("Must pass extra " + KEY_LOCATION_ID);
+//        }
+
     }
 
     @Override
@@ -57,33 +68,9 @@ public class LocationDetailActivity extends AppCompatActivity implements
         super.onStop();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.saveFab:
-                onSaveFabClicked(v);
-                break;
-            case R.id.deleteFab:
-                onDeleteClicked(v);
-                break;
-        }
-    }
 
-    private void onSaveFabClicked(View v) {
-        UpdateLocationData();
-    }
 
-    private void onDeleteClicked(View v) {
-        RemoveLocationData();
-    }
 
-    private void UpdateLocationData() {
-
-    }
-
-    private void RemoveLocationData() {
-
-    }
 
 //    /**
 //     * Listener for the location document ({@link #mLocationRef}).
@@ -113,6 +100,10 @@ public class LocationDetailActivity extends AppCompatActivity implements
                     .hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+//    public getLocationId(locationId){
+//        return locationId;
+//    }
 
 }
 
