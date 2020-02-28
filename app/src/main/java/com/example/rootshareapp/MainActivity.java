@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,14 +16,14 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.rootshareapp.fragment.RootsFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.rootshareapp.fragment.RouteListFragment;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_MULTI_PERMISSIONS = 101;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             // インスタンスに対して張り付け方を指定する
-            fragmentTransaction.replace(R.id.container, new RootsFragment());
+            fragmentTransaction.replace(R.id.container, new RouteListFragment());
 
             // 張り付けを実行
             fragmentTransaction.commit();
@@ -129,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startLocationService() {
-//        setContentView(R.layout.roots_frag);
+//        setContentView(R.layout.frag_location_list);
 //
 ////        textView = findViewById(R.id.log_text);
 //        mStartRecordingFab = findViewById(R.id.StartRecordingFab);

@@ -21,38 +21,28 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
-import com.example.rootshareapp.sqlite.Local_Location;
 import com.example.rootshareapp.sqlite.LocationContract;
 import com.example.rootshareapp.sqlite.LocationOpenHelper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.example.rootshareapp.sqlite.RouteContract;
+import com.example.rootshareapp.sqlite.RouteOpenHelper;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static android.content.ContentValues.TAG;
-
 public class LocationService extends Service implements LocationListener {
     private LocationManager locationManager;
     private Context context;
 
-    private static final int MinTime = 300;
+    private static final int MinTime = 10;
     private static final float MinDistance = 1;
 
-//    private StorageReadWrite fileReadWrite;
-    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+////    private StorageReadWrite fileReadWrite;
+//    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
     private SQLiteDatabase db;
 
     private String startDate;
@@ -60,6 +50,11 @@ public class LocationService extends Service implements LocationListener {
     private double longitude;
     private double accuracy;
     private String created_at;
+    long root_id;
+    String title;
+    String uid;
+
+
 
 
     @Override
@@ -82,13 +77,12 @@ public class LocationService extends Service implements LocationListener {
 //        intentを予約して指定したタイミングで発行する。
 //        難しいことは抜きにしてAlarmManagerやNotification等で何かイベントを起こしたいときに用いる
         PendingIntent pendingIntent =
-                PendingIntent.getActivity(context, requestCode,
-                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.getActivity(
+                    context, requestCode,intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // ForegroundにするためNotificationが必要、Contextを設定
         NotificationManager notificationManager =
-                (NotificationManager)context.
-                        getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Notification　Channel 設定
         NotificationChannel channel = new NotificationChannel(
@@ -137,12 +131,15 @@ public class LocationService extends Service implements LocationListener {
 
         if (locationManager != null) {
             try {
-                if (ActivityCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION)!=
-                        PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 300, 1, this);
+
+                title = startDate;
+                created_at = startDate;
+                uid = getUid();
+                root_id = writeRouteDataToDb(title, created_at, uid);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MinTime, MinDistance, this);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MinTime, MinDistance, this);
 
             } catch (Exception e) {
@@ -157,15 +154,16 @@ public class LocationService extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-
         accuracy = location.getAccuracy();
+
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
         String currentTime = sdf.format(location.getTime());
         created_at = currentTime;
 
-        writeToDatabase(latitude, longitude, accuracy, created_at);
+        Log.e("aaaaa", String.valueOf(root_id));
+        writeLocationDataToDb(latitude, longitude, accuracy, created_at, uid, root_id);
 
     }
 
@@ -208,12 +206,8 @@ public class LocationService extends Service implements LocationListener {
     private void stopGPS(){
         if (locationManager != null) {
             // update を止める
-            if (ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                            PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) !=PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             locationManager.removeUpdates(this);
@@ -223,7 +217,6 @@ public class LocationService extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         stopGPS();
     }
 
@@ -233,11 +226,8 @@ public class LocationService extends Service implements LocationListener {
     }
 
 
-    private void writeToDatabase(double latitude, double longitude, double accuracy, String created_at) {
-        final String tag = startDate;
-        final String uid = getUid();
+    private void writeLocationDataToDb(double latitude, double longitude, double accuracy, String created_at, String uid, long root_id) {
 
-        Local_Location location = new Local_Location(tag, latitude, longitude, accuracy, created_at, uid);
         //        open db
         LocationOpenHelper locationOpenHelper = new LocationOpenHelper(this);
 //        データベースファイルの削除
@@ -246,14 +236,15 @@ public class LocationService extends Service implements LocationListener {
 
 //        処理(select, insert, delete, update)
         ContentValues newLocation = new ContentValues();
-//        newLocation.put(LocationContract.Locations.COL_TAG, tag);
         newLocation.put(LocationContract.Locations.COL_LATITUDE, latitude);
         newLocation.put(LocationContract.Locations.COL_LONGITUDE, longitude);
         newLocation.put(LocationContract.Locations.COL_ACCURACY, accuracy);
         newLocation.put(LocationContract.Locations.COL_CREATED_AT, created_at);
         newLocation.put(LocationContract.Locations.COL_COMMENT, "");
         newLocation.put(LocationContract.Locations.COL_UID, uid);
-        long newId = db.insert(
+        newLocation.put(LocationContract.Locations.COL_ROOT_ID, root_id);
+
+        long newLocationId = db.insert(
                 LocationContract.Locations.TABLE_NAME,
                 null,
                 newLocation
@@ -262,14 +253,13 @@ public class LocationService extends Service implements LocationListener {
         cursor = db.query(
                 LocationContract.Locations.TABLE_NAME,
                 null,
-                null,
-                null,
+                LocationContract.Locations.COL_ROOT_ID + " = ?",
+                new String[]{ String.valueOf(root_id) },
                 null,
                 null,
                 LocationContract.Locations._ID + " desc",
                 "1"
         );
-        Log.e("DB_TEST", "Count: " + cursor.getCount());
         while(cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(LocationContract.Locations._ID));
             double db_latitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LATITUDE));
@@ -283,48 +273,87 @@ public class LocationService extends Service implements LocationListener {
 //        close db
         db.close();
 
-//        Map<String, Object> locationData = location.toMap();
+////        Firestore
+//        Local_Location location = new Local_Location(tag, latitude, longitude, accuracy, created_at, uid);
+//// Add a new document with a generated ID
+//        mDatabase.collection("locations")
+//                .add(location)
+//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                    @Override
+//                    public void onSuccess(DocumentReference documentReference) {
+//                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w(TAG, "Error adding document", e);
+//                    }
+//                });
+//
+//        mDatabase.collection("locations")
+//                .whereEqualTo("title", startDate)
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                Log.d(TAG, document.getId() + " => " + document.getData());
+//
+//                                final String uid = getUid();
+//                                final String lid = document.getId();
+//
+//                                mDatabase.collection("roots").document(uid)
+//                                        .collection(document.getString("title")).document(lid)
+//                                        .set(document.getData());
+//                            }
+//                        } else {
+//                            Log.d(TAG, "Error getting documents: ", task.getException());
+//                        }
+//                    }
+//                });
 
-// Add a new document with a generated ID
-        mDatabase.collection("locations")
-                .add(location)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
+    }
 
-        mDatabase.collection("locations")
-                .whereEqualTo("title", startDate)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
+    private long writeRouteDataToDb(String title, String created_at, String uid){
 
-                                final String uid = getUid();
-                                final String lid = document.getId();
+        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(this);
 
-                                mDatabase.collection("roots").document(uid)
-                                        .collection(document.getString("title")).document(lid)
-                                        .set(document.getData());
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+//        SQLiteDatabase.deleteDatabase(context.getDatabasePath(routeOpenHelper.getDatabaseName()));
+        db = routeOpenHelper.getWritableDatabase();
 
+        ContentValues newRoute = new ContentValues();
+        newRoute.put(RouteContract.Routes.COL_TITLE, title);
+        newRoute.put(RouteContract.Routes.COL_CREATED_AT, created_at);
+        newRoute.put(RouteContract.Routes.COL_UID, uid);
+        long newRouteId = db.insert(
+                RouteContract.Routes.TABLE_NAME,
+                null,
+                newRoute
+        );
+        Cursor cursor = null;
+        cursor = db.query(
+                RouteContract.Routes.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                RouteContract.Routes._ID + " desc",
+                "1"
+        );
+        while(cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(RouteContract.Routes._ID));
+            String db_created_at = cursor.getString(cursor.getColumnIndex(RouteContract.Routes.COL_CREATED_AT));
+            String db_title = cursor.getString(cursor.getColumnIndex(RouteContract.Routes.COL_TITLE));
+            Log.e("DB_TEST", "id: " + id + ", created_at: " + db_created_at + ", title: " + db_title);
+        }
+        cursor.close();
 
+//        close db
+        db.close();
+        return newRouteId;
     }
 
     public static String getNowDate(){

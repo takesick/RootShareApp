@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <fragment android:name="com.example.rootshareapp.fragment.RootsFragment"
+    <fragment android:name="com.example.rootshareapp.fragment.RouteListFragment"
         android:id="@+id/container"
         android:layout_weight="2"
         android:layout_width="match_parent"

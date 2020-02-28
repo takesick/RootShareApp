@@ -16,15 +16,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.sqlite.LocationContract;
 import com.example.rootshareapp.sqlite.LocationOpenHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import static com.example.rootshareapp.LocationDetailActivity.KEY_LOCATION_ID;
+import static com.example.rootshareapp.RouteDetailActivity.KEY_LOCATION_ID;
+import static com.example.rootshareapp.RouteDetailActivity.KEY_ROOT_ID;
 
 public class LocationDetailFragment extends Fragment {
+
+    public static final long LOCATION_DEFAULT = 1;
+    private static long location_id;
 
     private View view;
     private TextView timeView;
@@ -34,18 +38,28 @@ public class LocationDetailFragment extends Fragment {
     private EditText editCommentView;
     private FloatingActionButton saveFab, deleteFab;
     private SQLiteDatabase db;
+//
+//    int id = this.getArguments().getInt(KEY_LOCATION_ID);
+
+    public static LocationDetailFragment newInstance(long location_id) {
+        LocationDetailFragment fragment = new LocationDetailFragment();
+        Bundle args = new Bundle();
+        args.putLong(KEY_LOCATION_ID, location_id);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.location_detail_frag, container, false);
+        view = inflater.inflate(R.layout.frag_location_detail, container, false);
         return view;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         timeView = view.findViewById(R.id.created_at);
         accuracyView = view.findViewById(R.id.accuracy);
@@ -55,15 +69,18 @@ public class LocationDetailFragment extends Fragment {
 
         LocationOpenHelper locationOpenHelper = new LocationOpenHelper(getActivity());
         db = locationOpenHelper.getWritableDatabase();
+
+        Bundle args = getArguments();
+        long location_id = args.getLong(KEY_LOCATION_ID);
+
         Cursor mCursor = null;
-        mCursor = getItems();
+        mCursor = getItems(location_id);
         while (mCursor.moveToNext()) {
             double latitude = mCursor.getDouble(mCursor.getColumnIndex(LocationContract.Locations.COL_LATITUDE));
             double longitude = mCursor.getDouble(mCursor.getColumnIndex(LocationContract.Locations.COL_LONGITUDE));
             double accuracy = mCursor.getDouble(mCursor.getColumnIndex(LocationContract.Locations.COL_ACCURACY));
             String created_at = mCursor.getString(mCursor.getColumnIndex(LocationContract.Locations.COL_CREATED_AT));
             String comment = mCursor.getString(mCursor.getColumnIndex(LocationContract.Locations.COL_COMMENT));
-
 
             timeView.setText("計測日時：" + created_at);
             accuracyView.setText("|精度：" + accuracy);
@@ -77,6 +94,11 @@ public class LocationDetailFragment extends Fragment {
 
         //        close db
         db.close();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         saveFab = getActivity().findViewById(R.id.saveFab);
         saveFab.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +130,9 @@ public class LocationDetailFragment extends Fragment {
 
         LocationOpenHelper locationOpenHelper = new LocationOpenHelper(getActivity());
         db = locationOpenHelper.getWritableDatabase();
+
+        Bundle args = getArguments();
+        long location_id = args.getLong(KEY_LOCATION_ID);
         String comment = editCommentView.getText().toString();
 
         ContentValues newComment = new ContentValues();
@@ -116,13 +141,12 @@ public class LocationDetailFragment extends Fragment {
                 LocationContract.Locations.TABLE_NAME,
                 newComment,
                 LocationContract.Locations._ID + " = ?",
-                new String[]{ String.valueOf(getActivity().getIntent().getExtras().getLong(KEY_LOCATION_ID)) }
+                new String[]{ String.valueOf(location_id) }
         );
-        editCommentView.getText().clear();
-//        close db
         db.close();
 
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), RouteDetailActivity.class);
+        intent.putExtra(RouteDetailActivity.KEY_ROOT_ID, getActivity().getIntent().getExtras().getLong(KEY_ROOT_ID));
         startActivity(intent);
 
     }
@@ -131,15 +155,18 @@ public class LocationDetailFragment extends Fragment {
 
     }
 
-    private Cursor getItems() {
+    private Cursor getItems(long location_id) {
         return db.query(
                 LocationContract.Locations.TABLE_NAME,
                 null,
-                LocationContract.Locations._ID + " = ?",
-                new String[]{ String.valueOf(getActivity().getIntent().getExtras().getLong(KEY_LOCATION_ID)) },
+                LocationContract.Locations._ID + " == ?",
+                new String[]{String.valueOf(location_id)},
                 null,
                 null,
                 null
         );
     }
+
+
+
 }

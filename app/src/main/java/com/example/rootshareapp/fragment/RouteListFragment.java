@@ -12,23 +12,24 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.rootshareapp.LocationDetailActivity;
+import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.LocationService;
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.sqlite.LocationAdapter;
-import com.example.rootshareapp.sqlite.LocationContract;
-import com.example.rootshareapp.sqlite.LocationOpenHelper;
+import com.example.rootshareapp.sqlite.RouteAdapter;
+import com.example.rootshareapp.sqlite.RouteContract;
+import com.example.rootshareapp.sqlite.RouteOpenHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class RootsFragment extends Fragment implements LocationAdapter.OnLocationSelectedListener {
+public class RouteListFragment extends Fragment implements RouteAdapter.OnRouteSelectedListener {
 
     private View view;
     private FloatingActionButton mStartRecordingFab, mStopRecordingFab;
     private RecyclerView mRecyclerView;
-    private LocationAdapter mAdapter;
+    private RouteAdapter mAdapter;
 //    private FirebaseFirestore mFirestore;
 //    private Query mQuery;
 //    private int LIMIT = 10;
@@ -39,12 +40,11 @@ public class RootsFragment extends Fragment implements LocationAdapter.OnLocatio
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.roots_frag, container, false);
-        mRecyclerView = view.findViewById(R.id.LocationList);
+                           ViewGroup container,
+                           Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.frag_route_list, container, false);
+        mRecyclerView = view.findViewById(R.id.RouteList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         return view;
     }
 
@@ -70,11 +70,11 @@ public class RootsFragment extends Fragment implements LocationAdapter.OnLocatio
 //
 //        mAdapter = new LocationListAdapter(getActivity());
 
-        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(getActivity());
+        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(getActivity());
         //        データベースファイルの削除
-//        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
-        final SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
-        mAdapter = new LocationAdapter(getContext(),getAllItems(db), this);
+//        SQLiteDatabase.deleteDatabase(getContext().getDatabasePath(routeOpenHelper.getDatabaseName()));
+        final SQLiteDatabase db = routeOpenHelper.getWritableDatabase();
+        mAdapter = new RouteAdapter(getContext(),getAllItems(db), this);
         mRecyclerView.setAdapter(mAdapter);
 
         mStartRecordingFab = getActivity().findViewById(R.id.StartRecordingFab);
@@ -108,24 +108,23 @@ public class RootsFragment extends Fragment implements LocationAdapter.OnLocatio
 
 
     @Override
-    public void onLocationSelected(View view, int position) {
+    public void onRouteSelected(View view, int position) {
         long id = (long) view.getTag();
-        Log.e("test2", String.valueOf(id));
-        Intent intent = new Intent(getActivity(), LocationDetailActivity.class);
-        intent.putExtra(LocationDetailActivity.KEY_LOCATION_ID, id);
+        Intent intent = new Intent(getActivity(), RouteDetailActivity.class);
+        intent.putExtra(RouteDetailActivity.KEY_ROOT_ID, id);
+        Log.e("tag", String.valueOf(id));
         startActivity(intent);
     }
 
     private Cursor getAllItems(SQLiteDatabase db) {
         return db.query(
-                LocationContract.Locations.TABLE_NAME,
+                RouteContract.Routes.TABLE_NAME,
                 null,
                 null,
                 null,
                 null,
                 null,
-                LocationContract.Locations._ID + " desc"
-
+                RouteContract.Routes._ID + " desc"
         );
 
     }
