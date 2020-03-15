@@ -8,31 +8,29 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.rootshareapp.model.local.Local_LocationData;
-
 import java.util.List;
 
 @Dao
-public interface LocationDataDao {
+public interface LocationDao {
 
     // LiveData is a data holder class that can be observed within a given lifecycle.
     // Always holds/caches latest version of data. Notifies its active observers when the
     // data has changed. Since we are getting all the contents of the database,
     // we are notified whenever any of the database contents have changed.
-    @Query(" SELECT * from location_table WHERE _id = 1 ORDER BY _id DESC ")
-    LiveData<List<Local_LocationData>> getLatestRoot();
-
+    @Query(" SELECT * from location_table WHERE route_id = :route_id ORDER BY _id DESC ")
+    LiveData<List<Local_LocationData>> getLatestLocations(long route_id);
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE, entity = Local_LocationData.class)
-    void insert(Local_LocationData local_locationData);
+    void insertLocation(Local_LocationData local_locationData);
 
     @Update
-    void update(Local_LocationData local_locationData);
+    void updateLocation(Local_LocationData local_locationData);
 
     @Delete
-    void delete(Local_LocationData local_locationData);
+    void deleteLocation(Local_LocationData local_locationData);
 
     @Query("DELETE FROM location_table")
-    void deleteAll();
+    void deleteAllLocations();
+
 }

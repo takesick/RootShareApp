@@ -13,28 +13,36 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.LocationService;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.room.Local_RouteData;
+import com.example.rootshareapp.room.LocationDataViewModel;
+import com.example.rootshareapp.room.RouteListAdapter;
 import com.example.rootshareapp.sqlite.RouteAdapter;
 import com.example.rootshareapp.sqlite.RouteContract;
 import com.example.rootshareapp.sqlite.RouteOpenHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class RouteListFragment extends Fragment implements RouteAdapter.OnRouteSelectedListener {
+import java.util.List;
+
+public class RouteListFragment extends Fragment implements RouteListAdapter.OnRouteSelectedListener {
 
     private View view;
     private FloatingActionButton mStartRecordingFab, mStopRecordingFab;
     private RecyclerView mRecyclerView;
-    private RouteAdapter mAdapter;
+    private RouteListAdapter mAdapter;
 //    private FirebaseFirestore mFirestore;
 //    private Query mQuery;
 //    private int LIMIT = 10;
 
-//    private LocationDataViewModel mLocationDataViewModel;
+    private LocationDataViewModel mLocationDataViewModel;
 
 
 
@@ -70,20 +78,29 @@ public class RouteListFragment extends Fragment implements RouteAdapter.OnRouteS
 //
 //        mAdapter = new LocationListAdapter(getActivity());
 
-        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(getActivity());
-        //        データベースファイルの削除
-//        SQLiteDatabase.deleteDatabase(getContext().getDatabasePath(routeOpenHelper.getDatabaseName()));
-        final SQLiteDatabase db = routeOpenHelper.getWritableDatabase();
-        mAdapter = new RouteAdapter(getContext(),getAllItems(db), this);
+//
+        mAdapter = new RouteListAdapter(getActivity(), this);
         mRecyclerView.setAdapter(mAdapter);
+
+        // Get a new or existing ViewModel from the ViewModelProvider.
+        mLocationDataViewModel = new ViewModelProvider(this).get(LocationDataViewModel.class);
+
+        // Add an observer on the LiveData returned by getAlphabetizedWords.
+        // The onChanged() method fires when the observed data changes and the activity is
+        // in the foreground.
+        mLocationDataViewModel.getLatestRoutes().observe(this, new Observer<List<Local_RouteData>>() {
+            @Override
+            public void onChanged(@Nullable final List<Local_RouteData> local_routeDataList) {
+                // Update the cached copy of the words in the adapter.
+                mAdapter.setRouteDataList(local_routeDataList);
+            }
+        });
 
         mStartRecordingFab = getActivity().findViewById(R.id.StartRecordingFab);
         mStartRecordingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
-
-                // API 26 以降
                 getActivity().startForegroundService(intent);
             }
         });
@@ -95,37 +112,29 @@ public class RouteListFragment extends Fragment implements RouteAdapter.OnRouteS
                 // Serviceの停止
                 Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
                 getActivity().stopService(intent);
-                mAdapter.swapCursor(getAllItems(db));
             }
         });
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-    }
-
-
-    @Override
     public void onRouteSelected(View view, int position) {
-        long id = (long) view.getTag();
+        int id = (int) view.getTag();
         Intent intent = new Intent(getActivity(), RouteDetailActivity.class);
-        intent.putExtra(RouteDetailActivity.KEY_ROOT_ID, id);
-        Log.e("tag", String.valueOf(id));
+        intent.putExtra(RouteDetailActivity.KEY_ROUTE_ID, id);
+        Log.e("rep3", String.valueOf(id));
         startActivity(intent);
     }
 
-    private Cursor getAllItems(SQLiteDatabase db) {
-        return db.query(
-                RouteContract.Routes.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                RouteContract.Routes._ID + " desc"
-        );
-
-    }
+//    private Cursor getAllItems(SQLiteDatabase db) {
+//        return db.query(
+//                RouteContract.Routes.TABLE_NAME,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                RouteContract.Routes._ID + " desc"
+//        );
+//
+//    }
 }

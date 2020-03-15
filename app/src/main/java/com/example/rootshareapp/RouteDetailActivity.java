@@ -13,58 +13,46 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.rootshareapp.adapter.LocationFragmentStatePagerAdapter;
+import com.example.rootshareapp.fragment.LocationFragment;
 import com.example.rootshareapp.fragment.MapFragment;
 import com.example.rootshareapp.fragment.RouteDetailFragment;
+import com.example.rootshareapp.room.LocationDataViewModel;
 
 public class RouteDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "LocationDetail";
-
-    public static final String KEY_ROOT_ID = "key_root_id";
+    public static final String KEY_ROUTE_ID = "key_route_id";
     public static final String KEY_LOCATION_ID = "key_location_id";
-
-    ViewPager viewPager;
-
-    private TextView timeView;
-    private TextView accuracyView;
-    private TextView latitudeView;
-    private TextView longitudeView;
-    private SQLiteDatabase db;
-    private LocationFragmentStatePagerAdapter mAdapter;
-
+    private LocationDataViewModel mLocationDataViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_detail);
+
+        mLocationDataViewModel = ViewModelProviders.of(this).get(LocationDataViewModel.class);
+        mLocationDataViewModel.setSelectedRoute(getIntent().getExtras().getInt(RouteDetailActivity.KEY_ROUTE_ID));
         if (savedInstanceState == null) {
+
             // FragmentManagerのインスタンス生成
-
             FragmentManager fragmentManager = getSupportFragmentManager();
-
             // FragmentTransactionのインスタンスを取得
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-
-            // インスタンスに対して張り付け方を指定する
-            fragmentTransaction.add(R.id.location_container, new RouteDetailFragment());
-
-            // 張り付けを実行
-            fragmentTransaction.commit();
+//            FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
+//            MapFragment mapFragment = new MapFragment();
+//            // インスタンスに対して張り付け方を指定する
+//            fragmentTransaction1.add(R.id.map_container, mapFragment);
+//            // 張り付けを実行
+//            fragmentTransaction1.commit();
 
             FragmentTransaction fragmentTransaction2 = fragmentManager.beginTransaction();
-            MapFragment mapFragment = new MapFragment();
-            fragmentTransaction2.add(R.id.map_container, mapFragment);
-            fragmentTransaction2.addToBackStack(null);
+            fragmentTransaction2.add(R.id.location_container, new LocationFragment());
             fragmentTransaction2.commit();
+
         }
-
-//        viewPager = (ViewPager) findViewById(R.id.location_container);
-//        viewPager.setAdapter(new LocationFragmentStatePagerAdapter( getSupportFragmentManager(),mAdapter));
-
     }
 
 //    /**
@@ -99,11 +87,11 @@ public class RouteDetailActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
 //        if (requestCode != REQUEST_MAIN_ACTIVITY)
 //            return;
 //        if (resultCode != RESULT_OK)
 //            return;
-
 
     }
 }

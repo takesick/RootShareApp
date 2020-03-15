@@ -1,11 +1,23 @@
-package com.example.rootshareapp.model.local;
+package com.example.rootshareapp.room;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "location_table")
+import static androidx.room.ForeignKey.CASCADE;
+
+
+@Entity(tableName = "location_table",
+        foreignKeys = @ForeignKey(
+                entity = Local_RouteData.class,
+                parentColumns = "_id",
+                childColumns =  "route_id",
+                onDelete = CASCADE
+        )
+)
+
 public class Local_LocationData {
     @PrimaryKey(autoGenerate = true)
     public int _id;
@@ -30,15 +42,21 @@ public class Local_LocationData {
     @NonNull
     public String uid;
 
-    @ColumnInfo(name = "root_id")
+    @ColumnInfo(name = "route_id")
     @NonNull
-    public String root_id;
+    public int route_id;
 
-    public Local_LocationData(double latitude, double longitude, double accuracy, String created_at, String uid, String root_id) {
-    }
+    @ColumnInfo(name = "comment")
+    @NonNull
+    public String comment;
 
-    public void set_id(int _id) {
-        this._id = _id;
+    public Local_LocationData(double latitude, double longitude, double accuracy, String created_at, String uid, String comment) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.accuracy = accuracy;
+        this.created_at = created_at;
+        this.uid = uid;
+        this.comment = comment;
     }
 
     public void setLatitude(double latitude) {
@@ -61,8 +79,12 @@ public class Local_LocationData {
         this.uid = uid;
     }
 
-    public int get_id() {
-        return _id;
+    public void setRoute_id(int route_id) {
+        this.route_id = route_id;
+    }
+
+    public void setComment(@NonNull String comment) {
+        this.comment = comment;
     }
 
     @NonNull
@@ -96,7 +118,12 @@ public class Local_LocationData {
     }
 
     @NonNull
-    public String getRoot_id() {
-        return root_id;
+    public long getRoute_id() {
+        return route_id;
+    }
+
+    @NonNull
+    public String getComment() {
+        return comment;
     }
 }

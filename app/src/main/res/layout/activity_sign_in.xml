@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center_horizontal"
-            android:hint="yor_email"
+            android:hint="your_email"
             android:inputType="textEmailAddress"
             android:maxLines="1" />
 

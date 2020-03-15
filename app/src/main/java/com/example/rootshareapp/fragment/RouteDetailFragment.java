@@ -14,16 +14,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.RouteDetailActivity;
+import com.example.rootshareapp.room.LocationDataViewModel;
 import com.example.rootshareapp.sqlite.LocationAdapter;
 import com.example.rootshareapp.sqlite.LocationContract;
 import com.example.rootshareapp.sqlite.LocationOpenHelper;
 
-import static com.example.rootshareapp.RouteDetailActivity.KEY_ROOT_ID;
+import static com.example.rootshareapp.RouteDetailActivity.KEY_ROUTE_ID;
 
 
 public class RouteDetailFragment extends Fragment implements LocationAdapter.OnLocationSelectedListener {
@@ -68,7 +70,7 @@ public class RouteDetailFragment extends Fragment implements LocationAdapter.OnL
         LocationOpenHelper locationOpenHelper = new LocationOpenHelper(getActivity());
         //        データベースファイルの削除
 //        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
-        Log.e("tag1", String.valueOf(getActivity().getIntent().getExtras().getLong(KEY_ROOT_ID)));
+        Log.e("tag1", String.valueOf(getActivity().getIntent().getExtras().getLong(KEY_ROUTE_ID)));
         final SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
         mAdapter = new LocationAdapter(getContext(),getAllItems(db), this);
         mRecyclerView.setAdapter(mAdapter);
@@ -89,11 +91,17 @@ public class RouteDetailFragment extends Fragment implements LocationAdapter.OnL
 //        intent.putExtra(RouteDetailActivity.KEY_LOCATION_ID, id);
 //        Log.e("tag", String.valueOf(id));
 //        startActivity(intent);
-
+        LocationDataViewModel locationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
+        locationDataViewModel.setSelectedLocation(id);
         FragmentManager fragmentManager = getParentFragmentManager();
-        LocationDetailFragment mLocationDetailFragment = LocationDetailFragment.newInstance(id);
+//        LocationDetailFragment mLocationDetailFragment = LocationDetailFragment.newInstance(id);
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.location_container,mLocationDetailFragment);
+//        fragmentTransaction.addToBackStack(null);
+//        fragmentTransaction.commit();
+
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.location_container,mLocationDetailFragment);
+        fragmentTransaction.add(R.id.location_container, new LocationDetailFragment());
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
@@ -103,12 +111,12 @@ public class RouteDetailFragment extends Fragment implements LocationAdapter.OnL
         return db.query(
                 LocationContract.Locations.TABLE_NAME,
                 null,
-                LocationContract.Locations.COL_ROOT_ID + " == ?",
-                new String[]{String.valueOf(getActivity().getIntent().getExtras().getLong(KEY_ROOT_ID))},
+                LocationContract.Locations.COL_ROUTE_ID + " == ?",
+                new String[]{String.valueOf(getActivity().getIntent().getExtras().getLong(KEY_ROUTE_ID))},
                 null,
                 null,
                 LocationContract.Locations._ID + " desc"
-
         );
     }
+
 }

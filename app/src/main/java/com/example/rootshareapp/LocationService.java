@@ -1,6 +1,7 @@
 package com.example.rootshareapp;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -20,9 +21,22 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleService;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.example.rootshareapp.fragment.LocationFragment;
+import com.example.rootshareapp.room.Local_LocationData;
+import com.example.rootshareapp.room.Local_RouteData;
+import com.example.rootshareapp.room.LocationDataViewModel;
+import com.example.rootshareapp.sqlite.Local_Location;
 import com.example.rootshareapp.sqlite.LocationContract;
 import com.example.rootshareapp.sqlite.LocationOpenHelper;
 import com.example.rootshareapp.sqlite.RouteContract;
@@ -44,17 +58,18 @@ public class LocationService extends Service implements LocationListener {
 ////    private StorageReadWrite fileReadWrite;
 //    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
     private SQLiteDatabase db;
+    LocationDataViewModel mLocationDataViewModel;
+    
 
     private String startDate;
     private double latitude;
     private double longitude;
     private double accuracy;
     private String created_at;
-    long root_id;
+    int route_id;
     String title;
     String uid;
-
-
+    MainActivity mainActivity;
 
 
     @Override
@@ -138,7 +153,7 @@ public class LocationService extends Service implements LocationListener {
                 title = startDate;
                 created_at = startDate;
                 uid = getUid();
-                root_id = writeRouteDataToDb(title, created_at, uid);
+                writeRouteDataToDb(title, created_at, uid);
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MinTime, MinDistance, this);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MinTime, MinDistance, this);
 
@@ -156,14 +171,11 @@ public class LocationService extends Service implements LocationListener {
         longitude = location.getLongitude();
         accuracy = location.getAccuracy();
 
-
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
         String currentTime = sdf.format(location.getTime());
         created_at = currentTime;
-
-        Log.e("aaaaa", String.valueOf(root_id));
-        writeLocationDataToDb(latitude, longitude, accuracy, created_at, uid, root_id);
+        writeLocationDataToDb(latitude, longitude, accuracy, created_at, uid);
 
     }
 
@@ -226,52 +238,60 @@ public class LocationService extends Service implements LocationListener {
     }
 
 
-    private void writeLocationDataToDb(double latitude, double longitude, double accuracy, String created_at, String uid, long root_id) {
+    private void writeLocationDataToDb(double latitude, double longitude, double accuracy, String created_at, String uid) {
+        String comment = "";
+        Local_LocationData local_locationData = new Local_LocationData(latitude, longitude, accuracy, created_at, uid,comment);
+        mLocationDataViewModel = new LocationDataViewModel(getApplication());
+        mLocationDataViewModel.insertLocation(local_locationData);
+
 
         //        open db
-        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(this);
+//        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(this);
 //        データベースファイルの削除
 //        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
-        db = locationOpenHelper.getWritableDatabase();
-
-//        処理(select, insert, delete, update)
-        ContentValues newLocation = new ContentValues();
-        newLocation.put(LocationContract.Locations.COL_LATITUDE, latitude);
-        newLocation.put(LocationContract.Locations.COL_LONGITUDE, longitude);
-        newLocation.put(LocationContract.Locations.COL_ACCURACY, accuracy);
-        newLocation.put(LocationContract.Locations.COL_CREATED_AT, created_at);
-        newLocation.put(LocationContract.Locations.COL_COMMENT, "");
-        newLocation.put(LocationContract.Locations.COL_UID, uid);
-        newLocation.put(LocationContract.Locations.COL_ROOT_ID, root_id);
-
-        long newLocationId = db.insert(
-                LocationContract.Locations.TABLE_NAME,
-                null,
-                newLocation
-        );
-        Cursor cursor = null;
-        cursor = db.query(
-                LocationContract.Locations.TABLE_NAME,
-                null,
-                LocationContract.Locations.COL_ROOT_ID + " = ?",
-                new String[]{ String.valueOf(root_id) },
-                null,
-                null,
-                LocationContract.Locations._ID + " desc",
-                "1"
-        );
-        while(cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(LocationContract.Locations._ID));
-            double db_latitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LATITUDE));
-            double db_longitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LONGITUDE));
-            String db_created_at = cursor.getString(cursor.getColumnIndex(LocationContract.Locations.COL_CREATED_AT));
-            Log.e("DB_TEST", "id: " + id + ", created_at: " + db_created_at + ", latitude: " + db_latitude + ", longitude: " + db_longitude);
-        }
-
-        cursor.close();
-
-//        close db
-        db.close();
+//        db = locationOpenHelper.getWritableDatabase();
+//
+////        処理(select, insert, delete, update)
+//        ContentValues newLocation = new ContentValues();
+//        newLocation.put(LocationContract.Locations.COL_LATITUDE, latitude);
+//        newLocation.put(LocationContract.Locations.COL_LONGITUDE, longitude);
+//        newLocation.put(LocationContract.Locations.COL_ACCURACY, accuracy);
+//        newLocation.put(LocationContract.Locations.COL_CREATED_AT, created_at);
+//        newLocation.put(LocationContract.Locations.COL_COMMENT, "");
+//        newLocation.put(LocationContract.Locations.COL_UID, uid);
+//        newLocation.put(LocationContract.Locations.COL_ROOT_ID, root_id);
+//
+//        long newLocationId = db.insert(
+//                LocationContract.Locations.TABLE_NAME,
+//                null,
+//                newLocation
+//        );
+//        Cursor cursor = null;
+//        cursor = db.query(
+//                LocationContract.Locations.TABLE_NAME,
+//                null,
+//                LocationContract.Locations.COL_ROOT_ID + " = ?",
+//                new String[]{ String.valueOf(root_id) },
+//                null,
+//                null,
+//                LocationContract.Locations._ID + " desc",
+//                "1"
+//        );
+//        while(cursor.moveToNext()) {
+//            int id = cursor.getInt(cursor.getColumnIndex(LocationContract.Locations._ID));
+//            double db_latitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LATITUDE));
+//            double db_longitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LONGITUDE));
+//            String db_created_at = cursor.getString(cursor.getColumnIndex(LocationContract.Locations.COL_CREATED_AT));
+//            Log.e("DB_TEST", "id: " + id + ", created_at: " + db_created_at + ", latitude: " + db_latitude + ", longitude: " + db_longitude);
+//            String message = "Now recording(n=" + num + ")";
+//            toastMake(message);
+//            num++;
+//        }
+//
+//        cursor.close();
+//
+////        close db
+//        db.close();
 
 ////        Firestore
 //        Local_Location location = new Local_Location(tag, latitude, longitude, accuracy, created_at, uid);
@@ -316,44 +336,48 @@ public class LocationService extends Service implements LocationListener {
 
     }
 
-    private long writeRouteDataToDb(String title, String created_at, String uid){
+    private void writeRouteDataToDb(String title, String created_at, String uid){
+        Local_RouteData local_routeData = new Local_RouteData(title, created_at, uid);
+        mLocationDataViewModel =  ViewModelProviders.of(mainActivity).get(LocationDataViewModel.class);
+        mLocationDataViewModel.insertRoute(local_routeData);
 
-        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(this);
-
-//        SQLiteDatabase.deleteDatabase(context.getDatabasePath(routeOpenHelper.getDatabaseName()));
-        db = routeOpenHelper.getWritableDatabase();
-
-        ContentValues newRoute = new ContentValues();
-        newRoute.put(RouteContract.Routes.COL_TITLE, title);
-        newRoute.put(RouteContract.Routes.COL_CREATED_AT, created_at);
-        newRoute.put(RouteContract.Routes.COL_UID, uid);
-        long newRouteId = db.insert(
-                RouteContract.Routes.TABLE_NAME,
-                null,
-                newRoute
-        );
-        Cursor cursor = null;
-        cursor = db.query(
-                RouteContract.Routes.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                RouteContract.Routes._ID + " desc",
-                "1"
-        );
-        while(cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(RouteContract.Routes._ID));
-            String db_created_at = cursor.getString(cursor.getColumnIndex(RouteContract.Routes.COL_CREATED_AT));
-            String db_title = cursor.getString(cursor.getColumnIndex(RouteContract.Routes.COL_TITLE));
-            Log.e("DB_TEST", "id: " + id + ", created_at: " + db_created_at + ", title: " + db_title);
-        }
-        cursor.close();
-
-//        close db
-        db.close();
-        return newRouteId;
+//        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(this);
+//
+////        SQLiteDatabase.deleteDatabase(context.getDatabasePath(routeOpenHelper.getDatabaseName()));
+//        db = routeOpenHelper.getWritableDatabase();
+//
+//        ContentValues newRoute = new ContentValues();
+//        newRoute.put(RouteContract.Routes.COL_TITLE, title);
+//        newRoute.put(RouteContract.Routes.COL_CREATED_AT, created_at);
+//        newRoute.put(RouteContract.Routes.COL_UID, uid);
+//        long newRouteId = db.insert(
+//                RouteContract.Routes.TABLE_NAME,
+//                null,
+//                newRoute
+//        );
+//        Cursor cursor = null;
+//        cursor = db.query(
+//                RouteContract.Routes.TABLE_NAME,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                RouteContract.Routes._ID + " desc",
+//                "1"
+//        );
+//        while(cursor.moveToNext()) {
+//            int id = cursor.getInt(cursor.getColumnIndex(RouteContract.Routes._ID));
+//            String db_created_at = cursor.getString(cursor.getColumnIndex(RouteContract.Routes.COL_CREATED_AT));
+//            String db_title = cursor.getString(cursor.getColumnIndex(RouteContract.Routes.COL_TITLE));
+//            Log.e("DB_TEST", "id: " + id + ", created_at: " + db_created_at + ", title: " + db_title);
+//            String message = "Start recording";
+//            toastMake(message);
+//        }
+//        cursor.close();
+//
+////        close db
+//        db.close()
     }
 
     public static String getNowDate(){
@@ -364,6 +388,13 @@ public class LocationService extends Service implements LocationListener {
 
     public String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    private void toastMake(String message){
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        // 位置調整
+        toast.setGravity(Gravity.CENTER, 0, 100);
+        toast.show();
     }
 
 //    public void swapCursor(Cursor mCursor, Cursor newCursor) {

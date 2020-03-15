@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.rootshareapp.fragment.LocationFragment;
 import com.example.rootshareapp.fragment.RouteListFragment;
 
 import java.util.ArrayList;
@@ -59,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
     // 位置情報許可の確認、外部ストレージのPermissionにも対応できるようにしておく
     private  void checkMultiPermissions(){
         // 位置情報の Permission
-        int permissionLocation = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         // 外部ストレージ書き込みの Permission
 //        int permissionExtStorage = ContextCompat.checkSelfPermission(this,
 //                Manifest.permission.WRITE_EXTERNAL_STORAGE);

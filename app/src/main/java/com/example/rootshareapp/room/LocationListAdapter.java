@@ -10,48 +10,68 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.model.local.Local_LocationData;
 
 import java.util.List;
+import java.util.zip.Inflater;
 
 public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapter.LocationDataViewHolder> {
 
-class LocationDataViewHolder extends RecyclerView.ViewHolder {
-    private final TextView timeView;
-    private final TextView accuracyView;
-    private final TextView latitudeView;
-    private final TextView longitudeView;
+    private Context mContext;
+    private List<Local_LocationData> mLocationDataList;
+    private  OnLocationSelectedListener mOnLocationSelectedListener;
 
-    private LocationDataViewHolder(View itemView) {
-        super(itemView);
-        timeView = itemView.findViewById(R.id.created_at);
-        accuracyView = itemView.findViewById(R.id.accuracy);
-        latitudeView = itemView.findViewById(R.id.lat);
-        longitudeView = itemView.findViewById(R.id.lng);
+    public LocationListAdapter(Context context, OnLocationSelectedListener onLocationSelectedListener) {
+        mContext = context;
+        mOnLocationSelectedListener = onLocationSelectedListener;
     }
-}
 
-    private final LayoutInflater mInflater;
-    private List<Local_LocationData> mLocationDataList; // Cached copy of words
+    public class LocationDataViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final TextView timeView;
+        private final TextView accuracyView;
+        private final TextView latitudeView;
+        private final TextView longitudeView;
+        private final TextView commentView;
+        OnLocationSelectedListener onLocationSelectedListener;
 
-    public LocationListAdapter(Context context) {
-        mInflater = LayoutInflater.from(context);
+        private LocationDataViewHolder(View itemView, OnLocationSelectedListener onLocationSelectedListener) {
+            super(itemView);
+            timeView = itemView.findViewById(R.id.created_at);
+            accuracyView = itemView.findViewById(R.id.accuracy);
+            latitudeView = itemView.findViewById(R.id.lat);
+            longitudeView = itemView.findViewById(R.id.lng);
+            commentView = itemView.findViewById(R.id.comment);
+            this.onLocationSelectedListener = onLocationSelectedListener;
+
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            onLocationSelectedListener.onLocationSelected(v,getAdapterPosition());
+        }
     }
+
 
     @Override
     public LocationDataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.list_location_item, parent, false);
-        return new LocationDataViewHolder(itemView);
+        LayoutInflater Inflater = LayoutInflater.from(mContext);
+        View itemView = Inflater.inflate(R.layout.list_location_item, parent, false);
+        return new LocationDataViewHolder(itemView, mOnLocationSelectedListener);
     }
 
     @Override
     public void onBindViewHolder(LocationDataViewHolder holder, int position) {
         if (mLocationDataList != null) {
             Local_LocationData current = mLocationDataList.get(position);
+            holder.itemView.setTag(current._id);
             holder.timeView.setText("計測日時：" + current.getCreated_at());
             holder.accuracyView.setText("|精度：" + current.getAccuracy());
             holder.latitudeView.setText("|緯度："+ current.getLatitude());
             holder.longitudeView.setText("|経度："+ current.getLongitude());
+            holder.commentView.setText("|コメント：" + current.getComment());
+            Log.e("adapter", String.valueOf(current.getId()));
+
         } else {
             // Covers the case of data not being ready yet.
             Log.e("test", "no words");
@@ -74,5 +94,9 @@ class LocationDataViewHolder extends RecyclerView.ViewHolder {
         if (mLocationDataList != null)
             return mLocationDataList.size();
         else return 0;
+    }
+
+    public interface OnLocationSelectedListener {
+        void onLocationSelected(View view, int position);
     }
 }

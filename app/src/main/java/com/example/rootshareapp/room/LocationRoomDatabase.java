@@ -9,15 +9,17 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.rootshareapp.model.local.Local_LocationData;
+import com.example.rootshareapp.sqlite.LocationContract;
+import com.example.rootshareapp.sqlite.RouteContract;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Local_LocationData.class}, version = 1, exportSchema = false)
+@Database(entities = {Local_RouteData.class, Local_LocationData.class}, version = 8, exportSchema = false)
 public abstract class LocationRoomDatabase extends RoomDatabase {
 
-    public abstract LocationDataDao locationDataDao();
+    public abstract RouteDao routeDao();
+    public abstract LocationDao locationDao();
 
     // marking the instance as volatile to ensure atomic access to the variable
     private static volatile LocationRoomDatabase INSTANCE;
@@ -31,7 +33,8 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
 
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            LocationRoomDatabase.class, "Location_database")
+                            LocationRoomDatabase.class, "local_database")
+                            .fallbackToDestructiveMigration()
                             .addMigrations(FROM_1_TO_2)
                             .addCallback(sRoomDatabaseCallback)
                             .build();
@@ -60,20 +63,37 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                 public void run() {
                     // Populate the database in the background.
                     // If you want to start with more words, just add them.
-                    LocationDataDao dao = INSTANCE.locationDataDao();
-                    dao.deleteAll();
+                    RouteDao routedao = INSTANCE.routeDao();
+                    LocationDao locationdao = INSTANCE.locationDao();
+
+                    routedao.deleteAllRoutes();
+                    locationdao.deleteAllLocations();
                 }
             });
         }
     };
 
-    static final Migration FROM_1_TO_2 = new Migration(1, 2) {
+    static final Migration FROM_1_TO_2 = new Migration(7, 8) {
         @Override
         public void migrate(final SupportSQLiteDatabase database) {
-            database.execSQL("CREATE TABLE `location_table` " +
-                    "(`id` INTEGER, " +
-                    "`created_at` TEXT , `uid` TEXT , `root_id` TEXT ," +
-                    " PRIMARY KEY(`id`))");
+//            database.execSQL("drop table route_table");
+            database.execSQL("create table " + "route_table" + "(" +
+                    RouteContract.Routes._ID + " integer primary key autoincrement," +
+                    RouteContract.Routes.COL_CREATED_AT + " String," +
+                    RouteContract.Routes.COL_TITLE + " String," +
+                    RouteContract.Routes.COL_UID + " String)"
+            );
+//            database.execSQL("drop table location_table");
+            database.execSQL("create table " + "location_table" + "(" +
+                    LocationContract.Locations._ID + " integer primary key autoincrement," +
+                    LocationContract.Locations.COL_LATITUDE + " double," +
+                    LocationContract.Locations.COL_LONGITUDE + " double," +
+                    LocationContract.Locations.COL_ACCURACY + " double," +
+                    LocationContract.Locations.COL_CREATED_AT + " String," +
+                    LocationContract.Locations.COL_COMMENT + " String," +
+                    LocationContract.Locations.COL_UID + " String ," +
+                    LocationContract.Locations.COL_ROUTE_ID + " integer)"
+            );
         }
     };
 }

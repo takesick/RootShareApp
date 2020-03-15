@@ -23,7 +23,7 @@ import com.example.rootshareapp.sqlite.LocationOpenHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import static com.example.rootshareapp.RouteDetailActivity.KEY_LOCATION_ID;
-import static com.example.rootshareapp.RouteDetailActivity.KEY_ROOT_ID;
+import static com.example.rootshareapp.RouteDetailActivity.KEY_ROUTE_ID;
 
 public class LocationDetailFragment extends Fragment {
 
@@ -137,7 +137,7 @@ public class LocationDetailFragment extends Fragment {
 
         ContentValues newComment = new ContentValues();
         newComment.put(LocationContract.Locations.COL_COMMENT, comment);
-        long updateComment = db.update(
+        long updateCount = db.update(
                 LocationContract.Locations.TABLE_NAME,
                 newComment,
                 LocationContract.Locations._ID + " = ?",
@@ -146,13 +146,28 @@ public class LocationDetailFragment extends Fragment {
         db.close();
 
         Intent intent = new Intent(getContext(), RouteDetailActivity.class);
-        intent.putExtra(RouteDetailActivity.KEY_ROOT_ID, getActivity().getIntent().getExtras().getLong(KEY_ROOT_ID));
+        intent.putExtra(RouteDetailActivity.KEY_ROUTE_ID, getActivity().getIntent().getExtras().getLong(KEY_ROUTE_ID));
         startActivity(intent);
 
     }
 
     private void RemoveLocationData() {
+        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(getActivity());
+        db = locationOpenHelper.getWritableDatabase();
 
+        Bundle args = getArguments();
+        long location_id = args.getLong(KEY_LOCATION_ID);
+
+        long deleted = db.delete(
+                LocationContract.Locations.TABLE_NAME,
+                LocationContract.Locations._ID + " = ?",
+                new String[]{ String.valueOf(location_id) }
+        );
+        db.close();
+
+        Intent intent = new Intent(getContext(), RouteDetailActivity.class);
+        intent.putExtra(RouteDetailActivity.KEY_ROUTE_ID, getActivity().getIntent().getExtras().getLong(KEY_ROUTE_ID));
+        startActivity(intent);
     }
 
     private Cursor getItems(long location_id) {

@@ -15,7 +15,7 @@ public final class LocationContract {
         public static final String COL_CREATED_AT = "created_at";
         public static final String COL_COMMENT = "comment";
         public static final String COL_UID = "uid";
-        public static final String COL_ROOT_ID = "root_id";
+        public static final String COL_ROUTE_ID = "route_id";
 
     }
 

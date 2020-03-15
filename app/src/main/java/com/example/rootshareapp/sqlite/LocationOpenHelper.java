@@ -17,7 +17,7 @@ public class LocationOpenHelper extends SQLiteOpenHelper {
                     LocationContract.Locations.COL_CREATED_AT + " String," +
                     LocationContract.Locations.COL_COMMENT + " String," +
                     LocationContract.Locations.COL_UID + " String ," +
-                    LocationContract.Locations.COL_ROOT_ID + " integer)";
+                    LocationContract.Locations.COL_ROUTE_ID + " integer)";
 
     public static final String DROP_TABLE =
             "drop table if exists " + LocationContract.Locations.TABLE_NAME;
