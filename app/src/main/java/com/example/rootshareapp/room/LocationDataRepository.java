@@ -8,6 +8,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class LocationDataRepository {
     private LocationDao locationDao;
@@ -15,40 +18,57 @@ public class LocationDataRepository {
 
     private LiveData<List<Local_RouteData>> mLatestRoutes;
     private LiveData<List<Local_LocationData>> mLatestLocations;
-    private LocationDataViewModel mLocationDataViewModel;
+    private Local_LocationData mLocation;
+
+    public LocationDataRepository(Application application) {
+        LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
+        routeDao = db.routeDao();
+        mLatestRoutes = routeDao.getLatestRoutes();
+    }
 
     // Note that in order to unit test the WordRepository, you have to remove the Application
     // dependency. This adds complexity and much more code, and this sample is not about testing.
     // See the BasicSample in the android-architecture-components repository at
     // https://github.com/googlesamples
-    public LocationDataRepository(Application application) {
+    public LocationDataRepository(Application application, int route_id) {
+        LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
+        locationDao = db.locationDao();
+        mLatestLocations = locationDao.getLatestLocations(route_id);
+    }
+
+    public LocationDataRepository(Application application, long location_id) {
         LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
         locationDao = db.locationDao();
         routeDao = db.routeDao();
-        mLatestLocations = locationDao.getLatestLocations(route_id);
-        mLatestRoutes = routeDao.getLatestRoutes();
+        mLocation = locationDao.getSelectedLocation(location_id);
     }
+
+
 
     // Room executes all queries on a separate thread.
     // Observed LiveData will notify the observer when the data has changed.
     public LiveData<List<Local_RouteData>> getLatestRoutes() {
         return mLatestRoutes;
     }
-    public LiveData<List<Local_LocationData>> getLatestLocations() {
+    public LiveData<List<Local_LocationData>> getLatestLocations(int route_id) {
+        mLatestLocations = locationDao.getLatestLocations(route_id);
         return mLatestLocations;
     }
 
+    public Local_LocationData getSelectedLocation(long location_id){
+        mLocation = locationDao.getSelectedLocation(location_id);
+        return mLocation;
+    }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
-    public long insertRoute(final Local_RouteData local_routeData) {
-        LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
-            public long run() {
-                long id = routeDao.insertRoute(local_routeData);
-                return id;
+    public Long insertRoute(final Local_RouteData local_routeData) throws ExecutionException, InterruptedException {
+        Future<Long> future = LocationRoomDatabase.databaseWriteExecutor.submit(new Callable<Long>() {
+            public Long call() {
+                return routeDao.insertRoute(local_routeData);
             }
         });
-
+        return future.get();
     }
 
     public void updateRoute(final Local_RouteData local_routeData) {

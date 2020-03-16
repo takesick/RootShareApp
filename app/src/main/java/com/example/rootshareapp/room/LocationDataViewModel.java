@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class LocationDataViewModel extends AndroidViewModel {
@@ -21,26 +22,44 @@ public class LocationDataViewModel extends AndroidViewModel {
     // - Repository is completely separated from the UI through the ViewModel.
     private LiveData<List<Local_RouteData>> mLatestRoutes;
     private LiveData<List<Local_LocationData>> mLatestLocations;
+    private Local_LocationData mLocation;
     private long temporary_id;
-    private int route_id;
 
     public LocationDataViewModel(Application application) {
         super(application);
-        mRepository = new LocationDataRepository(application, route_id);
-        mLatestLocations = mRepository.getLatestLocations();
+        mRepository = new LocationDataRepository(application);
         mLatestRoutes = mRepository.getLatestRoutes();
+    }
+
+    public LocationDataViewModel(Application application, int route_id) {
+        super(application);
+        mRepository = new LocationDataRepository(application, route_id);
+        mLatestRoutes = mRepository.getLatestRoutes();
+        mLatestLocations = mRepository.getLatestLocations(route_id);
+    }
+
+    public LocationDataViewModel(Application application, long location_id) {
+        super(application);
+        mRepository = new LocationDataRepository(application, location_id);
+        mLocation = mRepository.getSelectedLocation(location_id);
     }
 
     public LiveData<List<Local_RouteData>> getLatestRoutes() {
         return mLatestRoutes;
     }
 
-    public LiveData<List<Local_LocationData>> getLatestLocations() {
+    public LiveData<List<Local_LocationData>> getLatestLocations(int route_id) {
+        mLatestLocations = mRepository.getLatestLocations(route_id);
         return mLatestLocations;
     }
 
-    public void insertRoute(Local_RouteData local_routeData) {
-        mRepository.insertRoute(local_routeData);
+    public Local_LocationData getSelectedLocation(long location_id) {
+        mLocation = mRepository.getSelectedLocation(location_id);
+        return mLocation;
+    }
+
+    public Long insertRoute(Local_RouteData local_routeData) throws ExecutionException, InterruptedException {
+        return mRepository.insertRoute(local_routeData);
     }
 
     public void updateRoute(Local_RouteData local_routeData) {
@@ -57,7 +76,6 @@ public class LocationDataViewModel extends AndroidViewModel {
 
     public void insertLocation(Local_LocationData local_locationData) {
         mRepository.insertLocation(local_locationData);
-        Log.e("TAG", String.valueOf(local_locationData.getId()));
     }
 
     public void updateLocation(Local_LocationData local_locationData) {
@@ -79,12 +97,11 @@ public class LocationDataViewModel extends AndroidViewModel {
         return temporary_id;
     }
 
-    public void setSelectedRoute(int id) {
-        this.route_id = id;
-    }
-    public int  getSelectedRoute() {
-        return route_id;
-    }
+//    public void setSelectedRoute(int id) { route_id = id;
+//    }
+//    public int  getSelectedRoute() {
+//        return route_id;
+//    }
 
 }
 

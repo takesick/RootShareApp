@@ -12,10 +12,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.rootshareapp.sqlite.LocationContract;
 import com.example.rootshareapp.sqlite.RouteContract;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-@Database(entities = {Local_RouteData.class, Local_LocationData.class}, version = 8, exportSchema = false)
+@Database(entities = {Local_RouteData.class, Local_LocationData.class}, version = 9, exportSchema = false)
 public abstract class LocationRoomDatabase extends RoomDatabase {
 
     public abstract RouteDao routeDao();
@@ -24,8 +26,10 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
     // marking the instance as volatile to ensure atomic access to the variable
     private static volatile LocationRoomDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
+
     static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    static final  ExecutorService a = Executors.newFixedThreadPool(3);
 
     public static LocationRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -73,7 +77,7 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
         }
     };
 
-    static final Migration FROM_1_TO_2 = new Migration(7, 8) {
+    static final Migration FROM_1_TO_2 = new Migration(9, 10) {
         @Override
         public void migrate(final SupportSQLiteDatabase database) {
 //            database.execSQL("drop table route_table");

@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
@@ -27,15 +28,12 @@ public class RouteDetailActivity extends AppCompatActivity {
     private static final String TAG = "LocationDetail";
     public static final String KEY_ROUTE_ID = "key_route_id";
     public static final String KEY_LOCATION_ID = "key_location_id";
-    private LocationDataViewModel mLocationDataViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_detail);
 
-        mLocationDataViewModel = ViewModelProviders.of(this).get(LocationDataViewModel.class);
-        mLocationDataViewModel.setSelectedRoute(getIntent().getExtras().getInt(RouteDetailActivity.KEY_ROUTE_ID));
         if (savedInstanceState == null) {
 
             // FragmentManagerのインスタンス生成

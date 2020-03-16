@@ -47,6 +47,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 
 public class LocationService extends Service implements LocationListener {
     private LocationManager locationManager;
@@ -66,7 +67,8 @@ public class LocationService extends Service implements LocationListener {
     private double longitude;
     private double accuracy;
     private String created_at;
-    int route_id;
+    private int newRouteId;
+    private int route_id;
     String title;
     String uid;
     MainActivity mainActivity;
@@ -153,7 +155,9 @@ public class LocationService extends Service implements LocationListener {
                 title = startDate;
                 created_at = startDate;
                 uid = getUid();
-                writeRouteDataToDb(title, created_at, uid);
+                newRouteId = writeRouteDataToDb(title, created_at, uid).intValue();
+                setRoute_id();
+                Log.e("res1", String.valueOf(newRouteId));
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MinTime, MinDistance, this);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MinTime, MinDistance, this);
 
@@ -163,6 +167,14 @@ public class LocationService extends Service implements LocationListener {
         } else {
             strBuf.append("locationManager=null\n");
         }
+    }
+
+    private void setRoute_id() {
+         this.route_id = newRouteId;
+    }
+
+    private int getRoute_id() {
+        return route_id;
     }
 
     @Override
@@ -175,7 +187,8 @@ public class LocationService extends Service implements LocationListener {
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
         String currentTime = sdf.format(location.getTime());
         created_at = currentTime;
-        writeLocationDataToDb(latitude, longitude, accuracy, created_at, uid);
+        Log.e("res1.5", String.valueOf(route_id));
+        writeLocationDataToDb(latitude, longitude, accuracy, created_at, uid, route_id);
 
     }
 
@@ -238,11 +251,12 @@ public class LocationService extends Service implements LocationListener {
     }
 
 
-    private void writeLocationDataToDb(double latitude, double longitude, double accuracy, String created_at, String uid) {
+    private void writeLocationDataToDb(double latitude, double longitude, double accuracy, String created_at, String uid, int route_id) {
         String comment = "";
-        Local_LocationData local_locationData = new Local_LocationData(latitude, longitude, accuracy, created_at, uid,comment);
-        mLocationDataViewModel = new LocationDataViewModel(getApplication());
+        Local_LocationData local_locationData = new Local_LocationData(latitude, longitude, accuracy, created_at, uid, route_id, comment);
+        mLocationDataViewModel = new LocationDataViewModel(getApplication(), route_id);
         mLocationDataViewModel.insertLocation(local_locationData);
+
 
 
         //        open db
@@ -336,10 +350,10 @@ public class LocationService extends Service implements LocationListener {
 
     }
 
-    private void writeRouteDataToDb(String title, String created_at, String uid){
+    private Long writeRouteDataToDb(String title, String created_at, String uid) throws ExecutionException, InterruptedException {
         Local_RouteData local_routeData = new Local_RouteData(title, created_at, uid);
-        mLocationDataViewModel =  ViewModelProviders.of(mainActivity).get(LocationDataViewModel.class);
-        mLocationDataViewModel.insertRoute(local_routeData);
+        mLocationDataViewModel =  new LocationDataViewModel(getApplication());
+        return mLocationDataViewModel.insertRoute(local_routeData);
 
 //        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(this);
 //

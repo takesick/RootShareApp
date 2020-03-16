@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.LocationService;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.room.Local_LocationData;
 import com.example.rootshareapp.room.LocationDataViewModel;
 import com.example.rootshareapp.room.LocationListAdapter;
@@ -34,6 +35,7 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
     private LocationListAdapter mAdapter;
     private LocationDataViewModel mLocationDataViewModel;
     private FloatingActionButton mStartRecordingFab, mStopRecordingFab;
+    private int route_id;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -52,14 +54,16 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
 
         mAdapter = new LocationListAdapter(getActivity(), this);
         mRecyclerView.setAdapter(mAdapter);
+        route_id = getActivity().getIntent().getExtras().getInt(RouteDetailActivity.KEY_ROUTE_ID);
+        Log.e("res2", String.valueOf(route_id));
 
         // Get a new or existing ViewModel from the ViewModelProvider.
-        LocationDataViewModel mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
+        mLocationDataViewModel = new LocationDataViewModel(getActivity().getApplication(), route_id);
 
         // Add an observer on the LiveData returned by getAlphabetizedWords.
         // The onChanged() method fires when the observed data changes and the activity is
         // in the foreground.
-        mLocationDataViewModel.getLatestLocations().observe(this, new Observer<List<Local_LocationData>>() {
+        mLocationDataViewModel.getLatestLocations(route_id).observe(this, new Observer<List<Local_LocationData>>() {
             @Override
             public void onChanged(@Nullable final List<Local_LocationData> local_locationDataList) {
                 // Update the cached copy of the words in the adapter.
@@ -101,23 +105,11 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
     @Override
     public void onLocationSelected(View view, int position) {
         int id = (int) view.getTag();
-//        Intent intent = new Intent(getActivity(), RouteDetailActivity.class);
-//        intent.putExtra(RouteDetailActivity.KEY_LOCATION_ID, id);
+        Log.e("rep3", String.valueOf(id));
 
-//        startActivity(intent);
-
-        LocationDataViewModel locationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
-        locationDataViewModel.setSelectedLocation(id);
-        Log.e("tag", String.valueOf(locationDataViewModel.getLatestLocations()));
         FragmentManager fragmentManager = getParentFragmentManager();
-//        LocationDetailFragment mLocationDetailFragment = LocationDetailFragment.newInstance(id);
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.location_container,mLocationDetailFragment);
-//        fragmentTransaction.addToBackStack(null);
-//        fragmentTransaction.commit();
-
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.location_container, new LocationDetailFragment());
+        fragmentTransaction.replace(R.id.location_container, LocationDetailFragment.newInstance(id));
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }

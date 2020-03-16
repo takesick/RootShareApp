@@ -9,13 +9,14 @@ import androidx.room.PrimaryKey;
 import static androidx.room.ForeignKey.CASCADE;
 
 
-@Entity(tableName = "location_table",
-        foreignKeys = @ForeignKey(
-                entity = Local_RouteData.class,
-                parentColumns = "_id",
-                childColumns =  "route_id",
-                onDelete = CASCADE
-        )
+@Entity(tableName = "location_table"
+//        ,
+//        foreignKeys = @ForeignKey(
+//                entity = Local_RouteData.class,
+//                parentColumns = "_id",
+//                childColumns =  "route_id",
+//                onDelete = CASCADE
+//        )
 )
 
 public class Local_LocationData {
@@ -50,12 +51,13 @@ public class Local_LocationData {
     @NonNull
     public String comment;
 
-    public Local_LocationData(double latitude, double longitude, double accuracy, String created_at, String uid, String comment) {
+    public Local_LocationData(double latitude, double longitude, double accuracy, String created_at, String uid, int route_id, String comment) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.accuracy = accuracy;
         this.created_at = created_at;
         this.uid = uid;
+        this.route_id = route_id;
         this.comment = comment;
     }
 
