@@ -1,4 +1,4 @@
-package com.example.rootshareapp.fragment;
+package com.example.rootshareapp.sqlite;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.RouteDetailActivity;
+import com.example.rootshareapp.fragment.LocationDetailFragment;
 import com.example.rootshareapp.room.LocationDataViewModel;
 import com.example.rootshareapp.sqlite.LocationAdapter;
 import com.example.rootshareapp.sqlite.LocationContract;
@@ -28,7 +29,7 @@ import com.example.rootshareapp.sqlite.LocationOpenHelper;
 import static com.example.rootshareapp.RouteDetailActivity.KEY_ROUTE_ID;
 
 
-public class RouteDetailFragment extends Fragment implements LocationAdapter.OnLocationSelectedListener {
+public class SQLiteRouteDetailFragment extends Fragment implements LocationAdapter.OnLocationSelectedListener {
 
     private View view;
     private RecyclerView mRecyclerView;

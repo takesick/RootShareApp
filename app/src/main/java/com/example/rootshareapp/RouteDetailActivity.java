@@ -2,26 +2,16 @@ package com.example.rootshareapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.ViewPager;
 
-import com.example.rootshareapp.adapter.LocationFragmentStatePagerAdapter;
 import com.example.rootshareapp.fragment.LocationFragment;
-import com.example.rootshareapp.fragment.MapFragment;
-import com.example.rootshareapp.fragment.RouteDetailFragment;
-import com.example.rootshareapp.room.LocationDataViewModel;
 
 public class RouteDetailActivity extends AppCompatActivity {
 

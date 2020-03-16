@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.rootshareapp.fragment.LocationDetailFragment;
-import com.example.rootshareapp.fragment.RouteDetailFragment;
+import com.example.rootshareapp.sqlite.SQLiteRouteDetailFragment;
 
 public class LocationFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
 
@@ -20,7 +20,7 @@ public class LocationFragmentStatePagerAdapter extends FragmentStatePagerAdapter
             case 0:
                 return new LocationDetailFragment();
             default:
-                return new RouteDetailFragment();
+                return new SQLiteRouteDetailFragment();
         }
 
     }

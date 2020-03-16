@@ -18,7 +18,7 @@ public class SharedViewModel extends ViewModel {
 //    }
 //}
 //
-//public class RouteDetailFragment extends Fragment {
+//public class SQLiteRouteDetailFragment extends Fragment {
 //    private SharedViewModel model;
 //    public void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
