@@ -72,16 +72,16 @@ public class LocationDetailFragment extends Fragment {
         longitudeView = view.findViewById(R.id.lng);
         editCommentView = view.findViewById(R.id.editComent);
 
-//        Bundle args = getArguments();
-//        long location_id = args.getLong(KEY_LOCATION_ID);
-//        mLocationDataViewModel = new LocationDataViewModel(getActivity().getApplication(), location_id);
-//        mLocal_locationData = mLocationDataViewModel.getSelectedLocation(location_id);
+        Bundle args = getArguments();
+        int location_id = args.getInt(KEY_LOCATION_ID);
+        mLocationDataViewModel = new LocationDataViewModel(getActivity().getApplication(), location_id);
+        mLocal_locationData = mLocationDataViewModel.getSelectedLocation(location_id);
 
-//        timeView.setText("計測日時：" + mLocal_locationData.created_at);
-//        accuracyView.setText("|精度：" + mLocal_locationData.accuracy);
-//        latitudeView.setText("|緯度：" + mLocal_locationData.latitude);
-//        longitudeView.setText("|経度：" + mLocal_locationData.longitude);
-//        editCommentView.setText(mLocal_locationData.comment);
+        timeView.setText("計測日時：" + mLocal_locationData.created_at);
+        accuracyView.setText("|精度：" + mLocal_locationData.accuracy);
+        latitudeView.setText("|緯度：" + mLocal_locationData.latitude);
+        longitudeView.setText("|経度：" + mLocal_locationData.longitude);
+        editCommentView.setText(mLocal_locationData.comment);
 
     }
 

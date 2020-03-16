@@ -58,7 +58,7 @@ public class LocationService extends Service implements LocationListener {
 ////    private StorageReadWrite fileReadWrite;
 //    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
     private SQLiteDatabase db;
-    LocationDataViewModel mLocationDataViewModel;
+    private LocationDataViewModel mLocationDataViewModel = new LocationDataViewModel(getApplication());
     
 
     private String startDate;
@@ -66,7 +66,6 @@ public class LocationService extends Service implements LocationListener {
     private double longitude;
     private double accuracy;
     private String created_at;
-    private int newRouteId;
     private int route_id;
     String title;
     String uid;
@@ -79,6 +78,7 @@ public class LocationService extends Service implements LocationListener {
         // LocationManager インスタンス生成
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         startDate = getNowDate();
+        uid = getUid();
     }
 
     @Override
@@ -151,10 +151,13 @@ public class LocationService extends Service implements LocationListener {
                 }
                 title = startDate;
                 created_at = startDate;
-                uid = getUid();
                 route_id = writeRouteDataToDb(title, created_at, uid).intValue();
+                
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MinTime, MinDistance, this);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MinTime, MinDistance, this);
+                Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                Log.e("location", String.valueOf(location));
+                writeLocationDataToDb(location);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -166,15 +169,7 @@ public class LocationService extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        accuracy = location.getAccuracy();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
-        String currentTime = sdf.format(location.getTime());
-        created_at = currentTime;
-        writeLocationDataToDb(latitude, longitude, accuracy, created_at, uid, route_id);
+        writeLocationDataToDb(location);
     }
 
     @Override
@@ -236,10 +231,21 @@ public class LocationService extends Service implements LocationListener {
     }
 
 
-    private void writeLocationDataToDb(double latitude, double longitude, double accuracy, String created_at, String uid, int route_id) {
+    private void writeLocationDataToDb(Location location) {
+
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        accuracy = location.getAccuracy();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+        String currentTime = sdf.format(location.getTime());
+        created_at = currentTime;
+
         String comment = "";
+
         Local_LocationData local_locationData = new Local_LocationData(latitude, longitude, accuracy, created_at, uid, route_id, comment);
-        mLocationDataViewModel = new LocationDataViewModel(getApplication(), route_id);
+//        mLocationDataViewModel = new LocationDataViewModel(getApplication(), route_id);
         mLocationDataViewModel.insertLocation(local_locationData);
 
 
@@ -337,7 +343,7 @@ public class LocationService extends Service implements LocationListener {
 
     private Long writeRouteDataToDb(String title, String created_at, String uid) throws ExecutionException, InterruptedException {
         Local_RouteData local_routeData = new Local_RouteData(title, created_at, uid);
-        mLocationDataViewModel =  new LocationDataViewModel(getApplication());
+//        mLocationDataViewModel =  new LocationDataViewModel(getApplication());
         return mLocationDataViewModel.insertRoute(local_routeData);
 
 //        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(this);

@@ -23,6 +23,7 @@ public class LocationDataRepository {
     public LocationDataRepository(Application application) {
         LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
         routeDao = db.routeDao();
+        locationDao = db.locationDao();
         mLatestRoutes = routeDao.getLatestRoutes();
     }
 
