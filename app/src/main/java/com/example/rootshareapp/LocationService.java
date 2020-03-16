@@ -1,7 +1,6 @@
 package com.example.rootshareapp;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -153,7 +152,7 @@ public class LocationService extends Service implements LocationListener {
                 title = startDate;
                 created_at = startDate;
                 uid = getUid();
-                newRouteId = writeRouteDataToDb(title, created_at, uid).intValue();
+                route_id = writeRouteDataToDb(title, created_at, uid).intValue();
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MinTime, MinDistance, this);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MinTime, MinDistance, this);
 
