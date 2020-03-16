@@ -71,7 +71,6 @@ public class LocationService extends Service implements LocationListener {
     private int route_id;
     String title;
     String uid;
-    MainActivity mainActivity;
 
 
     @Override
@@ -151,13 +150,10 @@ public class LocationService extends Service implements LocationListener {
                 if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-
                 title = startDate;
                 created_at = startDate;
                 uid = getUid();
                 newRouteId = writeRouteDataToDb(title, created_at, uid).intValue();
-                setRoute_id();
-                Log.e("res1", String.valueOf(newRouteId));
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MinTime, MinDistance, this);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MinTime, MinDistance, this);
 
@@ -167,14 +163,6 @@ public class LocationService extends Service implements LocationListener {
         } else {
             strBuf.append("locationManager=null\n");
         }
-    }
-
-    private void setRoute_id() {
-         this.route_id = newRouteId;
-    }
-
-    private int getRoute_id() {
-        return route_id;
     }
 
     @Override
@@ -187,9 +175,7 @@ public class LocationService extends Service implements LocationListener {
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
         String currentTime = sdf.format(location.getTime());
         created_at = currentTime;
-        Log.e("res1.5", String.valueOf(route_id));
         writeLocationDataToDb(latitude, longitude, accuracy, created_at, uid, route_id);
-
     }
 
     @Override
