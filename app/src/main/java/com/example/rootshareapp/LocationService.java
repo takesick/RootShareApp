@@ -37,7 +37,7 @@ import com.example.rootshareapp.room.Local_RouteData;
 import com.example.rootshareapp.room.LocationDataViewModel;
 import com.example.rootshareapp.sqlite.Local_Location;
 import com.example.rootshareapp.sqlite.LocationContract;
-import com.example.rootshareapp.sqlite.LocationOpenHelper;
+//import com.example.rootshareapp.sqlite.LocationOpenHelper;
 import com.example.rootshareapp.sqlite.RouteContract;
 import com.example.rootshareapp.sqlite.RouteOpenHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -245,7 +245,6 @@ public class LocationService extends Service implements LocationListener {
         String comment = "";
 
         Local_LocationData local_locationData = new Local_LocationData(latitude, longitude, accuracy, created_at, uid, route_id, comment);
-//        mLocationDataViewModel = new LocationDataViewModel(getApplication(), route_id);
         mLocationDataViewModel.insertLocation(local_locationData);
 
 

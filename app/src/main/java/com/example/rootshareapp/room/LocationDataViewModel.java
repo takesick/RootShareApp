@@ -1,6 +1,7 @@
 package com.example.rootshareapp.room;
 
 import android.app.Application;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -22,7 +23,7 @@ public class LocationDataViewModel extends AndroidViewModel {
     // - Repository is completely separated from the UI through the ViewModel.
     private LiveData<List<Local_RouteData>> mLatestRoutes;
     private LiveData<List<Local_LocationData>> mLatestLocations;
-    private Local_LocationData mLocation;
+    private LiveData<Local_LocationData> mSelectedLocation;
     private long temporary_id;
 
     public LocationDataViewModel(Application application) {
@@ -40,8 +41,9 @@ public class LocationDataViewModel extends AndroidViewModel {
 
     public LocationDataViewModel(Application application, long location_id) {
         super(application);
+        int id = Math.toIntExact(location_id);
         mRepository = new LocationDataRepository(application, location_id);
-        mLocation = mRepository.getSelectedLocation(location_id);
+        mSelectedLocation = mRepository.getSelectedLocation(id);
     }
 
     public LiveData<List<Local_RouteData>> getLatestRoutes() {
@@ -51,11 +53,6 @@ public class LocationDataViewModel extends AndroidViewModel {
     public LiveData<List<Local_LocationData>> getLatestLocations(int route_id) {
         mLatestLocations = mRepository.getLatestLocations(route_id);
         return mLatestLocations;
-    }
-
-    public Local_LocationData getSelectedLocation(long location_id) {
-        mLocation = mRepository.getSelectedLocation(location_id);
-        return mLocation;
     }
 
     public Long insertRoute(Local_RouteData local_routeData) throws ExecutionException, InterruptedException {
@@ -90,11 +87,10 @@ public class LocationDataViewModel extends AndroidViewModel {
         mRepository.deleteAllLocations(local_locationData);
     }
 
-    public void setSelectedLocation(long id) {
-        temporary_id = id;
-    }
-    public long getSelectedLocation() {
-        return temporary_id;
+    public LiveData<Local_LocationData> getSelectedLocation(long location_id) {
+        int id = Math.toIntExact(location_id);
+        mSelectedLocation = mRepository.getSelectedLocation(id);
+        return mSelectedLocation;
     }
 
 //    public void setSelectedRoute(int id) { route_id = id;

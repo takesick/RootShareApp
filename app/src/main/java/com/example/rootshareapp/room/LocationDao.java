@@ -21,11 +21,10 @@ public interface LocationDao {
     LiveData<List<Local_LocationData>> getLatestLocations(int route_id);
 
     @Query("SELECT * from location_table WHERE _id = :location_id")
-    Local_LocationData getSelectedLocation(long location_id);
-
+    LiveData<Local_LocationData> getSelectedLocation(int location_id);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE, entity = Local_LocationData.class)
-    void insertLocation(Local_LocationData local_locationData);
+    long insertLocation(Local_LocationData local_locationData);
 
     @Update
     void updateLocation(Local_LocationData local_locationData);

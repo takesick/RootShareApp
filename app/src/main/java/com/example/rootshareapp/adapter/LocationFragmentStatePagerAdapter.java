@@ -5,33 +5,33 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.rootshareapp.fragment.LocationDetailFragment;
-import com.example.rootshareapp.sqlite.SQLiteRouteDetailFragment;
+//import com.example.rootshareapp.sqlite.SQLiteRouteDetailFragment;
 
-public class LocationFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
-
-    public LocationFragmentStatePagerAdapter(FragmentManager fm, LocationFragmentStatePagerAdapter mAdapter) {
-        super( fm);
-    }
-
-    @Override
-    public Fragment getItem(int i) {
-
-        switch(i){
-            case 0:
-                return new LocationDetailFragment();
-            default:
-                return new SQLiteRouteDetailFragment();
-        }
-
-    }
-
-    @Override
-    public int getCount() {
-        return 2;
-    }
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return "Page " + position;
-    }
-}
+//public class LocationFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
+//
+//    public LocationFragmentStatePagerAdapter(FragmentManager fm, LocationFragmentStatePagerAdapter mAdapter) {
+//        super( fm);
+//    }
+//
+//    @Override
+//    public Fragment getItem(int i) {
+//
+//        switch(i){
+//            case 0:
+//                return new LocationDetailFragment();
+//            default:
+//                return new SQLiteRouteDetailFragment();
+//        }
+//
+//    }
+//
+//    @Override
+//    public int getCount() {
+//        return 2;
+//    }
+//
+//    @Override
+//    public CharSequence getPageTitle(int position) {
+//        return "Page " + position;
+//    }
+//}

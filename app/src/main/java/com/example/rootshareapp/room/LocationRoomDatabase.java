@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-@Database(entities = {Local_RouteData.class, Local_LocationData.class}, version = 9, exportSchema = false)
+@Database(entities = {Local_RouteData.class, Local_LocationData.class}, version = 1, exportSchema = false)
 public abstract class LocationRoomDatabase extends RoomDatabase {
 
     public abstract RouteDao routeDao();
@@ -29,18 +29,16 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
 
     static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-    static final  ExecutorService a = Executors.newFixedThreadPool(3);
 
     public static LocationRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (LocationRoomDatabase.class) {
                 if (INSTANCE == null) {
-
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             LocationRoomDatabase.class, "local_database")
                             .fallbackToDestructiveMigration()
-                            .addMigrations(FROM_1_TO_2)
                             .addCallback(sRoomDatabaseCallback)
+                            .addMigrations(FROM_0_TO_1)
                             .build();
                 }
             }
@@ -77,17 +75,17 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
         }
     };
 
-    static final Migration FROM_1_TO_2 = new Migration(9, 10) {
+    static final Migration FROM_0_TO_1 = new Migration(0, 1) {
         @Override
         public void migrate(final SupportSQLiteDatabase database) {
 //            database.execSQL("drop table route_table");
+//            database.execSQL("drop table location_table");
             database.execSQL("create table " + "route_table" + "(" +
                     RouteContract.Routes._ID + " integer primary key autoincrement," +
                     RouteContract.Routes.COL_CREATED_AT + " String," +
                     RouteContract.Routes.COL_TITLE + " String," +
                     RouteContract.Routes.COL_UID + " String)"
             );
-//            database.execSQL("drop table location_table");
             database.execSQL("create table " + "location_table" + "(" +
                     LocationContract.Locations._ID + " integer primary key autoincrement," +
                     LocationContract.Locations.COL_LATITUDE + " double," +

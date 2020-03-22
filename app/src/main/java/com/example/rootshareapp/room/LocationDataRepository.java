@@ -5,12 +5,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
+import javax.xml.transform.Result;
 
 public class LocationDataRepository {
     private LocationDao locationDao;
@@ -18,7 +19,7 @@ public class LocationDataRepository {
 
     private LiveData<List<Local_RouteData>> mLatestRoutes;
     private LiveData<List<Local_LocationData>> mLatestLocations;
-    private Local_LocationData mLocation;
+    private LiveData<Local_LocationData> mLocal_LocationData;
 
     public LocationDataRepository(Application application) {
         LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
@@ -39,9 +40,10 @@ public class LocationDataRepository {
 
     public LocationDataRepository(Application application, long location_id) {
         LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
+        int id = Math.toIntExact(location_id);
         locationDao = db.locationDao();
         routeDao = db.routeDao();
-        mLocation = locationDao.getSelectedLocation(location_id);
+        mLocal_LocationData = locationDao.getSelectedLocation(id);
     }
 
 
@@ -56,9 +58,11 @@ public class LocationDataRepository {
         return mLatestLocations;
     }
 
-    public Local_LocationData getSelectedLocation(long location_id){
-        mLocation = locationDao.getSelectedLocation(location_id);
-        return mLocation;
+    public LiveData<Local_LocationData> getSelectedLocation(int location_id){
+        Log.e("AsyncTaskCallback", String.valueOf(location_id));
+        getSelectedLocationAsyncTask Task = new getSelectedLocationAsyncTask(locationDao);
+        Task.execute(location_id);
+        return mLocal_LocationData;
     }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
@@ -136,7 +140,7 @@ public class LocationDataRepository {
     }
 
 
-//    private static class InsertLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Void> {
+//    private static class InsertLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Long> {
 //        private LocationDao locationDao;
 //
 //        private InsertLocationAsyncTask(LocationDao locationDao) {
@@ -144,13 +148,12 @@ public class LocationDataRepository {
 //        }
 //
 //        @Override
-//        protected Void doInBackground(Local_LocationData... local_locationData) {
-//            locationDao.insert(local_locationData[0]);
-//            return null;
+//        protected Long doInBackground(Local_LocationData... local_locationData) {
+//            return locationDao.insertLocation(local_locationData[0]);
 //        }
 //    }
 //
-//    private static class UpdateLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Void> {
+//    private static class UpdateLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Long> {
 //        private LocationDao locationDao;
 //
 //        private UpdateLocationAsyncTask(LocationDao locationDao) {
@@ -158,11 +161,27 @@ public class LocationDataRepository {
 //        }
 //
 //        @Override
-//        protected Void doInBackground(Local_LocationData... local_locationData) {
-//            locationDao.update(local_locationData[0]);
-//            return null;
+//        protected Long doInBackground(Local_LocationData... local_locationData) {
+//            return locationDao.updateLocation(local_locationData[0]);
 //        }
 //    }
+
+    private static class getSelectedLocationAsyncTask extends AsyncTask<Integer, Void, LiveData<Local_LocationData>> {
+        private LocationDao locationDao;
+
+        private getSelectedLocationAsyncTask(LocationDao locationDao) {
+            this.locationDao = locationDao;
+        }
+
+        @Override
+        protected LiveData<Local_LocationData> doInBackground(Integer... location_id) {
+            return locationDao.getSelectedLocation(location_id[0]);
+        }
+
+        @Override
+        protected void onPostExecute(LiveData<Local_LocationData> result) {
+            super.onPostExecute(result);
+        }
 //
 //    private static class DeleteLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Void> {
 //        private LocationDao locationDao;
@@ -178,5 +197,6 @@ public class LocationDataRepository {
 //            return null;
 //        }
 //    }
+    }
 
 }

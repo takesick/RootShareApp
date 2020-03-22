@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
@@ -51,6 +52,8 @@ public class Local_LocationData {
     @NonNull
     public String comment;
 
+    public Local_LocationData(){}
+
     public Local_LocationData(double latitude, double longitude, double accuracy, String created_at, String uid, int route_id, String comment) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -59,6 +62,10 @@ public class Local_LocationData {
         this.uid = uid;
         this.route_id = route_id;
         this.comment = comment;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
     }
 
     public void setLatitude(double latitude) {

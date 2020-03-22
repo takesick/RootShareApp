@@ -15,16 +15,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.room.Local_LocationData;
+import com.example.rootshareapp.room.LocationDataRepository;
 import com.example.rootshareapp.room.LocationDataViewModel;
 import com.example.rootshareapp.sqlite.LocationContract;
-import com.example.rootshareapp.sqlite.LocationOpenHelper;
+//import com.example.rootshareapp.sqlite.LocationOpenHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.TimeZone;
 
 import static com.example.rootshareapp.RouteDetailActivity.KEY_LOCATION_ID;
 import static com.example.rootshareapp.RouteDetailActivity.KEY_ROUTE_ID;
@@ -32,7 +40,6 @@ import static com.example.rootshareapp.RouteDetailActivity.KEY_ROUTE_ID;
 public class LocationDetailFragment extends Fragment {
 
     public static final long LOCATION_DEFAULT = 1;
-    private static long location_id;
 
     private View view;
     private TextView timeView;
@@ -41,15 +48,14 @@ public class LocationDetailFragment extends Fragment {
     private TextView longitudeView;
     private EditText editCommentView;
     private FloatingActionButton saveFab, deleteFab;
-    private LocationDataViewModel mLocationDataViewModel;
-    private Local_LocationData mLocal_locationData;
+    private Local_LocationData mLocal_Location;
 //
 //    int id = this.getArguments().getInt(KEY_LOCATION_ID);
 
     public static LocationDetailFragment newInstance(int location_id) {
         LocationDetailFragment fragment = new LocationDetailFragment();
         Bundle args = new Bundle();
-        args.putLong(KEY_LOCATION_ID, location_id);
+        args.putInt(KEY_LOCATION_ID, location_id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,22 +78,28 @@ public class LocationDetailFragment extends Fragment {
         longitudeView = view.findViewById(R.id.lng);
         editCommentView = view.findViewById(R.id.editComent);
 
-        Bundle args = getArguments();
-        int location_id = args.getInt(KEY_LOCATION_ID);
-        mLocationDataViewModel = new LocationDataViewModel(getActivity().getApplication(), location_id);
-        mLocal_locationData = mLocationDataViewModel.getSelectedLocation(location_id);
-
-        timeView.setText("計測日時：" + mLocal_locationData.created_at);
-        accuracyView.setText("|精度：" + mLocal_locationData.accuracy);
-        latitudeView.setText("|緯度：" + mLocal_locationData.latitude);
-        longitudeView.setText("|経度：" + mLocal_locationData.longitude);
-        editCommentView.setText(mLocal_locationData.comment);
-
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        Bundle args = getArguments();
+        int id = args.getInt(KEY_LOCATION_ID);
+        long location_id = id;
+        LocationDataViewModel mLocationDataViewModel = new LocationDataViewModel(getActivity().getApplication(), location_id);
+        mLocationDataViewModel.getSelectedLocation(location_id).observe(this, new Observer<Local_LocationData>() {
+            @Override
+            public void onChanged(@Nullable final Local_LocationData mLocal_LocationData) {
+                // Update the cached copy of the words in the adapter.
+                timeView.setText("計測日時：" + mLocal_LocationData.created_at);
+                accuracyView.setText("|精度：" + mLocal_LocationData.accuracy);
+                latitudeView.setText("|緯度：" + mLocal_LocationData.latitude);
+                longitudeView.setText("|経度：" + mLocal_LocationData.longitude);
+                editCommentView.setText(mLocal_LocationData.comment);
+                setLocation(mLocal_LocationData);
+            }
+        });
 
         saveFab = getActivity().findViewById(R.id.saveFab);
         saveFab.setOnClickListener(new View.OnClickListener() {
@@ -116,13 +128,35 @@ public class LocationDetailFragment extends Fragment {
     }
 
     private void UpdateLocationData() {
-//
-//        mLocationDataViewModel = new LocationDataViewModel(getActivity().getApplication(), location_id);
-//        mLocationDataViewModel.updateLocation(mLocal_locationData);
-//
-//        Bundle args = getArguments();
-//        long location_id = args.getLong(KEY_LOCATION_ID);
-//        String comment = editCommentView.getText().toString();
+
+        int location_id;
+        int route_id;
+        double latitude, longitude, accuracy;
+        String created_at, uid, comment;
+        LocationDataViewModel mLocationDataViewModel = new ViewModelProvider(this).get(LocationDataViewModel.class);
+        Local_LocationData mLocal_LocationData = getLocaton();
+
+        location_id = mLocal_LocationData.getId();
+        latitude = mLocal_LocationData.getLatitude();
+        longitude = mLocal_LocationData.getLongitude();
+        accuracy = mLocal_LocationData.getAccuracy();
+        created_at = mLocal_LocationData.getCreated_at();
+        route_id = (int) mLocal_LocationData.getRoute_id();
+
+        uid = mLocal_LocationData.getUid();
+        comment = editCommentView.getText().toString();
+
+        Local_LocationData local_locationData = new Local_LocationData();
+        local_locationData.set_id(location_id);
+        local_locationData.setLatitude(latitude);
+        local_locationData.setLongitude(longitude);
+        local_locationData.setAccuracy(accuracy);
+        local_locationData.setCreated_at(created_at);
+        local_locationData.setUid(uid);
+        local_locationData.setRoute_id(route_id);
+        local_locationData.setComment(comment);
+
+        mLocationDataViewModel.updateLocation(local_locationData);
 
 //        ContentValues newComment = new ContentValues();
 //        newComment.put(LocationContract.Locations.COL_COMMENT, comment);
@@ -134,8 +168,10 @@ public class LocationDetailFragment extends Fragment {
 //        );
 //        db.close();
 
-        Intent intent = new Intent(getContext(), RouteDetailActivity.class);
-        startActivity(intent);
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.location_container, new LocationFragment());
+        fragmentTransaction.commit();
 
     }
 
@@ -156,6 +192,14 @@ public class LocationDetailFragment extends Fragment {
         Intent intent = new Intent(getContext(), RouteDetailActivity.class);
         intent.putExtra(RouteDetailActivity.KEY_ROUTE_ID, getActivity().getIntent().getExtras().getLong(KEY_ROUTE_ID));
         startActivity(intent);
+    }
+
+    public void setLocation(Local_LocationData mlocation) {
+        mLocal_Location = mlocation;
+    }
+
+    public Local_LocationData getLocaton() {
+        return mLocal_Location;
     }
 
 //    private Cursor getItems(long location_id) {
