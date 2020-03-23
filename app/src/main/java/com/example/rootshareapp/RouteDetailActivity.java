@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.rootshareapp.fragment.LocationFragment;
+import com.example.rootshareapp.fragment.MapFragment;
 
 public class RouteDetailActivity extends AppCompatActivity {
 
@@ -29,12 +30,12 @@ public class RouteDetailActivity extends AppCompatActivity {
             // FragmentManagerのインスタンス生成
             FragmentManager fragmentManager = getSupportFragmentManager();
             // FragmentTransactionのインスタンスを取得
-//            FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
-//            MapFragment mapFragment = new MapFragment();
-//            // インスタンスに対して張り付け方を指定する
-//            fragmentTransaction1.add(R.id.map_container, mapFragment);
-//            // 張り付けを実行
-//            fragmentTransaction1.commit();
+            FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
+            MapFragment mapFragment = new MapFragment();
+            // インスタンスに対して張り付け方を指定する
+            fragmentTransaction1.add(R.id.map_container, mapFragment);
+            // 張り付けを実行
+            fragmentTransaction1.commit();
 
             FragmentTransaction fragmentTransaction2 = fragmentManager.beginTransaction();
             fragmentTransaction2.add(R.id.location_container, new LocationFragment());

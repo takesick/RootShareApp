@@ -110,6 +110,7 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.location_container, LocationDetailFragment.newInstance(id));
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 }
