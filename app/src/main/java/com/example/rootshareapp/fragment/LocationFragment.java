@@ -78,26 +78,26 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
 //        final SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
 //        mAdapter = new LocationAdapter(getContext(),getAllItems(db), this);
 
-        mStartRecordingFab = getActivity().findViewById(R.id.StartRecordingFab);
-        mStartRecordingFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
-
-                // API 26 以降
-                getActivity().startForegroundService(intent);
-            }
-        });
-
-        mStopRecordingFab  = getActivity().findViewById(R.id.StopRecordingFab);
-        mStopRecordingFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Serviceの停止
-                Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
-                getActivity().stopService(intent);
-            }
-        });
+//        mStartRecordingFab = getActivity().findViewById(R.id.StartRecordingFab);
+//        mStartRecordingFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
+//
+//                // API 26 以降
+//                getActivity().startForegroundService(intent);
+//            }
+//        });
+//
+//        mStopRecordingFab  = getActivity().findViewById(R.id.StopRecordingFab);
+//        mStopRecordingFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Serviceの停止
+//                Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
+//                getActivity().stopService(intent);
+//            }
+//        });
 
     }
 

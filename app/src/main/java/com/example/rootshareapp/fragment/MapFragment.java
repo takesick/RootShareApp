@@ -172,7 +172,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             .draggable(true));
                     mMarkerList.add(mMarker);
 
-                    if(position == 1){
+                    if(position == 0){
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 19));
                     }
                 }

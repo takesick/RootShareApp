@@ -36,7 +36,7 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             LocationRoomDatabase.class, "local_database")
-                            .fallbackToDestructiveMigration()
+//                            .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .addMigrations(FROM_0_TO_1)
                             .build();
@@ -65,11 +65,11 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                 public void run() {
                     // Populate the database in the background.
                     // If you want to start with more words, just add them.
-                    RouteDao routedao = INSTANCE.routeDao();
-                    LocationDao locationdao = INSTANCE.locationDao();
+//                    RouteDao routedao = INSTANCE.routeDao();
+//                    LocationDao locationdao = INSTANCE.locationDao();
 
-                    routedao.deleteAllRoutes();
-                    locationdao.deleteAllLocations();
+//                    routedao.deleteAllRoutes();
+//                    locationdao.deleteAllLocations();
                 }
             });
         }

@@ -1,11 +1,13 @@
 package com.example.rootshareapp;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,19 +15,30 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
-import com.example.rootshareapp.fragment.LocationFragment;
-import com.example.rootshareapp.fragment.RouteListFragment;
+import com.example.rootshareapp.fragment.MyRoutesFragment;
+import com.example.rootshareapp.fragment.RecentPostsFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_MULTI_PERMISSIONS = 101;
 
+    private static final String TAG = "MainActivity";
+    private FloatingActionButton mOpenDrawerFab, mCloseDrawerFab, mStartRecordingFab, mStopRecordingFab, mWriteNewPostFab;
+    private FragmentPagerAdapter mPagerAdapter;
+    private ViewPager mViewPager;
 
+
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,18 +55,60 @@ public class MainActivity extends AppCompatActivity {
         if(savedInstanceState == null){
             // FragmentManagerのインスタンス生成
             FragmentManager fragmentManager = getSupportFragmentManager();
-
             // FragmentTransactionのインスタンスを取得
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-
             // インスタンスに対して張り付け方を指定する
-            fragmentTransaction.replace(R.id.container, new RouteListFragment());
-
+            fragmentTransaction.replace(R.id.container, new MyRoutesFragment());
             // 張り付けを実行
             fragmentTransaction.commit();
         }
 
+//        setContentView(R.layout.activity_main);
+
+//        // Create the adapter that will return a fragment for each section
+//        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
+//                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+//            private final Fragment[] mFragments = new Fragment[] {
+//                    new RecentPostsFragment(),
+//                    new MyRoutesFragment(),
+//                    new MyPostsFragment(),
+//            };
+//            private final String[] mFragmentNames = new String[] {
+//                    getString(R.string.heading_recent),
+//                    getString(R.string.heading_my_routes),
+//                    getString(R.string.heading_my_posts)
+//            };
+//            @Override
+//            public Fragment getItem(int position) {
+//                return mFragments[position];
+//            }
+//            @Override
+//            public int getCount() {
+//                return mFragments.length;
+//            }
+//            @Override
+//            public CharSequence getPageTitle(int position) {
+//                return mFragmentNames[position];
+//            }
+//        };
+//
+//        // Set up the ViewPager with the sections adapter.
+//        mViewPager = findViewById(R.id.container);
+//        mViewPager.setAdapter(mPagerAdapter);
+//        TabLayout tabLayout = findViewById(R.id.tabs);
+//        tabLayout.setupWithViewPager(mViewPager);
+
+        mOpenDrawerFab = findViewById(R.id.OpenDrawerFab);
+        mCloseDrawerFab = findViewById(R.id.CloseDrawerFab);
+        mWriteNewPostFab = findViewById(R.id.WriteNewPostFab);
+        mStartRecordingFab = findViewById(R.id.StartRecordingFab);
+        mStopRecordingFab = findViewById(R.id.StopRecordingFab);
+
+        mOpenDrawerFab.setOnClickListener(this);
+        mCloseDrawerFab.setOnClickListener(this);
+        mWriteNewPostFab.setOnClickListener(this);
+        mStartRecordingFab.setOnClickListener(this);
+        mStopRecordingFab.setOnClickListener(this);
 
     }
 
@@ -178,6 +233,65 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("RestrictedApi")
+    @Override
+    public void onClick(View v) {
+        if (v != null) {
+            switch (v.getId()) {
+                case R.id.OpenDrawerFab:
+                    if (mStopRecordingFab.getVisibility() == View.VISIBLE) {
+                        String nowRecording = "位置情報の記録を停止してください";
+                        toastMake(nowRecording);
+                    } else if (mStopRecordingFab.getVisibility() == View.GONE){
+                        mOpenDrawerFab.setVisibility(View.GONE);
+                        mCloseDrawerFab.setVisibility(View.VISIBLE);
+                        mWriteNewPostFab.setVisibility(View.VISIBLE);
+                        mStartRecordingFab.setVisibility(View.VISIBLE);
+                    }
+                    break;
 
+                case R.id.CloseDrawerFab:
+                    mWriteNewPostFab.setVisibility(View.GONE);
+                    mStartRecordingFab.setVisibility(View.GONE);
+                    mCloseDrawerFab.setVisibility(View.GONE);
+                    mOpenDrawerFab.setVisibility(View.VISIBLE);
+                    break;
+
+                case R.id.WriteNewPostFab:
+                    mWriteNewPostFab.setVisibility(View.GONE);
+                    mStartRecordingFab.setVisibility(View.GONE);
+                    mStopRecordingFab.setVisibility(View.GONE);
+                    mCloseDrawerFab.setVisibility(View.GONE);
+                    mOpenDrawerFab.setVisibility(View.VISIBLE);
+                    Intent intent_newPost = new Intent(this, NewPostActivity.class);
+                    startActivity(intent_newPost);
+                    break;
+
+                case R.id.StartRecordingFab:
+                    mWriteNewPostFab.setVisibility(View.GONE);
+                    mStartRecordingFab.setVisibility(View.GONE);
+                    mCloseDrawerFab.setVisibility(View.GONE);
+                    mOpenDrawerFab.setVisibility(View.VISIBLE);
+                    mStopRecordingFab.setVisibility(View.VISIBLE);
+                    Intent intent_start = new Intent(this, LocationService.class);
+                    startForegroundService(intent_start);
+                    break;
+
+                case R.id.StopRecordingFab:
+                    mStopRecordingFab.setVisibility(View.GONE);
+                    mOpenDrawerFab.setVisibility(View.GONE);
+                    mCloseDrawerFab.setVisibility(View.VISIBLE);
+                    mWriteNewPostFab.setVisibility(View.VISIBLE);
+                    mStartRecordingFab.setVisibility(View.VISIBLE);
+                    Intent intent_stop = new Intent(this, LocationService.class);
+                    stopService(intent_stop);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+    }
 }
 

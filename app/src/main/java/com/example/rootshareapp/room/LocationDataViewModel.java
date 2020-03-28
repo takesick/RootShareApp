@@ -101,7 +101,7 @@ public class LocationDataViewModel extends AndroidViewModel {
 
 }
 
-//class RouteListFragment extends Fragment {
+//class MyRoutesFragment extends Fragment {
 //    public void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
 //        LocationDataViewModel model = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
