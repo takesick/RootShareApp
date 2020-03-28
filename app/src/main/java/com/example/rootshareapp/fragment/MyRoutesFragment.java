@@ -32,10 +32,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class RouteListFragment extends Fragment implements RouteListAdapter.OnRouteSelectedListener {
+public class MyRoutesFragment extends Fragment implements RouteListAdapter.OnRouteSelectedListener {
 
     private View view;
-    private FloatingActionButton mStartRecordingFab, mStopRecordingFab;
     private RecyclerView mRecyclerView;
     private RouteListAdapter mAdapter;
 //    private FirebaseFirestore mFirestore;
@@ -93,25 +92,6 @@ public class RouteListFragment extends Fragment implements RouteListAdapter.OnRo
             public void onChanged(@Nullable final List<Local_RouteData> local_routeDataList) {
                 // Update the cached copy of the words in the adapter.
                 mAdapter.setRouteDataList(local_routeDataList);
-            }
-        });
-
-        mStartRecordingFab = getActivity().findViewById(R.id.StartRecordingFab);
-        mStartRecordingFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
-                getActivity().startForegroundService(intent);
-            }
-        });
-
-        mStopRecordingFab  = getActivity().findViewById(R.id.StopRecordingFab);
-        mStopRecordingFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Serviceの停止
-                Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
-                getActivity().stopService(intent);
             }
         });
     }

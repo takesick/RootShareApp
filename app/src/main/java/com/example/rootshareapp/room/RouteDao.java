@@ -16,7 +16,6 @@ public interface RouteDao {
     @Query(" SELECT * from route_table ORDER BY _id DESC ")
     LiveData<List<Local_RouteData>> getLatestRoutes();
 
-
     @Insert(onConflict = OnConflictStrategy.IGNORE, entity = Local_RouteData.class)
     long insertRoute(Local_RouteData local_routeData);
 
