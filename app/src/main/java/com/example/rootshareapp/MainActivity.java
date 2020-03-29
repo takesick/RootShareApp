@@ -2,10 +2,15 @@ package com.example.rootshareapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -21,6 +26,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.rootshareapp.fragment.MyPageFragment;
 import com.example.rootshareapp.fragment.MyRoutesFragment;
 import com.example.rootshareapp.fragment.RecentPostsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -34,7 +40,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = "MainActivity";
     private FloatingActionButton mOpenDrawerFab, mCloseDrawerFab, mStartRecordingFab, mStopRecordingFab, mWriteNewPostFab;
-    private FragmentPagerAdapter mPagerAdapter;
+
+//        if(savedInstanceState == null){
+//            // FragmentManagerのインスタンス生成
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            // FragmentTransactionのインスタンスを取得
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            // インスタンスに対して張り付け方を指定する
+//            fragmentTransaction.replace(R.id.container, new MyRoutesFragment());
+//            // 張り付けを実行
+//            fragmentTransaction.commit();
+//        }
+
+//        setContentView(R.layout.activity_main);
+
+
     private ViewPager mViewPager;
 
 
@@ -52,51 +72,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startLocationService();
         }
 
-        if(savedInstanceState == null){
-            // FragmentManagerのインスタンス生成
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            // FragmentTransactionのインスタンスを取得
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            // インスタンスに対して張り付け方を指定する
-            fragmentTransaction.replace(R.id.container, new MyRoutesFragment());
-            // 張り付けを実行
-            fragmentTransaction.commit();
-        }
-
-//        setContentView(R.layout.activity_main);
-
-//        // Create the adapter that will return a fragment for each section
-//        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
-//                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-//            private final Fragment[] mFragments = new Fragment[] {
-//                    new RecentPostsFragment(),
-//                    new MyRoutesFragment(),
-//                    new MyPostsFragment(),
+        // Create the adapter that will return a fragment for each section
+        FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+            private final Fragment[] mFragments = new Fragment[] {
+                    new RecentPostsFragment(),
+                    new MyRoutesFragment(),
+                    new MyPageFragment(),
+            };
+            private final String[] mFragmentNames = new String[] {
+                    getString(R.string.heading_recent),
+                    getString(R.string.heading_my_routes),
+                    getString(R.string.heading_my_page)
+            };
+//            private int[] imageResId = {
+//                    R.drawable.ic_home_black_24dp,
+//                    R.drawable.ic_place_black_24dp,
+//                    R.drawable.ic_person_black_24dp
 //            };
-//            private final String[] mFragmentNames = new String[] {
-//                    getString(R.string.heading_recent),
-//                    getString(R.string.heading_my_routes),
-//                    getString(R.string.heading_my_posts)
-//            };
-//            @Override
-//            public Fragment getItem(int position) {
-//                return mFragments[position];
-//            }
-//            @Override
-//            public int getCount() {
-//                return mFragments.length;
-//            }
+
 //            @Override
 //            public CharSequence getPageTitle(int position) {
-//                return mFragmentNames[position];
-//            }
-//        };
 //
-//        // Set up the ViewPager with the sections adapter.
-//        mViewPager = findViewById(R.id.container);
-//        mViewPager.setAdapter(mPagerAdapter);
-//        TabLayout tabLayout = findViewById(R.id.tabs);
-//        tabLayout.setupWithViewPager(mViewPager);
+//                Drawable image = ContextCompat.getDrawable(getApplicationContext(), imageResId[position]);
+//                image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
+//                SpannableString sb = new SpannableString(mFragmentNames[position]);
+//                ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
+//                sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                return sb;
+//            }
+            @Override
+            public Fragment getItem(int position) {
+                return mFragments[position];
+            }
+            @Override
+            public int getCount() {
+                return mFragments.length;
+            }
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return mFragmentNames[position];
+            }
+
+        };
+
+// Set up the ViewPager with the sections adapter.
+        mViewPager = findViewById(R.id.pager);
+        mViewPager.setAdapter(mPagerAdapter);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_home_black_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_place_black_24dp);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_person_black_24dp);
 
         mOpenDrawerFab = findViewById(R.id.OpenDrawerFab);
         mCloseDrawerFab = findViewById(R.id.CloseDrawerFab);

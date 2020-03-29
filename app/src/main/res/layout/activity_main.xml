@@ -5,18 +5,49 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <fragment android:name="com.example.rootshareapp.fragment.MyRoutesFragment"
-        android:id="@+id/container"
-        android:layout_weight="2"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <com.google.android.material.tabs.TabItem
+                    style="@style/Widget.MaterialComponents.TabLayout.Colored"
+                    android:icon="@drawable/ic_home_black_24dp"/>
+                <com.google.android.material.tabs.TabItem
+                    style="@style/Widget.MaterialComponents.TabLayout.Colored"
+                    android:icon="@drawable/ic_place_black_24dp"/>
+                <com.google.android.material.tabs.TabItem
+                    style="@style/Widget.MaterialComponents.TabLayout.Colored"
+                    android:icon="@drawable/ic_person_black_24dp" />
+
+            </com.google.android.material.tabs.TabLayout>>
+
+            <fragment
+                android:id="@+id/container"
+                android:name="com.example.rootshareapp.fragment.MyRoutesFragment"
+                android:layout_width="match_parent"
+                android:layout_height="561dp"
+                android:layout_weight="1"/>
+
+        </androidx.viewpager.widget.ViewPager>
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/WriteNewPostFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -31,8 +62,6 @@
         android:id="@+id/StartRecordingFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -47,8 +76,6 @@
         android:id="@+id/StopRecordingFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -63,8 +90,6 @@
         android:id="@+id/OpenDrawerFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -79,8 +104,6 @@
         android:id="@+id/CloseDrawerFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"

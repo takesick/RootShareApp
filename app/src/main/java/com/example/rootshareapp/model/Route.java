@@ -1,4 +1,4 @@
 package com.example.rootshareapp.model;
 
-public class Root {
+public class Route {
 }

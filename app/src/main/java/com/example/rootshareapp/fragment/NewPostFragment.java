@@ -1,9 +1,15 @@
 package com.example.rootshareapp.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,48 +19,119 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.model.Post;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class NewPostFragment extends Fragment implements View.OnClickListener {
 
-    RecyclerView mRecyclerView;
+    private static final String TAG = "NewPostFragment";
+    private RecyclerView mRecyclerView;
+    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+    private String uid, author,created_at, body;
+    private EditText editBodyView;
+    private TextView selectRouteBtn, addSpotBtn;
+    private ImageButton cameraBtn, gallaryBtn;
+    private Button submitBtn;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_new_post, container, false);
-        FragmentManager fragmentManager = getParentFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        FragmentManager fragmentManager = getParentFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         mRecyclerView = view.findViewById(R.id.featuredSpots);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        editBodyView = view.findViewById(R.id.fieldBody);
+        selectRouteBtn = view.findViewById(R.id.selectRouteBtn);
+        addSpotBtn = view.findViewById(R.id.addSpotBtn);
+        submitBtn = view.findViewById(R.id.submitBtn);
+        cameraBtn = view.findViewById(R.id.cameraBtn);
+        gallaryBtn = view.findViewById(R.id.gallaryBtn);
+
+
+        submitBtn.setOnClickListener(this);
+//        selectRouteBtn.setOnClickListener(this);
+//        addSpotBtn.setOnClickListener(this);
+//        cameraBtn.setOnClickListener(this);
+//        gallaryBtn.setOnClickListener(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
+    @Override
     public void onClick(View v) {
-//        if (v != null) {
-//            switch (v.getId()) {
-//                case R.id.selectRouteBtn:
-////                    CustomDialogFragment newFragment = CustomDialogFragment.newInstance();
-////                    newFragment.show(getFragmentManager(), "dialog");
-//                    break;
-//
-//                case R.id.addSpotBtn:
-//                    break;
-//
-//                case R.id.submitBtn:
-//                    break;
-//
-//                case R.id.cameraBtn:
-//                    break;
-//
-//                case R.id.gallaryBtn:
-//                    break;
-//
-//                default:
-//                    break;
-//            }
-//        }
+        if (v != null) {
+            switch (v.getId()) {
+                case R.id.selectRouteBtn:
+//                    CustomDialogFragment newFragment = CustomDialogFragment.newInstance();
+//                    newFragment.show(getFragmentManager(), "dialog");
+                    break;
+
+                case R.id.addSpotBtn:
+                    break;
+
+                case R.id.submitBtn:
+                    uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    author = "takeshi";
+                    created_at = getNowDate();
+                    body = editBodyView.getText().toString();
+
+                    Post post = new Post(uid, author, created_at, body);
+                    mDatabase.collection("posts")
+                        .add(post)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error adding document", e);
+                            }
+                        });
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(intent);
+                    break;
+
+                case R.id.cameraBtn:
+                    break;
+
+                case R.id.gallaryBtn:
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    public static String getNowDate(){
+        final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH:mm:ss");
+        final Date date = new Date(System.currentTimeMillis());
+        return df.format(date);
     }
 }
