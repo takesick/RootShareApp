@@ -91,7 +91,6 @@ public class LocationDetailFragment extends Fragment {
         mLocationDataViewModel.getSelectedLocation(location_id).observe(this, new Observer<Local_LocationData>() {
             @Override
             public void onChanged(@Nullable final Local_LocationData mLocal_LocationData) {
-                // Update the cached copy of the words in the adapter.
                 timeView.setText("計測日時：" + mLocal_LocationData.created_at);
                 accuracyView.setText("|精度：" + mLocal_LocationData.accuracy);
                 latitudeView.setText("|緯度：" + mLocal_LocationData.latitude);

@@ -342,7 +342,6 @@ public class LocationService extends Service implements LocationListener {
 
     private Long writeRouteDataToDb(String title, String created_at, String uid) throws ExecutionException, InterruptedException {
         Local_RouteData local_routeData = new Local_RouteData(title, created_at, uid);
-//        mLocationDataViewModel =  new LocationDataViewModel(getApplication());
         return mLocationDataViewModel.insertRoute(local_routeData);
 
 //        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(this);

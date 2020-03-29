@@ -15,7 +15,7 @@
         android:title="Search"/>
     <item
         android:id="@+id/nav_mypage"
-        android:icon="@drawable/ic_menu_mypage"
+        android:icon="@drawable/ic_person_black_24dp"
         android:title="My page"/>
 
 </menu>

@@ -13,12 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.rootshareapp.LocationService;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.room.Local_LocationData;
