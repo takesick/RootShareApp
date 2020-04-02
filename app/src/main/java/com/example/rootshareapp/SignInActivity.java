@@ -11,7 +11,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
+import com.example.rootshareapp.fragment.SignUpFragment;
 import com.example.rootshareapp.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -90,29 +92,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private void signUp() {
         Log.d(TAG, "signUp");
-        if (!validateForm()) {
-            return;
-        }
-
-//        showProgressBar();
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-//                        hideProgressBar();
-
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Toast.makeText(SignInActivity.this, "Sign Up Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        FragmentActivity SignUpFragment = new SignUpFragment();
     }
 
     private void onAuthSuccess(FirebaseUser user) {

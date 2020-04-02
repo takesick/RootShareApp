@@ -48,7 +48,9 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
         @Override
         public void onClick(View v) {
-            onLocationSelectedListener.onLocationSelected(v,getAdapterPosition());
+            int position = getAdapterPosition();
+            if (onLocationSelectedListener != null && position != RecyclerView.NO_POSITION)
+            onLocationSelectedListener.onLocationSelected(mLocationDataList.get(position));
         }
     }
 
@@ -97,6 +99,6 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     }
 
     public interface OnLocationSelectedListener {
-        void onLocationSelected(View view, int position);
+        void onLocationSelected(Local_LocationData local_locationData);
     }
 }

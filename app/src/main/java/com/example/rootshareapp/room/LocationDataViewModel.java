@@ -24,7 +24,7 @@ public class LocationDataViewModel extends AndroidViewModel {
     private LiveData<List<Local_RouteData>> mLatestRoutes;
     private LiveData<List<Local_LocationData>> mLatestLocations;
     private LiveData<Local_LocationData> mSelectedLocation;
-    private long temporary_id;
+    private int temporary_id;
 
     public LocationDataViewModel(Application application) {
         super(application);
@@ -93,11 +93,13 @@ public class LocationDataViewModel extends AndroidViewModel {
         return mSelectedLocation;
     }
 
-//    public void setSelectedRoute(int id) { route_id = id;
-//    }
-//    public int  getSelectedRoute() {
-//        return route_id;
-//    }
+    public void setSelectedRoute(int id) {
+        temporary_id = id;
+    }
+
+    public int  getSelectedRoute() {
+        return temporary_id;
+    }
 
 }
 

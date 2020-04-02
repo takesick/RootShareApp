@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_below="@id/user_info"
-        android:background="#E91E63" />
+        android:background="@color/colorPrimary" />
 
     <LinearLayout
         android:id="@+id/user_info"

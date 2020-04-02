@@ -6,6 +6,7 @@ public class Post {
     public String author;
     public String body;
     public String created_at;
+    public String tag;
     public int starCount = 0;
 
     public Post() {

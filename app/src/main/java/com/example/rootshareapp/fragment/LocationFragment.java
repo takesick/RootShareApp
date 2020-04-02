@@ -100,14 +100,13 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
 
 
     @Override
-    public void onLocationSelected(View view, int position) {
-        int id = (int) view.getTag();
-        Log.e("rep3", String.valueOf(id));
+    public void onLocationSelected(Local_LocationData local_locationData) {
 
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.location_container, LocationDetailFragment.newInstance(id));
+        fragmentTransaction.replace(R.id.location_container, LocationDetailFragment.newInstance(local_locationData));
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+
     }
 }
