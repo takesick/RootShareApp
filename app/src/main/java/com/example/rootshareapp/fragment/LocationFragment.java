@@ -12,7 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,12 +29,12 @@ import java.util.List;
 
 public class LocationFragment extends Fragment implements LocationListAdapter.OnLocationSelectedListener {
 
+    private int route_id;
     private View view;
     private RecyclerView mRecyclerView;
     private LocationListAdapter mAdapter;
     private LocationDataViewModel mLocationDataViewModel;
     private FloatingActionButton mStartRecordingFab, mStopRecordingFab;
-    private int route_id;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -53,9 +55,9 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
         mRecyclerView.setAdapter(mAdapter);
         route_id = getActivity().getIntent().getExtras().getInt(RouteDetailActivity.KEY_ROUTE_ID);
         Log.e("res2", String.valueOf(route_id));
-
-        // Get a new or existing ViewModel from the ViewModelProvider.
-        mLocationDataViewModel = new LocationDataViewModel(getActivity().getApplication(), route_id);
+//
+//        // Get a new or existing ViewModel from the ViewModelProvider.
+        mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
 
         // Add an observer on the LiveData returned by getAlphabetizedWords.
         // The onChanged() method fires when the observed data changes and the activity is
@@ -102,10 +104,11 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
     @Override
     public void onLocationSelected(Local_LocationData local_locationData) {
 
+        mLocationDataViewModel.setSelectedLocation(local_locationData);
+
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.location_container, LocationDetailFragment.newInstance(local_locationData));
-        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.location_container, LocationDetailFragment.newInstance());
         fragmentTransaction.commit();
 
     }

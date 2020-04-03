@@ -23,7 +23,7 @@ public class LocationDataViewModel extends AndroidViewModel {
     // - Repository is completely separated from the UI through the ViewModel.
     private LiveData<List<Local_RouteData>> mLatestRoutes;
     private LiveData<List<Local_LocationData>> mLatestLocations;
-    private LiveData<Local_LocationData> mSelectedLocation;
+    private Local_LocationData mSelectedLocation;
     private int temporary_id;
 
     public LocationDataViewModel(Application application) {
@@ -32,19 +32,6 @@ public class LocationDataViewModel extends AndroidViewModel {
         mLatestRoutes = mRepository.getLatestRoutes();
     }
 
-    public LocationDataViewModel(Application application, int route_id) {
-        super(application);
-        mRepository = new LocationDataRepository(application, route_id);
-        mLatestRoutes = mRepository.getLatestRoutes();
-        mLatestLocations = mRepository.getLatestLocations(route_id);
-    }
-
-    public LocationDataViewModel(Application application, long location_id) {
-        super(application);
-        int id = Math.toIntExact(location_id);
-        mRepository = new LocationDataRepository(application, location_id);
-        mSelectedLocation = mRepository.getSelectedLocation(id);
-    }
 
     public LiveData<List<Local_RouteData>> getLatestRoutes() {
         return mLatestRoutes;
@@ -87,18 +74,12 @@ public class LocationDataViewModel extends AndroidViewModel {
         mRepository.deleteAllLocations(local_locationData);
     }
 
-    public LiveData<Local_LocationData> getSelectedLocation(long location_id) {
-        int id = Math.toIntExact(location_id);
-        mSelectedLocation = mRepository.getSelectedLocation(id);
+    public void setSelectedLocation(Local_LocationData local_locationData) {
+        mSelectedLocation = local_locationData;
+    }
+
+    public Local_LocationData  getSelectedLocation() {
         return mSelectedLocation;
-    }
-
-    public void setSelectedRoute(int id) {
-        temporary_id = id;
-    }
-
-    public int  getSelectedRoute() {
-        return temporary_id;
     }
 
 }
