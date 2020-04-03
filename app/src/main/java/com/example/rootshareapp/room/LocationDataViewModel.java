@@ -29,11 +29,11 @@ public class LocationDataViewModel extends AndroidViewModel {
     public LocationDataViewModel(Application application) {
         super(application);
         mRepository = new LocationDataRepository(application);
-        mLatestRoutes = mRepository.getLatestRoutes();
     }
 
 
     public LiveData<List<Local_RouteData>> getLatestRoutes() {
+        mLatestRoutes = mRepository.getLatestRoutes();
         return mLatestRoutes;
     }
 
