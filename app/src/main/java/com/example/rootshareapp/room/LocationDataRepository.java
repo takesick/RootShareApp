@@ -19,50 +19,27 @@ public class LocationDataRepository {
 
     private LiveData<List<Local_RouteData>> mLatestRoutes;
     private LiveData<List<Local_LocationData>> mLatestLocations;
-    private LiveData<Local_LocationData> mLocal_LocationData;
 
     public LocationDataRepository(Application application) {
         LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
         routeDao = db.routeDao();
         locationDao = db.locationDao();
-        mLatestRoutes = routeDao.getLatestRoutes();
     }
 
     // Note that in order to unit test the WordRepository, you have to remove the Application
     // dependency. This adds complexity and much more code, and this sample is not about testing.
     // See the BasicSample in the android-architecture-components repository at
     // https://github.com/googlesamples
-    public LocationDataRepository(Application application, int route_id) {
-        LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
-        locationDao = db.locationDao();
-        mLatestLocations = locationDao.getLatestLocations(route_id);
-    }
-
-    public LocationDataRepository(Application application, long location_id) {
-        LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
-        int id = Math.toIntExact(location_id);
-        locationDao = db.locationDao();
-        routeDao = db.routeDao();
-        mLocal_LocationData = locationDao.getSelectedLocation(id);
-    }
-
-
 
     // Room executes all queries on a separate thread.
     // Observed LiveData will notify the observer when the data has changed.
     public LiveData<List<Local_RouteData>> getLatestRoutes() {
+        mLatestRoutes = routeDao.getLatestRoutes();
         return mLatestRoutes;
     }
     public LiveData<List<Local_LocationData>> getLatestLocations(int route_id) {
         mLatestLocations = locationDao.getLatestLocations(route_id);
         return mLatestLocations;
-    }
-
-    public LiveData<Local_LocationData> getSelectedLocation(int location_id){
-        Log.e("AsyncTaskCallback", String.valueOf(location_id));
-        getSelectedLocationAsyncTask Task = new getSelectedLocationAsyncTask(locationDao);
-        Task.execute(location_id);
-        return mLocal_LocationData;
     }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
