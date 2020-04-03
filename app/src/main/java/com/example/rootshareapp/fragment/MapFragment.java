@@ -47,8 +47,6 @@ import static com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitm
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
 
-    int location_num = 1;
-    private static final int LOCATION_CODE = 100;
     private static final String[] LOCATION_PERMISSION = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.FOREGROUND_SERVICE

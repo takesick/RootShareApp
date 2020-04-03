@@ -12,7 +12,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.example.rootshareapp.fragment.MapFragment;
 import com.example.rootshareapp.fragment.SignUpFragment;
 import com.example.rootshareapp.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -92,7 +95,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private void signUp() {
         Log.d(TAG, "signUp");
-        FragmentActivity SignUpFragment = new SignUpFragment();
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
+//        SignUpFragment signUpFragment = new SignUpFragment();
+//        fragmentTransaction1.replace(R.id.sign_up_fragment, signUpFragment);
+//        fragmentTransaction1.commit();
+        startActivity(new Intent(SignInActivity.this, SignUpFragment.class));
+        finish();
     }
 
     private void onAuthSuccess(FirebaseUser user) {

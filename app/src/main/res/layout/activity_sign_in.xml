@@ -166,5 +166,14 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <FrameLayout
+
+        android:id="@+id/sign_up_fragment"
+        android:name="com.example.rootshareapp.fragment.SignUpFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
 
 </RelativeLayout>
