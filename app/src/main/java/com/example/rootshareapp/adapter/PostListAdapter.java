@@ -57,7 +57,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         Context mContext;
-        ImageButton uIconBtn;
+        ImageView uIconBtn;
         TextView authorView;
         TextView unameView;
         TextView created_atView;
