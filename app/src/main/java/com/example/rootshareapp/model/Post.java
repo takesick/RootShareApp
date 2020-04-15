@@ -4,6 +4,7 @@ public class Post {
 
     public String uid;
     public String author;
+    public String uname;
     public String body;
     public String created_at;
     public String tag;
@@ -13,9 +14,8 @@ public class Post {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String author, String created_at, String body) {
+    public Post(String uid, String created_at, String body) {
         this.uid = uid;
-        this.author = author;
         this.created_at = created_at;
         this.body = body;
     }
@@ -42,6 +42,10 @@ public class Post {
 
     public String getAuthor() {
         return author;
+    }
+
+    public String getUname() {
+        return uname;
     }
 
     public String getCreated_at() {
