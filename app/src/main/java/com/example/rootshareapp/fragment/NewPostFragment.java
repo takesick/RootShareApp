@@ -22,10 +22,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.model.Post;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
@@ -42,6 +45,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     private TextView selectRouteBtn, addSpotBtn;
     private ImageButton cameraBtn, gallaryBtn;
     private Button submitBtn;
+    private Post post;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -94,11 +98,30 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
 
                 case R.id.submitBtn:
                     uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    author = "takeshi";
-                    created_at = getNowDate();
-                    body = editBodyView.getText().toString();
+                    createPost(uid);
+//                    DocumentReference docRef = mDatabase.collection("users").document(uid);
+//                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                            if (task.isSuccessful()) {
+//                                DocumentSnapshot document = task.getResult();
+//                                if (document.exists()) {
+//                                    Log.e(TAG, "DocumentSnapshot data: " + document.getData());
+//                                    createPost(
+//                                            document.getId(),
+//                                            String.valueOf(document.get("displayname")),
+//                                            String.valueOf(document.get("username"))
+//
+//                                    );
+//                                } else {
+//                                    Log.d(TAG, "No such document");
+//                                }
+//                            } else {
+//                                Log.d(TAG, "get failed with ", task.getException());
+//                            }
+//                        }
+//                    });
 
-                    Post post = new Post(uid, author, created_at, body);
                     mDatabase.collection("posts")
                         .add(post)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -133,5 +156,11 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         final DateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH:mm:ss");
         final Date date = new Date(System.currentTimeMillis());
         return df.format(date);
+    }
+
+    public void createPost(String uid) {
+        created_at = getNowDate();
+        body = editBodyView.getText().toString();
+        post = new Post(uid, created_at, body);
     }
 }

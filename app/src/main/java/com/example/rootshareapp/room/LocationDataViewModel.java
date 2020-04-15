@@ -24,7 +24,6 @@ public class LocationDataViewModel extends AndroidViewModel {
     private LiveData<List<Local_RouteData>> mLatestRoutes;
     private LiveData<List<Local_LocationData>> mLatestLocations;
     private Local_LocationData mSelectedLocation;
-    private int temporary_id;
 
     public LocationDataViewModel(Application application) {
         super(application);
@@ -70,8 +69,8 @@ public class LocationDataViewModel extends AndroidViewModel {
         mRepository.deleteLocation(local_locationData);
     }
 
-    public void deleteAllLocations(Local_LocationData local_locationData) {
-        mRepository.deleteAllLocations(local_locationData);
+    public void deleteAllLocations() {
+        mRepository.deleteAllLocations();
     }
 
     public void setSelectedLocation(Local_LocationData local_locationData) {

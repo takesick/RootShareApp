@@ -107,7 +107,7 @@ public class LocationDataRepository {
         });
     }
 
-    public void deleteAllLocations(final Local_LocationData local_locationData) {
+    public void deleteAllLocations() {
         LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
