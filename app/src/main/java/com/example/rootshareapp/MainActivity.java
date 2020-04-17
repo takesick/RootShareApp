@@ -12,12 +12,15 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_MULTI_PERMISSIONS = 101;
 
     private static final String TAG = "MainActivity";
-    private FloatingActionButton mOpenDrawerFab, mCloseDrawerFab, mStartRecordingFab, mStopRecordingFab, mWriteNewPostFab;
+    private FloatingActionButton mOpenDrawerFab, mCloseDrawerFab, mStartRecordingFab, mStopRecordingFab, mWriteNewPostFab, mSearchFab;
 
 //        if(savedInstanceState == null){
 //            // FragmentManagerのインスタンス生成
@@ -130,12 +133,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mWriteNewPostFab = findViewById(R.id.WriteNewPostFab);
         mStartRecordingFab = findViewById(R.id.StartRecordingFab);
         mStopRecordingFab = findViewById(R.id.StopRecordingFab);
+        mSearchFab=findViewById(R.id.Search);
 
         mOpenDrawerFab.setOnClickListener(this);
         mCloseDrawerFab.setOnClickListener(this);
         mWriteNewPostFab.setOnClickListener(this);
         mStartRecordingFab.setOnClickListener(this);
         mStopRecordingFab.setOnClickListener(this);
+        mSearchFab.setOnClickListener(this);
+
+
 
     }
 
@@ -260,6 +267,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bottom_navigation_item, menu);
+        MenuItem menuItem = menu.findItem(R.id.search_item);
+        SearchView searchView=(SearchView) menuItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @SuppressLint("RestrictedApi")
     @Override
     public void onClick(View v) {
@@ -274,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mCloseDrawerFab.setVisibility(View.VISIBLE);
                         mWriteNewPostFab.setVisibility(View.VISIBLE);
                         mStartRecordingFab.setVisibility(View.VISIBLE);
+                        mSearchFab.setVisibility(View.VISIBLE);
                     }
                     break;
 
@@ -312,6 +343,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mStartRecordingFab.setVisibility(View.VISIBLE);
                     Intent intent_stop = new Intent(this, LocationService.class);
                     stopService(intent_stop);
+                    break;
+
+                case R.id.Search:
+                    mSearchFab.setVisibility(View.GONE);
                     break;
 
                 default:
