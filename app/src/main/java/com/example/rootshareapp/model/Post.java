@@ -3,8 +3,6 @@ package com.example.rootshareapp.model;
 public class Post {
 
     public String uid;
-    public String author;
-    public String uname;
     public String body;
     public String created_at;
     public String tag;
@@ -24,10 +22,6 @@ public class Post {
         this.uid = uid;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
@@ -38,14 +32,6 @@ public class Post {
 
     public String getUid() {
         return uid;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getUname() {
-        return uname;
     }
 
     public String getCreated_at() {

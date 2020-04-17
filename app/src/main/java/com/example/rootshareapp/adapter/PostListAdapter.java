@@ -98,6 +98,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                                 @Override
                                 public void onClick(View view) {
                                     //それぞれのuserのページに飛べるようにする処理を書く
+
                                 }
                             });
                         } else {
