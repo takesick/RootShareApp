@@ -166,19 +166,19 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showPhoto(Uri photoImage) {
-        mUserIcon.setImageURI(photoImage);
-        mIconUri = photoImage;
+//        mUserIcon.setImageURI(photoImage);
+//        mIconUri = photoImage;
     }
 
-    public void showPicker() {
-        //intentとは意図：新しく欲しいものの条件(他のアプリに伝える条件)
-        //Intent.~意図(伝える条件)の編集ができる
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);//.ACTION_OPEN_DOCUMENT：ストレージ内のドキュメントプロバイダ内のものを条件として指定
-        intent.addCategory(Intent.CATEGORY_OPENABLE);//CATEGORY_OPENABLE開けるものを指定
-        intent.setType("image/*");//imageフォルダのjpegを指定
-        /* REQUEST_PICK_PHOTO(REQUEST_CODE) は最初に定義されている値。
-        写真選択リクエストの意味の変数名にしておくとよい。
-        結果が欲しいので ForResult の方を使う */
-        startActivityForResult(intent, REQUEST_PICK_PHOTO);//引数：(出来上がった条件, 意図の送信元のActivityのidみたいなもの)
-    }
+//    public void showPicker() {
+//        //intentとは意図：新しく欲しいものの条件(他のアプリに伝える条件)
+//        //Intent.~意図(伝える条件)の編集ができる
+//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);//.ACTION_OPEN_DOCUMENT：ストレージ内のドキュメントプロバイダ内のものを条件として指定
+//        intent.addCategory(Intent.CATEGORY_OPENABLE);//CATEGORY_OPENABLE開けるものを指定
+//        intent.setType("image/*");//imageフォルダのjpegを指定
+//        /* REQUEST_PICK_PHOTO(REQUEST_CODE) は最初に定義されている値。
+//        写真選択リクエストの意味の変数名にしておくとよい。
+//        結果が欲しいので ForResult の方を使う */
+//        startActivityForResult(intent, REQUEST_PICK_PHOTO);//引数：(出来上がった条件, 意図の送信元のActivityのidみたいなもの)
+//    }
 }
