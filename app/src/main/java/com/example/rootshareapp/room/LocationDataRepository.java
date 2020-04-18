@@ -2,16 +2,16 @@ package com.example.rootshareapp.room;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+
+import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.model.Local_RouteData;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
-import javax.xml.transform.Result;
 
 public class LocationDataRepository {
     private LocationDao locationDao;

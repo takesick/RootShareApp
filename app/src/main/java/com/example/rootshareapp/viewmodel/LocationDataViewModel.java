@@ -1,14 +1,13 @@
-package com.example.rootshareapp.room;
+package com.example.rootshareapp.viewmodel;
 
 import android.app.Application;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
 
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProviders;
+
+import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.model.Local_RouteData;
+import com.example.rootshareapp.room.LocationDataRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

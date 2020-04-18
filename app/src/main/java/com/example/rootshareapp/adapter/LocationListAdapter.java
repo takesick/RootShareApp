@@ -1,4 +1,4 @@
-package com.example.rootshareapp.room;
+package com.example.rootshareapp.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,9 +10,9 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.model.Local_LocationData;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapter.LocationDataViewHolder> {
 

@@ -9,13 +9,12 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.rootshareapp.sqlite.LocationContract;
+import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.model.Local_RouteData;
 import com.example.rootshareapp.sqlite.RouteContract;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 @Database(entities = {Local_RouteData.class, Local_LocationData.class}, version = 1, exportSchema = false)
 public abstract class LocationRoomDatabase extends RoomDatabase {

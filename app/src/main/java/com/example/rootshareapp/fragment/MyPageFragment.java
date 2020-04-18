@@ -21,4 +21,6 @@ public class MyPageFragment extends Fragment {
         view = inflater.inflate(R.layout.frag_mypage, container, false);
         return view;
     }
+
+
 }

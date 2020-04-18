@@ -1,10 +1,7 @@
 package com.example.rootshareapp.fragment;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -20,13 +17,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.room.Local_LocationData;
-import com.example.rootshareapp.room.LocationDataViewModel;
-import com.example.rootshareapp.sqlite.LocationContract;
+import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -39,11 +34,8 @@ import java.util.List;
 
 import static com.example.rootshareapp.RouteDetailActivity.KEY_ROUTE_ID;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_AZURE;
-import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_BLUE;
-import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ORANGE;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_VIOLET;
-import static com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
 

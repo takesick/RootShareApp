@@ -8,6 +8,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.rootshareapp.model.Local_RouteData;
+
 import java.util.List;
 
 @Dao

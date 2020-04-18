@@ -2,11 +2,8 @@ package com.example.rootshareapp.fragment;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,20 +17,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.SignInActivity;
 import com.example.rootshareapp.model.User;
 
-import com.example.rootshareapp.viewmodel.SignInViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,17 +32,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -66,7 +51,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     private StorageTask mUploadTask;
 
     private View view;
-    private SignInViewModel mSignInViewModel;
 
     private EditText mEmailField;
     private EditText mUserNameField;
@@ -117,8 +101,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         mDatabase = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
-        mSignInViewModel =  ViewModelProviders.of(getActivity()).get(SignInViewModel.class);
     }
 
     private void signUp() {
@@ -255,7 +237,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         Log.e("s", String.valueOf(uri));
         /* Layout に入れた ImageView に java コードからアクセスするには
         findViewById() を使ってインスタンスを取得すればよい。 */
-        mSignInViewModel.setResult(resultCode == RESULT_OK, uri);
         showPhoto(uri);
     }
 
