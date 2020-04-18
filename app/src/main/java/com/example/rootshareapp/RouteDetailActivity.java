@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.rootshareapp.fragment.LocationFragment;
 import com.example.rootshareapp.fragment.MapFragment;
-import com.example.rootshareapp.room.LocationDataViewModel;
+import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 
 public class RouteDetailActivity extends AppCompatActivity {
 

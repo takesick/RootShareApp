@@ -6,11 +6,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
@@ -24,22 +22,11 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LifecycleService;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
-import com.example.rootshareapp.fragment.LocationFragment;
-import com.example.rootshareapp.room.Local_LocationData;
-import com.example.rootshareapp.room.Local_RouteData;
-import com.example.rootshareapp.room.LocationDataViewModel;
-import com.example.rootshareapp.sqlite.Local_Location;
-import com.example.rootshareapp.sqlite.LocationContract;
+import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.model.Local_RouteData;
+import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 //import com.example.rootshareapp.sqlite.LocationOpenHelper;
-import com.example.rootshareapp.sqlite.RouteContract;
-import com.example.rootshareapp.sqlite.RouteOpenHelper;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DateFormat;

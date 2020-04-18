@@ -1,4 +1,4 @@
-package com.example.rootshareapp.room;
+package com.example.rootshareapp.model;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

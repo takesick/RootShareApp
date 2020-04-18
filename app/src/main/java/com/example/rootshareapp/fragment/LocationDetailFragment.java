@@ -1,8 +1,6 @@
 package com.example.rootshareapp.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.RouteDetailActivity;
-import com.example.rootshareapp.room.Local_LocationData;
-import com.example.rootshareapp.room.LocationDataViewModel;
+import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.TimeZone;
-
-import static com.example.rootshareapp.RouteDetailActivity.KEY_LOCATION_ID;
-import static com.example.rootshareapp.RouteDetailActivity.KEY_ROUTE_ID;
 
 public class LocationDetailFragment extends Fragment {
 
@@ -113,7 +102,7 @@ public class LocationDetailFragment extends Fragment {
     }
 
     private void UpdateLocationData() {
-        String comment;;
+        String comment;
         comment = editCommentView.getText().toString();
         mLocal_Location.setComment(comment);
         mLocationDataViewModel.updateLocation(mLocal_Location);

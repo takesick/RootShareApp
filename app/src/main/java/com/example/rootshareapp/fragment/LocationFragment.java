@@ -1,6 +1,5 @@
 package com.example.rootshareapp.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.RouteDetailActivity;
-import com.example.rootshareapp.room.Local_LocationData;
-import com.example.rootshareapp.room.LocationDataViewModel;
-import com.example.rootshareapp.room.LocationListAdapter;
+import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.viewmodel.LocationDataViewModel;
+import com.example.rootshareapp.adapter.LocationListAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;

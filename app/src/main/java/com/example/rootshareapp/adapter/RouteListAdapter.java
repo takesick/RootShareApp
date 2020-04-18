@@ -1,4 +1,4 @@
-package com.example.rootshareapp.room;
+package com.example.rootshareapp.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.model.Local_RouteData;
 
 import java.util.List;
 

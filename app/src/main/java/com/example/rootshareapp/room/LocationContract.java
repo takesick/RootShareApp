@@ -1,4 +1,4 @@
-package com.example.rootshareapp.sqlite;
+package com.example.rootshareapp.room;
 
 import android.provider.BaseColumns;
 
