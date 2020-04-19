@@ -41,7 +41,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class NewPostFragment extends Fragment implements View.OnClickListener, AddRouteDialogFragment.OnRouteSelectedListener {
+public class NewPostFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "NewPostFragment";
     private static final int REQUEST_PICK_PHOTO = 2;
@@ -104,9 +104,8 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
         if (v != null) {
             switch (v.getId()) {
                 case R.id.selectRouteBtn:
-                    AddRouteDialogFragment newFragment = new AddRouteDialogFragment();
-                    Log.e("dialog", "show");
-                    newFragment.show(getChildFragmentManager(), "dialog");
+//                    CustomDialogFragment newFragment = CustomDialogFragment.newInstance();
+//                    newFragment.show(getFragmentManager(), "dialog");
                     break;
 
                 case R.id.addSpotBtn:
@@ -180,8 +179,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
         post = new Post(uid, created_at, body);
     }
 
-
-
     public void showPhoto(Uri photoImage) {
 //        mUserIcon.setImageURI(photoImage);
 //        mIconUri = photoImage;
@@ -197,11 +194,5 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
         写真選択リクエストの意味の変数名にしておくとよい。
         結果が欲しいので ForResult の方を使う */
         startActivityForResult(intent, REQUEST_PICK_PHOTO);//引数：(出来上がった条件, 意図の送信元のActivityのidみたいなもの)
-    }
-
-    @Override
-    public void setRoute() {
-        local_Route = mLocationDataViewModel.getSelectedRoute();
-        selectRouteBtn.setText(local_Route.title);
     }
 }
