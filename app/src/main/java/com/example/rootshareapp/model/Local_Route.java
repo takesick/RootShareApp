@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "route_table")
-public class Local_RouteData {
+public class Local_Route {
     @PrimaryKey(autoGenerate = true)
     public int _id;
 
@@ -22,7 +22,7 @@ public class Local_RouteData {
     @NonNull
     public String uid;
 
-    public Local_RouteData(String title, String created_at, String uid) {
+    public Local_Route(String title, String created_at, String uid) {
         this.title = title;
         this.created_at = created_at;
         this.uid = uid;

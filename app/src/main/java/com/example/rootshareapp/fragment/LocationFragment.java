@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.RouteDetailActivity;
-import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.example.rootshareapp.adapter.LocationListAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -60,11 +60,11 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
         // Add an observer on the LiveData returned by getAlphabetizedWords.
         // The onChanged() method fires when the observed data changes and the activity is
         // in the foreground.
-        mLocationDataViewModel.getLatestLocations(route_id).observe(this, new Observer<List<Local_LocationData>>() {
+        mLocationDataViewModel.getLatestLocations(route_id).observe(this, new Observer<List<Local_Location>>() {
             @Override
-            public void onChanged(@Nullable final List<Local_LocationData> local_locationDataList) {
+            public void onChanged(@Nullable final List<Local_Location> local_locationList) {
                 // Update the cached copy of the words in the adapter.
-                mAdapter.setLocationDataList(local_locationDataList);
+                mAdapter.setLocationDataList(local_locationList);
             }
         });
 
@@ -100,9 +100,9 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
 
 
     @Override
-    public void onLocationSelected(Local_LocationData local_locationData) {
+    public void onLocationSelected(Local_Location local_location) {
 
-        mLocationDataViewModel.setSelectedLocation(local_locationData);
+        mLocationDataViewModel.setSelectedLocation(local_location);
 
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

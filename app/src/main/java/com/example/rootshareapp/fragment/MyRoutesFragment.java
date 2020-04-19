@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.model.Local_RouteData;
+import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.example.rootshareapp.adapter.RouteListAdapter;
 
@@ -48,10 +48,10 @@ public class MyRoutesFragment extends Fragment implements RouteListAdapter.OnRou
         mRecyclerView.setAdapter(mAdapter);
 
         mLocationDataViewModel = new ViewModelProvider(this).get(LocationDataViewModel.class);
-        mLocationDataViewModel.getLatestRoutes().observe(this, new Observer<List<Local_RouteData>>() {
+        mLocationDataViewModel.getLatestRoutes().observe(this, new Observer<List<Local_Route>>() {
             @Override
-            public void onChanged(@Nullable final List<Local_RouteData> local_routeDataList) {
-                mAdapter.setRouteDataList(local_routeDataList);
+            public void onChanged(@Nullable final List<Local_Route> local_routeList) {
+                mAdapter.setRouteDataList(local_routeList);
             }
         });
     }

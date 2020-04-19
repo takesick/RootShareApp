@@ -10,14 +10,14 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.model.Local_Location;
 
 import java.util.List;
 
 public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapter.LocationDataViewHolder> {
 
     private Context mContext;
-    private List<Local_LocationData> mLocationDataList;
+    private List<Local_Location> mLocationDataList;
     private  OnLocationSelectedListener mOnLocationSelectedListener;
 
     public LocationListAdapter(Context context, OnLocationSelectedListener onLocationSelectedListener) {
@@ -65,7 +65,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     @Override
     public void onBindViewHolder(LocationDataViewHolder holder, int position) {
         if (mLocationDataList != null) {
-            Local_LocationData current = mLocationDataList.get(position);
+            Local_Location current = mLocationDataList.get(position);
             holder.itemView.setTag(current._id);
             holder.timeView.setText("計測日時：" + current.getCreated_at());
             holder.accuracyView.setText("|精度：" + current.getAccuracy());
@@ -84,7 +84,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         }
     }
 
-    public void setLocationDataList(List<Local_LocationData> locationDataList) {
+    public void setLocationDataList(List<Local_Location> locationDataList) {
         mLocationDataList = locationDataList;
         notifyDataSetChanged();
     }
@@ -99,6 +99,6 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     }
 
     public interface OnLocationSelectedListener {
-        void onLocationSelected(Local_LocationData local_locationData);
+        void onLocationSelected(Local_Location local_location);
     }
 }

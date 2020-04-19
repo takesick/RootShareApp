@@ -17,7 +17,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -129,19 +129,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private void setMapData() {
         int route_id = getActivity().getIntent().getExtras().getInt(KEY_ROUTE_ID);
         mLocationDataViewModel = new ViewModelProvider(this).get(LocationDataViewModel.class);
-        mLocationDataViewModel.getLatestLocations(route_id).observe(this, new Observer<List<Local_LocationData>>() {
+        mLocationDataViewModel.getLatestLocations(route_id).observe(this, new Observer<List<Local_Location>>() {
             @Override
-            public void onChanged(@Nullable final List<Local_LocationData> local_locationDataList) {
+            public void onChanged(@Nullable final List<Local_Location> local_locationList) {
                 // Update the cached copy of the words in the adapter.
-                int n =local_locationDataList.size();
+                int n = local_locationList.size();
                 for (int i=0; i<n; i++) {
-                    Local_LocationData mLocal_LocationData = local_locationDataList.get(i);
+                    Local_Location mLocal_Location = local_locationList.get(i);
                     int position;
                     double latitude, longitude, accuracy;
                     position = i;
-                    latitude = mLocal_LocationData.latitude;
-                    longitude = mLocal_LocationData.longitude;
-                    accuracy = mLocal_LocationData.accuracy;
+                    latitude = mLocal_Location.latitude;
+                    longitude = mLocal_Location.longitude;
+                    accuracy = mLocal_Location.accuracy;
 
                     LatLng mLatLng = new LatLng(latitude, longitude);
                     mRoot.add(mLatLng);
