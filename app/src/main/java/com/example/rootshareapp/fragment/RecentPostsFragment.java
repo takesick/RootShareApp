@@ -125,7 +125,6 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
         startActivity(intent);
     }
 
-
     @Override
     public void setQuery(Query query) {
         mAdapter.setQuery(query);

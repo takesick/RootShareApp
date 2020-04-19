@@ -39,14 +39,10 @@ import com.example.rootshareapp.fragment.MyRoutesFragment;
 import com.example.rootshareapp.fragment.RecentPostsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -75,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        setContentView(R.layout.activity_main);
 
     private ViewPager mViewPager;
-    private  setQuery msetQuery;
+    private setQuery msetQuery;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -103,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     getString(R.string.heading_my_routes),
                     getString(R.string.heading_my_page)
             };
+
 //            private int[] imageResId = {
 //                    R.drawable.ic_home_black_24dp,
 //                    R.drawable.ic_place_black_24dp,
@@ -158,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStartRecordingFab.setOnClickListener(this);
         mStopRecordingFab.setOnClickListener(this);
         mSearchFab.setOnClickListener(this);
+
+        msetQuery = (setQuery) mPagerAdapter.getItem(mViewPager.getCurrentItem());
 
 
     }
@@ -280,13 +279,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference mCllection;
-    private PostListAdapter mAdapter;
+    private CollectionReference mCollection;
+    private Query firebaseSearchQuery;
 
     //search data
     private Query firebaseSearch(String searchText){
-        mCllection = db.collection("posts");
-        Query firebaseSearchQuery= mCllection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
+        mCollection = db.collection("posts");
+        firebaseSearchQuery= mCollection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
         return firebaseSearchQuery;
     }
 
