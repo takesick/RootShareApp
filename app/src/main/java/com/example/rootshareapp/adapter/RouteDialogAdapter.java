@@ -19,6 +19,7 @@ import java.util.List;
 public class RouteDialogAdapter extends RecyclerView.Adapter<RouteDialogAdapter.RouteDataViewHolder> {
 
     private Context mContext;
+    private int lastSelectedPosition = -1;
     private List<Local_Route> mRouteDataList;
     private  OnRouteSelectedListener mOnRouteSelectedListener;
 
@@ -43,13 +44,12 @@ public class RouteDialogAdapter extends RecyclerView.Adapter<RouteDialogAdapter.
 
         @Override
         public void onClick(View v) {
-            int lastSelectedPosition = getAdapterPosition();
-            if (onRouteSelectedListener != null && lastSelectedPosition != RecyclerView.NO_POSITION)
+            lastSelectedPosition = getAdapterPosition();
+            if (onRouteSelectedListener != null && lastSelectedPosition != RecyclerView.NO_POSITION) {
                 onRouteSelectedListener.onRouteSelected(mRouteDataList.get(lastSelectedPosition));
-            notifyDataSetChanged();
-//            Toast.makeText(RouteDialogAdapter.this.getClass(),
-//                    "selected offer is " + .getText(),
-//                    Toast.LENGTH_LONG).show();
+
+                notifyDataSetChanged();
+            }
         }
     }
 
@@ -67,6 +67,7 @@ public class RouteDialogAdapter extends RecyclerView.Adapter<RouteDialogAdapter.
             Local_Route current = mRouteDataList.get(position);
             holder.itemView.setTag(current._id);
             holder.mRadioBtnView.setText(current.title);
+            holder.mRadioBtnView.setChecked(lastSelectedPosition == position);
 
 
         } else {

@@ -202,6 +202,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
     @Override
     public void setRoute() {
         local_Route = mLocationDataViewModel.getSelectedRoute();
+        Log.e("route selected", local_Route.title);
         selectRouteBtn.setText(local_Route.title);
     }
 }

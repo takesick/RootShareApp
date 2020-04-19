@@ -59,7 +59,7 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
         mAdapter = new RouteDialogAdapter(getActivity(), this);
         mRecyclerView.setAdapter(mAdapter);
 
-        mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
+        mLocationDataViewModel = ViewModelProviders.of(getParentFragment()).get(LocationDataViewModel.class);
         mLocationDataViewModel.getLatestRoutes().observe(this, new Observer<List<Local_Route>>() {
             @Override
             public void onChanged(@Nullable final List<Local_Route> local_routeList) {
@@ -116,6 +116,7 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
     @Override
     public void onRouteSelected(Local_Route local_route) {
         mLocationDataViewModel.setSelectedRoute(local_route);
+        Log.e("route selected", local_route.title);
     }
 
 }
