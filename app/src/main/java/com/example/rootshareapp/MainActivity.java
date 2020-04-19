@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,13 +29,23 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.rootshareapp.adapter.FirestoreAdapter;
 import com.example.rootshareapp.fragment.MyPageFragment;
 import com.example.rootshareapp.fragment.MyRoutesFragment;
 import com.example.rootshareapp.fragment.RecentPostsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -57,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        setContentView(R.layout.activity_main);
 
-
     private ViewPager mViewPager;
+
 
 
     @SuppressLint("RestrictedApi")
@@ -68,22 +80,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         // Android 6, API 23以上でパーミッシンの確認
-        if(Build.VERSION.SDK_INT >= 23){
+        if (Build.VERSION.SDK_INT >= 23) {
             checkMultiPermissions();
-        }
-        else{
+        } else {
             startLocationService();
         }
 
         // Create the adapter that will return a fragment for each section
         FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-            private final Fragment[] mFragments = new Fragment[] {
+            private final Fragment[] mFragments = new Fragment[]{
                     new RecentPostsFragment(),
                     new MyRoutesFragment(),
                     new MyPageFragment(),
             };
-            private final String[] mFragmentNames = new String[] {
+            private final String[] mFragmentNames = new String[]{
                     getString(R.string.heading_recent),
                     getString(R.string.heading_my_routes),
                     getString(R.string.heading_my_page)
@@ -94,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    R.drawable.ic_person_black_24dp
 //            };
 
-//            @Override
+            //            @Override
 //            public CharSequence getPageTitle(int position) {
 //
 //                Drawable image = ContextCompat.getDrawable(getApplicationContext(), imageResId[position]);
@@ -108,10 +119,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public Fragment getItem(int position) {
                 return mFragments[position];
             }
+
             @Override
             public int getCount() {
                 return mFragments.length;
             }
+
             @Override
             public CharSequence getPageTitle(int position) {
                 return mFragmentNames[position];
@@ -133,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mWriteNewPostFab = findViewById(R.id.WriteNewPostFab);
         mStartRecordingFab = findViewById(R.id.StartRecordingFab);
         mStopRecordingFab = findViewById(R.id.StopRecordingFab);
-        mSearchFab=findViewById(R.id.Search);
+        mSearchFab = findViewById(R.id.Search);
 
         mOpenDrawerFab.setOnClickListener(this);
         mCloseDrawerFab.setOnClickListener(this);
@@ -143,11 +156,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSearchFab.setOnClickListener(this);
 
 
-
     }
 
     // 位置情報許可の確認、外部ストレージのPermissionにも対応できるようにしておく
-    private  void checkMultiPermissions(){
+    private void checkMultiPermissions() {
         // 位置情報の Permission
         int permissionLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         // 外部ストレージ書き込みの Permission
@@ -159,8 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 位置情報の Permission が許可されているか確認
         if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
             // 許可済
-        }
-        else{
+        } else {
             // 未許可
             reqPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
@@ -170,8 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     (String[]) reqPermissions.toArray(new String[0]),
                     REQUEST_MULTI_PERMISSIONS);
             // 未許可あり
-        }
-        else{
+        } else {
             // 許可済
             startLocationService();
         }
@@ -209,8 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 //                startLocationService();
             }
-        }
-        else{
+        } else {
             //
         }
     }
@@ -259,21 +268,72 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // トーストの生成
-    private void toastMake(String message){
+    private void toastMake(String message) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
         // 位置調整
         toast.setGravity(Gravity.CENTER, 0, 200);
         toast.show();
     }
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference mCllection;
+    private FirestoreAdapter mFirestore;
 
+    //search data
+    private void firebaseSearch(String searchText){
+        mCllection = db.collection("posts");
+        Query firebaseSearchQuery= mCllection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
+        mFirestore=new FirestoreAdapter(firebaseSearchQuery) {
 
+            @NonNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return null;
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+            }
+
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                // 例外処理(3種類以外の変更など)
+                if (e != null) {
+                    Log.w(TAG, "onEvent:error", e);
+                    onError(e);
+                    return;
+                }
+
+                // Dispatch the event(=スナップショットの変更の詳細を3種に分類し、それぞれに対応したメソッドを実行する)
+                Log.d(TAG, "onEvent:numChanges:" + documentSnapshots.getDocumentChanges().size());
+                for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
+                    switch (change.getType()) {
+                        case ADDED:
+                            onDocumentAdded(change);
+                            break;
+                        case MODIFIED:
+                            onDocumentModified(change);
+                            break;
+                        case REMOVED:
+                            onDocumentRemoved(change);
+                            break;
+                    }
+                }
+
+                onDataChanged();
+            }
+
+        };
+
+        mFirestore.setQuery(firebaseSearchQuery);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bottom_navigation_item, menu);
         MenuItem menuItem = menu.findItem(R.id.search_item);
-        SearchView searchView=(SearchView) menuItem.getActionView();
+        SearchView searchView = (SearchView) menuItem.getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -290,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onCreateOptionsMenu(menu);
     }
 
+
     @SuppressLint("RestrictedApi")
     @Override
     public void onClick(View v) {
@@ -299,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (mStopRecordingFab.getVisibility() == View.VISIBLE) {
                         String nowRecording = "位置情報の記録を停止してください";
                         toastMake(nowRecording);
-                    } else if (mStopRecordingFab.getVisibility() == View.GONE){
+                    } else if (mStopRecordingFab.getVisibility() == View.GONE) {
                         mOpenDrawerFab.setVisibility(View.GONE);
                         mCloseDrawerFab.setVisibility(View.VISIBLE);
                         mWriteNewPostFab.setVisibility(View.VISIBLE);

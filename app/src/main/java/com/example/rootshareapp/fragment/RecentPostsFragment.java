@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.rootshareapp.PostDetailActivity;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.adapter.PostListAdapter;
+import com.example.rootshareapp.model.Post;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -86,6 +88,8 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
 
     }
 
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -119,4 +123,6 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
         intent.putExtra(PostDetailActivity.KEY_SNAPSHOT, post.getId());
         startActivity(intent);
     }
+
+
 }

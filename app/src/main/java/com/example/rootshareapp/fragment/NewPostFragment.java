@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.load.model.Model;
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.model.Post;
@@ -27,10 +28,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.collect.ImmutableCollection;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -48,6 +53,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     private ImageButton cameraBtn, galleryBtn;
     private Button submitBtn;
     private Post post;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -179,4 +185,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         結果が欲しいので ForResult の方を使う */
         startActivityForResult(intent, REQUEST_PICK_PHOTO);//引数：(出来上がった条件, 意図の送信元のActivityのidみたいなもの)
     }
+
+
+
 }
