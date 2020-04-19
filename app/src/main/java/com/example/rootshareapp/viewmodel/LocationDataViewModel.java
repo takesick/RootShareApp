@@ -22,6 +22,7 @@ public class LocationDataViewModel extends AndroidViewModel {
     // - Repository is completely separated from the UI through the ViewModel.
     private LiveData<List<Local_Route>> mLatestRoutes;
     private LiveData<List<Local_Location>> mLatestLocations;
+    private Local_Route mSelectedRoute;
     private Local_Location mSelectedLocation;
 
     public LocationDataViewModel(Application application) {
@@ -80,6 +81,13 @@ public class LocationDataViewModel extends AndroidViewModel {
         return mSelectedLocation;
     }
 
+    public void setSelectedRoute(Local_Route local_route) {
+        mSelectedRoute = local_route;
+    }
+
+    public Local_Route getSelectedRoute() {
+        return mSelectedRoute;
+    }
 }
 
 //class MyRoutesFragment extends Fragment {

@@ -17,17 +17,22 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.model.Post;
+import com.example.rootshareapp.model.Route;
+import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,18 +41,25 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class NewPostFragment extends Fragment implements View.OnClickListener {
+public class NewPostFragment extends Fragment implements View.OnClickListener, AddRouteDialogFragment.OnRouteSelectedListener {
 
     private static final String TAG = "NewPostFragment";
     private static final int REQUEST_PICK_PHOTO = 2;
-    private RecyclerView mRecyclerView;
-    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
-    private String uid, created_at, body;
+
     private EditText editBodyView;
     private TextView selectRouteBtn, addSpotBtn;
     private ImageButton cameraBtn, galleryBtn;
     private Button submitBtn;
+
+    private RecyclerView mRecyclerView;
+    private FirebaseFirestore mDatabase;
+    private CollectionReference postRef;
+
+    private String uid, created_at, body;
     private Post post;
+    private Local_Route local_Route;
+
+    private LocationDataViewModel mLocationDataViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -56,6 +68,10 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.frag_new_post, container, false);
         mRecyclerView = view.findViewById(R.id.featuredSpots);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
+        mDatabase = FirebaseFirestore.getInstance();
+
         return view;
     }
 
@@ -88,8 +104,9 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         if (v != null) {
             switch (v.getId()) {
                 case R.id.selectRouteBtn:
-//                    CustomDialogFragment newFragment = CustomDialogFragment.newInstance();
-//                    newFragment.show(getFragmentManager(), "dialog");
+                    AddRouteDialogFragment newFragment = new AddRouteDialogFragment();
+                    Log.e("dialog", "show");
+                    newFragment.show(getChildFragmentManager(), "dialog");
                     break;
 
                 case R.id.addSpotBtn:
@@ -163,6 +180,8 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         post = new Post(uid, created_at, body);
     }
 
+
+
     public void showPhoto(Uri photoImage) {
 //        mUserIcon.setImageURI(photoImage);
 //        mIconUri = photoImage;
@@ -178,5 +197,11 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         写真選択リクエストの意味の変数名にしておくとよい。
         結果が欲しいので ForResult の方を使う */
         startActivityForResult(intent, REQUEST_PICK_PHOTO);//引数：(出来上がった条件, 意図の送信元のActivityのidみたいなもの)
+    }
+
+    @Override
+    public void setRoute() {
+        local_Route = mLocationDataViewModel.getSelectedRoute();
+        selectRouteBtn.setText(local_Route.title);
     }
 }
