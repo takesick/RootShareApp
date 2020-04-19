@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,7 +27,7 @@ public class RouteDialogAdapter extends RecyclerView.Adapter<RouteDialogAdapter.
         mOnRouteSelectedListener = onRouteSelectedListener;
     }
 
-    public class RouteDataViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener {
+    public class RouteDataViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         RadioButton mRadioBtnView;
         OnRouteSelectedListener onRouteSelectedListener;
@@ -36,13 +37,19 @@ public class RouteDialogAdapter extends RecyclerView.Adapter<RouteDialogAdapter.
             mRadioBtnView = itemView.findViewById(R.id.radioButton);
             this.onRouteSelectedListener = onRouteSelectedListener;
 
-            mRadioBtnView.setOnCheckedChangeListener(this);
+            mRadioBtnView.setOnClickListener(this);
 
         }
 
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            onRouteSelectedListener.onRouteSelected(buttonView,getAdapterPosition());
+        public void onClick(View v) {
+            int lastSelectedPosition = getAdapterPosition();
+            if (onRouteSelectedListener != null && lastSelectedPosition != RecyclerView.NO_POSITION)
+                onRouteSelectedListener.onRouteSelected(mRouteDataList.get(lastSelectedPosition));
+            notifyDataSetChanged();
+//            Toast.makeText(RouteDialogAdapter.this.getClass(),
+//                    "selected offer is " + .getText(),
+//                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -50,7 +57,7 @@ public class RouteDialogAdapter extends RecyclerView.Adapter<RouteDialogAdapter.
     @Override
     public RouteDataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater Inflater = LayoutInflater.from(mContext);
-        View itemView = Inflater.inflate(R.layout.list_route_item, parent, false);
+        View itemView = Inflater.inflate(R.layout.list_dialog_route_item, parent, false);
         return new RouteDataViewHolder(itemView, mOnRouteSelectedListener);
     }
 
@@ -84,6 +91,6 @@ public class RouteDialogAdapter extends RecyclerView.Adapter<RouteDialogAdapter.
     }
 
     public interface OnRouteSelectedListener {
-        void onRouteSelected(CompoundButton buttonView, int position);
+        void onRouteSelected(Local_Route local_route);
     }
 }

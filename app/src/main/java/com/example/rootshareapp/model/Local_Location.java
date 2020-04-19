@@ -3,6 +3,7 @@ package com.example.rootshareapp.model;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 
@@ -48,7 +49,10 @@ public class Local_Location {
     @NonNull
     public String comment;
 
-    public Local_Location(){}
+    @Ignore
+    public Local_Location(){
+//
+    }
 
     public Local_Location(double latitude, double longitude, double accuracy, String created_at, String uid, int route_id, String comment) {
         this.latitude = latitude;
