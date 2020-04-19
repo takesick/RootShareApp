@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.model.Local_LocationData;
+import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -28,7 +28,7 @@ public class LocationDetailFragment extends Fragment {
     private TextView longitudeView;
     private EditText editCommentView;
     private FloatingActionButton saveFab, deleteFab;
-    private Local_LocationData mLocal_Location;
+    private Local_Location mLocal_Location;
     private LocationDataViewModel mLocationDataViewModel;
 //
 //    int id = this.getArguments().getInt(KEY_LOCATION_ID);

@@ -17,7 +17,7 @@ import androidx.room.PrimaryKey;
 //        )
 )
 
-public class Local_LocationData {
+public class Local_Location {
     @PrimaryKey(autoGenerate = true)
     public int _id;
 
@@ -49,9 +49,9 @@ public class Local_LocationData {
     @NonNull
     public String comment;
 
-    public Local_LocationData(){}
+    public Local_Location(){}
 
-    public Local_LocationData(double latitude, double longitude, double accuracy, String created_at, String uid, int route_id, String comment) {
+    public Local_Location(double latitude, double longitude, double accuracy, String created_at, String uid, int route_id, String comment) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.accuracy = accuracy;

@@ -23,8 +23,8 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
-import com.example.rootshareapp.model.Local_LocationData;
-import com.example.rootshareapp.model.Local_RouteData;
+import com.example.rootshareapp.model.Local_Location;
+import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 //import com.example.rootshareapp.sqlite.LocationOpenHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -231,8 +231,8 @@ public class LocationService extends Service implements LocationListener {
 
         String comment = "";
 
-        Local_LocationData local_locationData = new Local_LocationData(latitude, longitude, accuracy, created_at, uid, route_id, comment);
-        mLocationDataViewModel.insertLocation(local_locationData);
+        Local_Location local_location = new Local_Location(latitude, longitude, accuracy, created_at, uid, route_id, comment);
+        mLocationDataViewModel.insertLocation(local_location);
 
 
 
@@ -328,8 +328,8 @@ public class LocationService extends Service implements LocationListener {
     }
 
     private Long writeRouteDataToDb(String title, String created_at, String uid) throws ExecutionException, InterruptedException {
-        Local_RouteData local_routeData = new Local_RouteData(title, created_at, uid);
-        return mLocationDataViewModel.insertRoute(local_routeData);
+        Local_Route local_route = new Local_Route(title, created_at, uid);
+        return mLocationDataViewModel.insertRoute(local_route);
 
 //        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(this);
 //

@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.rootshareapp.model.Local_RouteData;
+import com.example.rootshareapp.model.Local_Route;
 
 import java.util.List;
 
@@ -16,16 +16,16 @@ import java.util.List;
 public interface RouteDao {
 
     @Query(" SELECT * from route_table ORDER BY _id DESC ")
-    LiveData<List<Local_RouteData>> getLatestRoutes();
+    LiveData<List<Local_Route>> getLatestRoutes();
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE, entity = Local_RouteData.class)
-    long insertRoute(Local_RouteData local_routeData);
+    @Insert(onConflict = OnConflictStrategy.IGNORE, entity = Local_Route.class)
+    long insertRoute(Local_Route local_route);
 
     @Update
-    void updateRoute(Local_RouteData local_routeData);
+    void updateRoute(Local_Route local_route);
 
     @Delete
-    void deleteRoute(Local_RouteData local_routeData);
+    void deleteRoute(Local_Route local_route);
 
     @Query("DELETE FROM route_table")
     void deleteAllRoutes();
