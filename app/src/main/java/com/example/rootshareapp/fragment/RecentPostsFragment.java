@@ -35,6 +35,7 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
     private Query mQuery;
     private PostListAdapter mAdapter;
 
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
