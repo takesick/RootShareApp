@@ -304,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                msetQuery.setQuery(firebaseSearch(newText));
                 return false;
             }
         });
