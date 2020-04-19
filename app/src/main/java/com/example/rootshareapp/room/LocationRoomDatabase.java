@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.rootshareapp.model.Local_LocationData;
 import com.example.rootshareapp.model.Local_RouteData;
-import com.example.rootshareapp.sqlite.RouteContract;
+import com.example.rootshareapp.room.RouteContract;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
