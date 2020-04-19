@@ -279,13 +279,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference mCllection;
+    private CollectionReference mCollection;
     private Query firebaseSearchQuery;
 
     //search data
     private Query firebaseSearch(String searchText){
-        mCllection = db.collection("posts");
-        firebaseSearchQuery= mCllection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
+        mCollection = db.collection("posts");
+        firebaseSearchQuery= mCollection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
         return firebaseSearchQuery;
     }
 
