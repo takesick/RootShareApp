@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.rootshareapp.adapter.FirestoreAdapter;
+import com.example.rootshareapp.adapter.PostListAdapter;
 import com.example.rootshareapp.fragment.MyPageFragment;
 import com.example.rootshareapp.fragment.MyRoutesFragment;
 import com.example.rootshareapp.fragment.RecentPostsFragment;
@@ -56,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
     private FloatingActionButton mOpenDrawerFab, mCloseDrawerFab, mStartRecordingFab, mStopRecordingFab, mWriteNewPostFab, mSearchFab;
 
+    public interface setQuery{
+        void setQuery(Query query);
+    }
+
 //        if(savedInstanceState == null){
 //            // FragmentManagerのインスタンス生成
 //            FragmentManager fragmentManager = getSupportFragmentManager();
@@ -70,8 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        setContentView(R.layout.activity_main);
 
     private ViewPager mViewPager;
-
-
+    private  setQuery msetQuery;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -277,56 +281,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference mCllection;
-    private FirestoreAdapter mFirestore;
+    private PostListAdapter mAdapter;
 
     //search data
-    private void firebaseSearch(String searchText){
+    private Query firebaseSearch(String searchText){
         mCllection = db.collection("posts");
         Query firebaseSearchQuery= mCllection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
-        mFirestore=new FirestoreAdapter(firebaseSearchQuery) {
-
-            @NonNull
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return null;
-            }
-
-            @Override
-            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
-            }
-
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                // 例外処理(3種類以外の変更など)
-                if (e != null) {
-                    Log.w(TAG, "onEvent:error", e);
-                    onError(e);
-                    return;
-                }
-
-                // Dispatch the event(=スナップショットの変更の詳細を3種に分類し、それぞれに対応したメソッドを実行する)
-                Log.d(TAG, "onEvent:numChanges:" + documentSnapshots.getDocumentChanges().size());
-                for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
-                    switch (change.getType()) {
-                        case ADDED:
-                            onDocumentAdded(change);
-                            break;
-                        case MODIFIED:
-                            onDocumentModified(change);
-                            break;
-                        case REMOVED:
-                            onDocumentRemoved(change);
-                            break;
-                    }
-                }
-
-                onDataChanged();
-            }
-
-        };
-
-        mFirestore.setQuery(firebaseSearchQuery);
+        return firebaseSearchQuery;
     }
 
     @Override
@@ -338,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                msetQuery.setQuery(firebaseSearch(query));
                 return false;
             }
 

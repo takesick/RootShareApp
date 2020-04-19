@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.PostDetailActivity;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.adapter.PostListAdapter;
@@ -24,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
-public class RecentPostsFragment extends Fragment implements PostListAdapter.OnPostSelectedListener {
+public class RecentPostsFragment extends Fragment implements PostListAdapter.OnPostSelectedListener, MainActivity.setQuery{
 
     public static final int LIMIT = 50;
 
@@ -125,4 +126,8 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
     }
 
 
+    @Override
+    public void setQuery(Query query) {
+        mAdapter.setQuery(query);
+    }
 }
