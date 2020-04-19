@@ -5,8 +5,8 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.rootshareapp.model.Local_LocationData;
-import com.example.rootshareapp.model.Local_RouteData;
+import com.example.rootshareapp.model.Local_Location;
+import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.room.LocationDataRepository;
 
 import java.util.List;
@@ -20,9 +20,9 @@ public class LocationDataViewModel extends AndroidViewModel {
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    private LiveData<List<Local_RouteData>> mLatestRoutes;
-    private LiveData<List<Local_LocationData>> mLatestLocations;
-    private Local_LocationData mSelectedLocation;
+    private LiveData<List<Local_Route>> mLatestRoutes;
+    private LiveData<List<Local_Location>> mLatestLocations;
+    private Local_Location mSelectedLocation;
 
     public LocationDataViewModel(Application application) {
         super(application);
@@ -30,53 +30,53 @@ public class LocationDataViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<Local_RouteData>> getLatestRoutes() {
+    public LiveData<List<Local_Route>> getLatestRoutes() {
         mLatestRoutes = mRepository.getLatestRoutes();
         return mLatestRoutes;
     }
 
-    public LiveData<List<Local_LocationData>> getLatestLocations(int route_id) {
+    public LiveData<List<Local_Location>> getLatestLocations(int route_id) {
         mLatestLocations = mRepository.getLatestLocations(route_id);
         return mLatestLocations;
     }
 
-    public Long insertRoute(Local_RouteData local_routeData) throws ExecutionException, InterruptedException {
-        return mRepository.insertRoute(local_routeData);
+    public Long insertRoute(Local_Route local_route) throws ExecutionException, InterruptedException {
+        return mRepository.insertRoute(local_route);
     }
 
-    public void updateRoute(Local_RouteData local_routeData) {
-        mRepository.updateRoute(local_routeData);
+    public void updateRoute(Local_Route local_route) {
+        mRepository.updateRoute(local_route);
     }
 
-    public void deleteRoute(Local_RouteData local_routeData) {
-        mRepository.deleteRoute(local_routeData);
+    public void deleteRoute(Local_Route local_route) {
+        mRepository.deleteRoute(local_route);
     }
 
-    public void deleteAllRoutes(Local_RouteData local_routeData) {
-        mRepository.deleteAllRoutes(local_routeData);
+    public void deleteAllRoutes(Local_Route local_route) {
+        mRepository.deleteAllRoutes(local_route);
     }
 
-    public void insertLocation(Local_LocationData local_locationData) {
-        mRepository.insertLocation(local_locationData);
+    public void insertLocation(Local_Location local_location) {
+        mRepository.insertLocation(local_location);
     }
 
-    public void updateLocation(Local_LocationData local_locationData) {
-        mRepository.updateLocation(local_locationData);
+    public void updateLocation(Local_Location local_location) {
+        mRepository.updateLocation(local_location);
     }
 
-    public void deleteLocation(Local_LocationData local_locationData) {
-        mRepository.deleteLocation(local_locationData);
+    public void deleteLocation(Local_Location local_location) {
+        mRepository.deleteLocation(local_location);
     }
 
     public void deleteAllLocations() {
         mRepository.deleteAllLocations();
     }
 
-    public void setSelectedLocation(Local_LocationData local_locationData) {
-        mSelectedLocation = local_locationData;
+    public void setSelectedLocation(Local_Location local_location) {
+        mSelectedLocation = local_location;
     }
 
-    public Local_LocationData  getSelectedLocation() {
+    public Local_Location getSelectedLocation() {
         return mSelectedLocation;
     }
 

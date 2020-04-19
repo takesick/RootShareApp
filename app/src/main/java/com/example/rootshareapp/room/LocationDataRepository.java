@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.rootshareapp.model.Local_LocationData;
-import com.example.rootshareapp.model.Local_RouteData;
+import com.example.rootshareapp.model.Local_Location;
+import com.example.rootshareapp.model.Local_Route;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -17,8 +17,8 @@ public class LocationDataRepository {
     private LocationDao locationDao;
     private RouteDao routeDao;
 
-    private LiveData<List<Local_RouteData>> mLatestRoutes;
-    private LiveData<List<Local_LocationData>> mLatestLocations;
+    private LiveData<List<Local_Route>> mLatestRoutes;
+    private LiveData<List<Local_Location>> mLatestLocations;
 
     public LocationDataRepository(Application application) {
         LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
@@ -33,45 +33,45 @@ public class LocationDataRepository {
 
     // Room executes all queries on a separate thread.
     // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<Local_RouteData>> getLatestRoutes() {
+    public LiveData<List<Local_Route>> getLatestRoutes() {
         mLatestRoutes = routeDao.getLatestRoutes();
         return mLatestRoutes;
     }
-    public LiveData<List<Local_LocationData>> getLatestLocations(int route_id) {
+    public LiveData<List<Local_Location>> getLatestLocations(int route_id) {
         mLatestLocations = locationDao.getLatestLocations(route_id);
         return mLatestLocations;
     }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
-    public Long insertRoute(final Local_RouteData local_routeData) throws ExecutionException, InterruptedException {
+    public Long insertRoute(final Local_Route local_route) throws ExecutionException, InterruptedException {
         Future<Long> future = LocationRoomDatabase.databaseWriteExecutor.submit(new Callable<Long>() {
             public Long call() {
-                return routeDao.insertRoute(local_routeData);
+                return routeDao.insertRoute(local_route);
             }
         });
         return future.get();
     }
 
-    public void updateRoute(final Local_RouteData local_routeData) {
+    public void updateRoute(final Local_Route local_route) {
         LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                routeDao.updateRoute(local_routeData);
+                routeDao.updateRoute(local_route);
             }
         });
     }
 
-    public void deleteRoute(final Local_RouteData local_routeData ) {
+    public void deleteRoute(final Local_Route local_route) {
         LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                routeDao.deleteRoute(local_routeData);
+                routeDao.deleteRoute(local_route);
             }
         });
     }
 
-    public void deleteAllRoutes(final Local_RouteData local_routeData) {
+    public void deleteAllRoutes(final Local_Route local_route) {
         LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -80,29 +80,29 @@ public class LocationDataRepository {
         });
     }
 
-    public void insertLocation(final Local_LocationData local_locationData) {
+    public void insertLocation(final Local_Location local_location) {
         LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                locationDao.insertLocation(local_locationData);
+                locationDao.insertLocation(local_location);
             }
         });
     }
 
-    public void updateLocation(final Local_LocationData local_locationData) {
+    public void updateLocation(final Local_Location local_location) {
         LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                locationDao.updateLocation(local_locationData);
+                locationDao.updateLocation(local_location);
             }
         });
     }
 
-    public void deleteLocation(final Local_LocationData local_locationData) {
+    public void deleteLocation(final Local_Location local_location) {
         LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                locationDao.deleteLocation(local_locationData);
+                locationDao.deleteLocation(local_location);
             }
         });
     }
@@ -143,7 +143,7 @@ public class LocationDataRepository {
 //        }
 //    }
 
-    private static class getSelectedLocationAsyncTask extends AsyncTask<Integer, Void, LiveData<Local_LocationData>> {
+    private static class getSelectedLocationAsyncTask extends AsyncTask<Integer, Void, LiveData<Local_Location>> {
         private LocationDao locationDao;
 
         private getSelectedLocationAsyncTask(LocationDao locationDao) {
@@ -151,12 +151,12 @@ public class LocationDataRepository {
         }
 
         @Override
-        protected LiveData<Local_LocationData> doInBackground(Integer... location_id) {
+        protected LiveData<Local_Location> doInBackground(Integer... location_id) {
             return locationDao.getSelectedLocation(location_id[0]);
         }
 
         @Override
-        protected void onPostExecute(LiveData<Local_LocationData> result) {
+        protected void onPostExecute(LiveData<Local_Location> result) {
             super.onPostExecute(result);
         }
 //

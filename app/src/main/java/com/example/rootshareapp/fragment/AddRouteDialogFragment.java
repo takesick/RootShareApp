@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
@@ -34,7 +33,7 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_route, container, false);
+        View v = inflater.inflate(R.layout.frag_dialog_add_route, container, false);
         mRatingText = v.findViewById(R.id.restaurant_form_text);
 
         v.findViewById(R.id.restaurant_form_button).setOnClickListener(this);
