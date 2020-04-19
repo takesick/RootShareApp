@@ -13,16 +13,19 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.PostDetailActivity;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.adapter.PostListAdapter;
+import com.example.rootshareapp.model.Post;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
-public class RecentPostsFragment extends Fragment implements PostListAdapter.OnPostSelectedListener {
+public class RecentPostsFragment extends Fragment implements PostListAdapter.OnPostSelectedListener, MainActivity.setQuery{
 
     public static final int LIMIT = 50;
 
@@ -86,6 +89,8 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
 
     }
 
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -118,5 +123,11 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
         Intent intent = new Intent(getActivity(), PostDetailActivity.class);
         intent.putExtra(PostDetailActivity.KEY_SNAPSHOT, post.getId());
         startActivity(intent);
+    }
+
+
+    @Override
+    public void setQuery(Query query) {
+        mAdapter.setQuery(query);
     }
 }

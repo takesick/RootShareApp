@@ -180,8 +180,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
         post = new Post(uid, created_at, body);
     }
 
-
-
     public void showPhoto(Uri photoImage) {
 //        mUserIcon.setImageURI(photoImage);
 //        mIconUri = photoImage;
