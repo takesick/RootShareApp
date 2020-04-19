@@ -46,8 +46,8 @@ public class RouteDialogAdapter extends RecyclerView.Adapter<RouteDialogAdapter.
         public void onClick(View v) {
             lastSelectedPosition = getAdapterPosition();
             if (onRouteSelectedListener != null && lastSelectedPosition != RecyclerView.NO_POSITION) {
+                Log.e("route selected", "select");
                 onRouteSelectedListener.onRouteSelected(mRouteDataList.get(lastSelectedPosition));
-
                 notifyDataSetChanged();
             }
         }

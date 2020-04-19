@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //search data
     private Query firebaseSearch(String searchText){
         mCollection = db.collection("posts");
-        firebaseSearchQuery= mCollection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
+        firebaseSearchQuery = mCollection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
         return firebaseSearchQuery;
     }
 

@@ -104,7 +104,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
         if (v != null) {
             switch (v.getId()) {
                 case R.id.selectRouteBtn:
-                    AddRouteDialogFragment newFragment = new AddRouteDialogFragment();
+                    AddRouteDialogFragment newFragment = AddRouteDialogFragment.newInstance();
                     Log.e("dialog", "show");
                     newFragment.show(getChildFragmentManager(), "dialog");
                     break;

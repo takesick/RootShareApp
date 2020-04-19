@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
@@ -34,6 +35,16 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
     private RouteDialogAdapter mAdapter;
     private OnRouteSelectedListener mOnRouteSelectedListener;
 
+    private Button submitBtn, cancelbtn;
+
+    public static AddRouteDialogFragment newInstance() {
+        AddRouteDialogFragment fragment = new AddRouteDialogFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     interface OnRouteSelectedListener {
         void setRoute();
     }
@@ -48,18 +59,28 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
         mRecyclerView = view.findViewById(R.id.dialogRouteList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        view.findViewById(R.id.buttonSubmitRoute).setOnClickListener(this);
-        view.findViewById(R.id.buttonCancel).setOnClickListener(this);
+        submitBtn = view.findViewById(R.id.buttonSubmitRoute);
+        cancelbtn = view.findViewById(R.id.buttonCancel);
+
+        submitBtn.setOnClickListener(this);
+        cancelbtn.setOnClickListener(this);
+
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         mAdapter = new RouteDialogAdapter(getActivity(), this);
         mRecyclerView.setAdapter(mAdapter);
 
-        mLocationDataViewModel = ViewModelProviders.of(getParentFragment()).get(LocationDataViewModel.class);
+        mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
         mLocationDataViewModel.getLatestRoutes().observe(this, new Observer<List<Local_Route>>() {
             @Override
             public void onChanged(@Nullable final List<Local_Route> local_routeList) {
@@ -101,11 +122,7 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
     }
 
     public void onSubmitClicked(View view) {
-
-        if (mOnRouteSelectedListener != null) {
-            mOnRouteSelectedListener.setRoute();
-        }
-
+        mOnRouteSelectedListener.setRoute();
         dismiss();
     }
 
@@ -116,7 +133,6 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
     @Override
     public void onRouteSelected(Local_Route local_route) {
         mLocationDataViewModel.setSelectedRoute(local_route);
-        Log.e("route selected", local_route.title);
     }
 
 }
