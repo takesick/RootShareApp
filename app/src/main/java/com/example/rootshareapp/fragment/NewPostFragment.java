@@ -17,25 +17,25 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.load.model.Model;
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.model.Post;
+import com.example.rootshareapp.model.Route;
+import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.common.collect.ImmutableCollection;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,15 +45,21 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "NewPostFragment";
     private static final int REQUEST_PICK_PHOTO = 2;
-    private RecyclerView mRecyclerView;
-    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
-    private String uid, created_at, body;
+
     private EditText editBodyView;
     private TextView selectRouteBtn, addSpotBtn;
     private ImageButton cameraBtn, galleryBtn;
     private Button submitBtn;
-    private Post post;
 
+    private RecyclerView mRecyclerView;
+    private FirebaseFirestore mDatabase;
+    private CollectionReference postRef;
+
+    private String uid, created_at, body;
+    private Post post;
+    private Local_Route local_Route;
+
+    private LocationDataViewModel mLocationDataViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -62,6 +68,10 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.frag_new_post, container, false);
         mRecyclerView = view.findViewById(R.id.featuredSpots);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
+        mDatabase = FirebaseFirestore.getInstance();
+
         return view;
     }
 
@@ -185,7 +195,4 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         結果が欲しいので ForResult の方を使う */
         startActivityForResult(intent, REQUEST_PICK_PHOTO);//引数：(出来上がった条件, 意図の送信元のActivityのidみたいなもの)
     }
-
-
-
 }

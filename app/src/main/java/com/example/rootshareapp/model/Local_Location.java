@@ -49,7 +49,10 @@ public class Local_Location {
     @NonNull
     public String comment;
 
-    public Local_Location(){}
+    @Ignore
+    public Local_Location(){
+//
+    }
 
     public Local_Location(double latitude, double longitude, double accuracy, String created_at, String uid, int route_id, String comment) {
         this.latitude = latitude;
