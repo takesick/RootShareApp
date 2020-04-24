@@ -2,21 +2,15 @@ package com.example.rootshareapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,25 +20,29 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.rootshareapp.adapter.FirestoreAdapter;
-import com.example.rootshareapp.adapter.PostListAdapter;
+import com.algolia.search.saas.AlgoliaException;
+import com.algolia.search.saas.Client;
+import com.algolia.search.saas.CompletionHandler;
+import com.algolia.search.saas.Index;
+import com.algolia.search.saas.Query;
 import com.example.rootshareapp.fragment.MyPageFragment;
 import com.example.rootshareapp.fragment.MyRoutesFragment;
 import com.example.rootshareapp.fragment.RecentPostsFragment;
+import com.example.rootshareapp.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+
+//import com.google.firebase.firestore.Query;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -53,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
     private FloatingActionButton mOpenDrawerFab, mCloseDrawerFab, mStartRecordingFab, mStopRecordingFab, mWriteNewPostFab, mSearchFab;
 
-    public interface setQuery{
-        void setQuery(Query query);
+    public interface SetQuery{
+        void setQuery(List<Post> postList);
     }
 
 //        if(savedInstanceState == null){
@@ -71,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        setContentView(R.layout.activity_main);
 
     private ViewPager mViewPager;
-    private setQuery msetQuery;
+    private SetQuery mSetQuery;
+//    private RecentPostsFragment fragment;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (Build.VERSION.SDK_INT >= 23) {
             checkMultiPermissions();
         } else {
-            startLocationService();
+
         }
 
         // Create the adapter that will return a fragment for each section
@@ -156,7 +155,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStopRecordingFab.setOnClickListener(this);
         mSearchFab.setOnClickListener(this);
 
-        msetQuery = (setQuery) mPagerAdapter.getItem(mViewPager.getCurrentItem());
+        mSetQuery = (SetQuery) mPagerAdapter.getItem(mViewPager.getCurrentItem());
+//        fragment = (RecentPostsFragment) mPagerAdapter.getItem(mViewPager.getCurrentItem());
+//
 
 
     }
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 未許可あり
         } else {
             // 許可済
-            startLocationService();
+
         }
     }
 
@@ -227,44 +228,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void startLocationService() {
-//        setContentView(R.layout.frag_location_list);
-//
-////        textView = findViewById(R.id.log_text);
-//        mStartRecordingFab = findViewById(R.id.StartRecordingFab);
-//        mStartRecordingFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getApplication(), LocationService.class);
-//
-//                // API 26 以降
-//                startForegroundService(intent);
-//
-//                // Activityを終了させる
-//            }
-//        });
-//
-//
-////        Button buttonLog = findViewById(R.id.button_log);
-////        buttonLog.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-////                textView.setText(fileReadWrite.r
-////                eadFile());
-////            }
-////        });
-//
-//        mStopRecordingFab  = findViewById(R.id.StopRecordingFab);
-//        mStopRecordingFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Serviceの停止
-//                Intent intent = new Intent(getApplication(), LocationService.class);
-//                stopService(intent);
-//            }
-//        });
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -278,16 +241,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toast.show();
     }
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference mCollection;
-    private Query firebaseSearchQuery;
-
     //search data
-    private Query firebaseSearch(String searchText){
-        mCollection = db.collection("posts");
-        firebaseSearchQuery = mCollection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
-        return firebaseSearchQuery;
-    }
+//    private Query firebaseSearch(String searchText){
+//        mCollection = db.collection("posts");
+//        firebaseSearchQuery = mCollection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
+//        return firebaseSearchQuery;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -295,16 +254,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MenuItem menuItem = menu.findItem(R.id.search_item);
         SearchView searchView = (SearchView) menuItem.getActionView();
 
+        Client client = new Client(getString(R.string.algolia_id), getString(R.string.algolia_key));
+        final Index index = client.getIndex("posts");
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                msetQuery.setQuery(firebaseSearch(query));
+            public boolean onQueryTextSubmit(String searchText) {
+//                msetQuery.setQuery(firebaseSearch(query));
+//                fragment.setQuery(firebaseSearch(query));
+                Query query = new Query(searchText)
+                        .setAttributesToRetrieve("body")
+                        .setHitsPerPage(50);
+                index.searchAsync(query, new CompletionHandler() {
+                    @Override
+                    public void requestCompleted(JSONObject content, AlgoliaException error) {
+                        try {
+                            JSONArray hits = content.getJSONArray("hits");
+                            List<Post> mPostList = new ArrayList<>();
+                            for (int i = 0; i < hits.length(); i++) {
+                                JSONObject jsonObject = hits.getJSONObject(i);
+                                Post post = new Post();
+                                post.setUid(jsonObject.getString("uid"));
+                                post.setCreated_at(jsonObject.getString("created_at"));
+                                post.setBody(jsonObject.getString("body"));
+                                mPostList.add(post);
+                            }
+                            mSetQuery.setQuery(mPostList);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                msetQuery.setQuery(firebaseSearch(newText));
+//                msetQuery.setQuery(firebaseSearch(newText));
+//                fragment.setQuery(firebaseSearch(newText));
+                Query query = new Query(newText)
+                        .setAttributesToRetrieve("body")
+                        .setHitsPerPage(50);
+                index.searchAsync(query, new CompletionHandler() {
+                    @Override
+                    public void requestCompleted(JSONObject content, AlgoliaException error) {
+                        try {
+                            JSONArray hits = content.getJSONArray("hits");
+                            List<Post> mPostList = new ArrayList<>();
+                            for (int i = 0; i < hits.length(); i++) {
+                                JSONObject jsonObject = hits.getJSONObject(i);
+                                Post post = new Post();
+                                Log.e("post", jsonObject.getString("uid"));
+                                post.setUid(jsonObject.getString("uid"));
+                                post.setCreated_at(jsonObject.getString("created_at"));
+                                post.setBody(jsonObject.getString("body"));
+                                mPostList.add(post);
+                            }
+                            mSetQuery.setQuery(mPostList);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
                 return false;
             }
         });

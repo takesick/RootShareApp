@@ -1,0 +1,4 @@
+<resources>
+    <string name="algolia_id" templateMergeStrategy="preserve" translatable="false">3B0P5K2C6I</string>
+    <string name="algolia_key" templateMergeStrategy="preserve" translatable="false">9a84fb7c1456614fdab7e83f387550c6</string>
+</resources>
