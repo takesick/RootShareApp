@@ -263,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                msetQuery.setQuery(firebaseSearch(query));
 //                fragment.setQuery(firebaseSearch(query));
                 Query query = new Query(searchText)
-                        .setAttributesToRetrieve("body")
                         .setHitsPerPage(50);
                 index.searchAsync(query, new CompletionHandler() {
                     @Override
@@ -293,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                msetQuery.setQuery(firebaseSearch(newText));
 //                fragment.setQuery(firebaseSearch(newText));
                 Query query = new Query(newText)
-                        .setAttributesToRetrieve("body")
                         .setHitsPerPage(50);
                 index.searchAsync(query, new CompletionHandler() {
                     @Override

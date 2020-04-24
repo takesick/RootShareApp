@@ -137,6 +137,7 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
     @Override
     public void setQuery(List<Post> postList) {
         PostListSearchedAdapter mSearchAdapter = new PostListSearchedAdapter(getContext(), postList, this);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mSearchAdapter);
     }
 }
