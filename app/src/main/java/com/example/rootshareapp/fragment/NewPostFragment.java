@@ -15,33 +15,34 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.algolia.search.saas.Client;
+import com.algolia.search.saas.Index;
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.model.Post;
-import com.example.rootshareapp.model.Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class NewPostFragment extends Fragment implements View.OnClickListener, AddRouteDialogFragment.OnRouteSelectedListener {
+public class NewPostFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "NewPostFragment";
     private static final int REQUEST_PICK_PHOTO = 2;
@@ -115,29 +116,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
                 case R.id.submitBtn:
                     uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     createPost(uid);
-//                    DocumentReference docRef = mDatabase.collection("users").document(uid);
-//                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                            if (task.isSuccessful()) {
-//                                DocumentSnapshot document = task.getResult();
-//                                if (document.exists()) {
-//                                    Log.e(TAG, "DocumentSnapshot data: " + document.getData());
-//                                    createPost(
-//                                            document.getId(),
-//                                            String.valueOf(document.get("displayname")),
-//                                            String.valueOf(document.get("username"))
-//
-//                                    );
-//                                } else {
-//                                    Log.d(TAG, "No such document");
-//                                }
-//                            } else {
-//                                Log.d(TAG, "get failed with ", task.getException());
-//                            }
-//                        }
-//                    });
-
                     mDatabase.collection("posts")
                         .add(post)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -152,6 +130,14 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
                                 Log.w(TAG, "Error adding document", e);
                             }
                         });
+
+                    Client client = new Client(getString(R.string.algolia_id), getString(R.string.algolia_key));
+                    Index index = client.getIndex("posts");
+
+                    List<JSONObject> postList = new ArrayList<>();
+                    postList.add(new JSONObject(post.toMap()));
+                    index.addObjectsAsync(new JSONArray(postList), null);
+
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);
                     break;
@@ -197,10 +183,8 @@ public class NewPostFragment extends Fragment implements View.OnClickListener, A
         startActivityForResult(intent, REQUEST_PICK_PHOTO);//引数：(出来上がった条件, 意図の送信元のActivityのidみたいなもの)
     }
 
-    @Override
     public void setRoute() {
         local_Route = mLocationDataViewModel.getSelectedRoute();
-        Log.e("route selected", local_Route.title);
         selectRouteBtn.setText(local_Route.title);
     }
 }

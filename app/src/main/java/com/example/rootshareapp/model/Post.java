@@ -1,7 +1,13 @@
 package com.example.rootshareapp.model;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Post {
 
+    public String _id;
     public String uid;
     public String body;
     public String created_at;
@@ -18,6 +24,10 @@ public class Post {
         this.body = body;
     }
 
+    public void setId(String _id) {
+        this._id = _id;
+    }
+
     public void setUid(String uid) {
         this.uid = uid;
     }
@@ -30,6 +40,10 @@ public class Post {
         this.body = body;
     }
 
+    public String getId() {
+        return _id;
+    }
+
     public String getUid() {
         return uid;
     }
@@ -40,5 +54,17 @@ public class Post {
 
     public String getBody() {
         return body;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", uid);
+        result.put("created_at", created_at);
+        result.put("body", body);
+//        result.put("starCount", starCount);
+//        result.put("stars", stars);
+
+        return result;
     }
 }

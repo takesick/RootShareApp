@@ -122,7 +122,4 @@ public class LocationDetailFragment extends Fragment {
         fragmentTransaction.replace(R.id.location_container, new LocationFragment());
         fragmentTransaction.commit();
     }
-
-
-
 }

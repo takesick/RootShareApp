@@ -18,38 +18,40 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
-/**
- * RecyclerView adapter for a list of Restaurants.
- */
-public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder> {
+import java.util.List;
 
-    public static final String TAG = "PostListAdapter";
+public class PostListSearchedAdapter extends RecyclerView.Adapter<PostListSearchedAdapter.postSearchedViewHolder> {
 
-    public interface OnPostSelectedListener {
-        void onPostSelected(DocumentSnapshot post);
-    }
-
+    public static final String TAG = "PostListSearchedAdapter";
+    private Context mContext;
+    private List<Post> mPostList;
     private OnPostSelectedListener mListener;
 
-    public PostListAdapter(Query query, OnPostSelectedListener listener) {
-        super(query);
-        mListener = listener;
+    public PostListSearchedAdapter(@NonNull Context context,  List<Post> postList, OnPostSelectedListener Listener) {
+        mContext = context;
+        mPostList = postList;
+        mListener = Listener;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public postSearchedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_item, parent, false);
-        return new ViewHolder(v, parent.getContext());
+        return new postSearchedViewHolder(v, parent.getContext());
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(getSnapshot(position), mListener);
+    public void onBindViewHolder(@NonNull postSearchedViewHolder holder, int position) {
+        holder.bind(mPostList.get(position), mListener);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public int getItemCount() {
+        return 0;
+    }
+
+    public class postSearchedViewHolder extends RecyclerView.ViewHolder {
 
         Context mContext;
         ImageView uIconBtn;
@@ -58,7 +60,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
         TextView created_atView;
         TextView bodyView;
 
-        public ViewHolder(View itemView, Context context) {
+        public postSearchedViewHolder(@NonNull View itemView, Context context) {
             super(itemView);
             mContext = context;
             uIconBtn = itemView.findViewById(R.id.u_icon);
@@ -68,11 +70,9 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             bodyView = itemView.findViewById(R.id.body);
         }
 
-        public void bind(final DocumentSnapshot snapshot, final OnPostSelectedListener listener) {
+        public void bind(final Post post, final OnPostSelectedListener listener) {
 
             FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
-
-            Post post = snapshot.toObject(Post.class);
 
             final String post_userId = post.getUid();
             mDatabase.collection("users").document(post_userId)
@@ -82,7 +82,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("user_icon"));
+//                        Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("user_icon"));
                             Glide.with(mContext)
                                     .load(document.getData().get("user_icon"))
                                     .into(uIconBtn);
@@ -107,18 +107,21 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             });
 
             created_atView.setText(post.getCreated_at());
-            bodyView.setText( post.getBody());
+            bodyView.setText(post.getBody());
 
             // Click listener
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (listener != null) {
-                        listener.onPostSelected(snapshot);
+                        listener.onPostSelected(itemView, getAdapterPosition());
                     }
                 }
             });
         }
+    }
 
+    public interface OnPostSelectedListener {
+        void onPostSelected(View view, int position);
     }
 }

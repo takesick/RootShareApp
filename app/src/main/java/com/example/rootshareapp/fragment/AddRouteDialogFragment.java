@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,9 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.adapter.RouteDialogAdapter;
 import com.example.rootshareapp.model.Local_Route;
-import com.example.rootshareapp.model.Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -33,7 +29,6 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
     private LocationDataViewModel mLocationDataViewModel;
     private RecyclerView mRecyclerView;
     private RouteDialogAdapter mAdapter;
-    private OnRouteSelectedListener mOnRouteSelectedListener;
 
     private Button submitBtn, cancelbtn;
 
@@ -43,10 +38,6 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
         fragment.setArguments(args);
 
         return fragment;
-    }
-
-    interface OnRouteSelectedListener {
-        void setRoute();
     }
 
     @Nullable
@@ -92,15 +83,6 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof OnRouteSelectedListener) {
-            mOnRouteSelectedListener = (OnRouteSelectedListener) context;
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         getDialog().getWindow().setLayout(
@@ -122,7 +104,8 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
     }
 
     public void onSubmitClicked(View view) {
-        mOnRouteSelectedListener.setRoute();
+        NewPostFragment fragment = (NewPostFragment) getParentFragment();
+        fragment.setRoute();
         dismiss();
     }
 
