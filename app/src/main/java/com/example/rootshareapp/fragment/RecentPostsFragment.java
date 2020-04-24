@@ -2,6 +2,7 @@ package com.example.rootshareapp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,8 +137,8 @@ public class RecentPostsFragment extends Fragment implements PostListAdapter.OnP
 
     @Override
     public void setQuery(List<Post> postList) {
-        PostListSearchedAdapter mSearchAdapter = new PostListSearchedAdapter(getContext(), postList, this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        PostListSearchedAdapter mSearchAdapter = new PostListSearchedAdapter(postList, this);
+        Log.e("adapter", String.valueOf(mSearchAdapter.getItemCount()));
         mRecyclerView.setAdapter(mSearchAdapter);
     }
 }

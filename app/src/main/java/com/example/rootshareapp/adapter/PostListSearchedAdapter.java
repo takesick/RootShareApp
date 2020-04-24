@@ -24,34 +24,29 @@ import java.util.List;
 public class PostListSearchedAdapter extends RecyclerView.Adapter<PostListSearchedAdapter.postSearchedViewHolder> {
 
     public static final String TAG = "PostListSearchedAdapter";
-    private Context mContext;
+
     private List<Post> mPostList;
     private OnPostSelectedListener mListener;
 
-    public PostListSearchedAdapter(@NonNull Context context,  List<Post> postList, OnPostSelectedListener Listener) {
-        mContext = context;
+    public PostListSearchedAdapter(List<Post> postList, OnPostSelectedListener Listener) {
         mPostList = postList;
         mListener = Listener;
     }
 
-    @NonNull
     @Override
-    public postSearchedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public postSearchedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.e("post1", "hello");
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_item, parent, false);
         return new postSearchedViewHolder(v, parent.getContext());
     }
 
     @Override
     public void onBindViewHolder(@NonNull postSearchedViewHolder holder, int position) {
+        Log.e("post2", "hello");
         holder.bind(mPostList.get(position), mListener);
     }
 
-    @Override
-    public int getItemCount() {
-        return 0;
-    }
-
-    public class postSearchedViewHolder extends RecyclerView.ViewHolder {
+    static class postSearchedViewHolder extends RecyclerView.ViewHolder {
 
         Context mContext;
         ImageView uIconBtn;
@@ -75,6 +70,7 @@ public class PostListSearchedAdapter extends RecyclerView.Adapter<PostListSearch
             FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
 
             final String post_userId = post.getUid();
+            Log.e("post3", "hello");
             mDatabase.collection("users").document(post_userId)
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -123,5 +119,12 @@ public class PostListSearchedAdapter extends RecyclerView.Adapter<PostListSearch
 
     public interface OnPostSelectedListener {
         void onPostSelected(View view, int position);
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mPostList != null)
+            return mPostList.size();
+        else return 0;
     }
 }
