@@ -8,7 +8,6 @@ public class PostDetailActivity extends AppCompatActivity {
 
     public static final String KEY_SNAPSHOT = "PostDetailActivity";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -47,7 +47,6 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
         // Firestore
         mFirestore = FirebaseFirestore.getInstance();
         mCollectionReference = mFirestore.collection("posts");
-
         mRecyclerView = view.findViewById(R.id.PostsList);
         mRecyclerView.setHasFixedSize(true);
         return view;
