@@ -344,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mWriteNewPostFab.setVisibility(View.GONE);
                     mStartRecordingFab.setVisibility(View.GONE);
                     mCloseDrawerFab.setVisibility(View.GONE);
+                    mSearchFab.setVisibility(View.GONE);
                     mOpenDrawerFab.setVisibility(View.VISIBLE);
                     break;
 
@@ -352,6 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mStartRecordingFab.setVisibility(View.GONE);
                     mStopRecordingFab.setVisibility(View.GONE);
                     mCloseDrawerFab.setVisibility(View.GONE);
+                    mSearchFab.setVisibility(View.GONE);
                     mOpenDrawerFab.setVisibility(View.VISIBLE);
                     Intent intent_newPost = new Intent(this, NewPostActivity.class);
                     startActivity(intent_newPost);
@@ -361,6 +363,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mWriteNewPostFab.setVisibility(View.GONE);
                     mStartRecordingFab.setVisibility(View.GONE);
                     mCloseDrawerFab.setVisibility(View.GONE);
+                    mSearchFab.setVisibility(View.GONE);
                     mOpenDrawerFab.setVisibility(View.VISIBLE);
                     mStopRecordingFab.setVisibility(View.VISIBLE);
                     Intent intent_start = new Intent(this, LocationService.class);
@@ -370,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.StopRecordingFab:
                     mStopRecordingFab.setVisibility(View.GONE);
                     mOpenDrawerFab.setVisibility(View.GONE);
+                    mSearchFab.setVisibility(View.GONE);
                     mCloseDrawerFab.setVisibility(View.VISIBLE);
                     mWriteNewPostFab.setVisibility(View.VISIBLE);
                     mStartRecordingFab.setVisibility(View.VISIBLE);
@@ -379,6 +383,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 case R.id.Search:
                     mSearchFab.setVisibility(View.GONE);
+                    mWriteNewPostFab.setVisibility(View.GONE);
+                    mStartRecordingFab.setVisibility(View.GONE);
+                    mStopRecordingFab.setVisibility(View.GONE);
+                    mCloseDrawerFab.setVisibility(View.GONE);
+                    mOpenDrawerFab.setVisibility(View.VISIBLE);
                     break;
 
                 default:

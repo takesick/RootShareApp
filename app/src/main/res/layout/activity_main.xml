@@ -126,7 +126,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="252dp"
         android:backgroundTint="@color/colorAccent"
-        android:src="@drawable/ic_menu_search"
+        android:src="@drawable/ic_search_black_24dp"
         android:visibility="gone" />
 
 
