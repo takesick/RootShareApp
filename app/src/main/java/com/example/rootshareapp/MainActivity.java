@@ -94,9 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     new MyPageFragment(),
             };
             private final String[] mFragmentNames = new String[]{
-                    getString(R.string.heading_recent),
-                    getString(R.string.heading_my_routes),
-                    getString(R.string.heading_my_page)
+                    getString(R.string.home_heading_recent),
+                    getString(R.string.home_heading_my_routes),
+                    getString(R.string.home_heading_my_page)
             };
 
 //            private int[] imageResId = {

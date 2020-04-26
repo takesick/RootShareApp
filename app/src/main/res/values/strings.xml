@@ -1,13 +1,16 @@
 <resources>
-    <string name="app_name">RootShareApp</string>
+    <string name="app_name">RouteShareApp</string>
     <string name="title_activity_maps">Map</string>
 
-    <string name="tab_a_label">ホーム</string>
-    <string name="tab_b_label">マイルート</string>
-    <string name="tab_c_label">マイページ</string>
+    <string name="home_tab_1_label">ホーム</string>
+    <string name="home_tab_2_label">マイルート</string>
+    <string name="home_tab_3_label">マイページ</string>
 
-    <string name="heading_recent">ホーム</string>
-    <string name="heading_my_routes">マイルート</string>
-    <string name="heading_my_page">マイページ</string>
+    <string name="home_heading_recent">ホーム</string>
+    <string name="home_heading_my_routes">マイルート</string>
+    <string name="home_heading_my_page">マイページ</string>
+
+    <string name="my_page_tab_1_label">投稿</string>
+    <string name="my_page_tab_2_label">いいね</string>
 
 </resources>
