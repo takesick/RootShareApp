@@ -1,17 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/addSpotBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorAccent"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp"
+        android:text="+ スポットを追加" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:background="#FF9800" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/Reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/list_featured_spot_item">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/addTagsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorAccent"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp"
+        android:text="+ タグを追加" />
+
+    <TextView
+        android:id="@+id/addReviewBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorAccent"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp"
+        android:text="+ 画像と口コミを追加" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/line2"
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:background="#FF9800" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/featuredSpots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/list_featured_spot_item">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/editLocationBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorAccent"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp"
+        android:text="- 位置情報を表示する" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/LocationList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
+        android:visibility="gone"
         tools:listitem="@layout/list_location_item" />
 
 
-</RelativeLayout>
+</LinearLayout>

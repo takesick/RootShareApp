@@ -35,35 +35,6 @@
             android:paddingVertical="5dp"
             android:text="+ ルートを追加" />
 
-        <TextView
-            android:id="@+id/addSpotBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@color/colorAccent"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="5dp"
-            android:text="+ スポットを追加" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/line"
-                android:layout_width="5dp"
-                android:layout_height="match_parent"
-                android:background="#FF9800" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/featuredSpots"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/list_featured_spot_item">
-
-            </androidx.recyclerview.widget.RecyclerView>
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
