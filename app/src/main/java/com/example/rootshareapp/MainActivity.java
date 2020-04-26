@@ -93,19 +93,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     new MyRoutesFragment(),
                     new MyPageFragment(),
             };
-            private final String[] mFragmentNames = new String[]{
-                    getString(R.string.home_heading_recent),
-                    getString(R.string.home_heading_my_routes),
-                    getString(R.string.home_heading_my_page)
-            };
-
+//            private final String[] mFragmentNames = new String[]{
+//                    getString(R.string.home_heading_recent),
+//                    getString(R.string.home_heading_my_routes),
+//                    getString(R.string.home_heading_my_page)
+//            };
+//
 //            private int[] imageResId = {
 //                    R.drawable.ic_home_black_24dp,
 //                    R.drawable.ic_place_black_24dp,
 //                    R.drawable.ic_person_black_24dp
 //            };
 
-            //            @Override
+//            @Override
 //            public CharSequence getPageTitle(int position) {
 //
 //                Drawable image = ContextCompat.getDrawable(getApplicationContext(), imageResId[position]);
@@ -124,11 +124,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public int getCount() {
                 return mFragments.length;
             }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return mFragmentNames[position];
-            }
+//
+//            @Override
+//            public CharSequence getPageTitle(int position) {
+//                return mFragmentNames[position];
+//            }
 
         };
 
