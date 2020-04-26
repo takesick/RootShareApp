@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.MainActivity;
+import com.example.rootshareapp.R;
 import com.example.rootshareapp.RecentPostActivity;
 import com.example.rootshareapp.adapter.PostListSearchedAdapter;
 import com.example.rootshareapp.model.Post;
@@ -28,7 +29,6 @@ public class RecentPostsFragment extends PostListFragment implements MainActivit
         return query;
     }
 
-
     @Override
     public void onPostSelected(View view, int position) {
         Intent intent = new Intent(getActivity(), RecentPostActivity.class);
@@ -39,6 +39,7 @@ public class RecentPostsFragment extends PostListFragment implements MainActivit
     @Override
     public void setQuery(List<Post> postList) {
         PostListSearchedAdapter mSearchAdapter = new PostListSearchedAdapter(postList, this);
+        mRecyclerView = getView().findViewById(R.id.PostsList);
         mRecyclerView.setAdapter(mSearchAdapter);
     }
 }
