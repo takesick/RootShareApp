@@ -8,7 +8,7 @@
     <EditText
         android:id="@+id/setTitle"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="40dp"
         android:background="#c0c0c0"
         android:hint="タイトルを入力してください"/>
 
