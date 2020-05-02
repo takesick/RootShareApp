@@ -38,8 +38,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".RouteDetailActivity" />
 
+        <activity android:name=".RouteDetailActivity"
+                       android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <service android:name=".LocationService" />
     </application>
 
