@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.rootshareapp.fragment.LocationFragment;
 import com.example.rootshareapp.fragment.MapFragment;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
+
+import java.util.Objects;
 
 public class RouteDetailActivity extends AppCompatActivity {
 
@@ -28,9 +31,8 @@ public class RouteDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_detail);
-
         mLocationDataViewModel = ViewModelProviders.of(this).get(LocationDataViewModel.class);
-
+        EditText edit =findViewById(R.id.setTitle);
         if (savedInstanceState == null) {
 
             // FragmentManagerのインスタンス生成
@@ -68,7 +70,6 @@ public class RouteDetailActivity extends AppCompatActivity {
 //        accuracyView.setText("|精度：" + locationData.getAccuracy());
 //        latitudeView.setText("|緯度："+ locationData.getLatitude());
 //        longitudeView.setText("|経度："+ locationData.getLongitude());
-//
 //    }
 
     private void hideKeyboard() {
