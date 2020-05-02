@@ -30,15 +30,13 @@ public class LocationDetailFragment extends Fragment {
     private FloatingActionButton saveFab, deleteFab;
     private Local_Location mLocal_Location;
     private LocationDataViewModel mLocationDataViewModel;
-//
+// 口コミの記入
 //    int id = this.getArguments().getInt(KEY_LOCATION_ID);
 
     public static LocationDetailFragment newInstance() {
-
         LocationDetailFragment fragment = new LocationDetailFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -53,13 +51,11 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         timeView = view.findViewById(R.id.created_at);
         accuracyView = view.findViewById(R.id.accuracy);
         latitudeView = view.findViewById(R.id.lat);
         longitudeView = view.findViewById(R.id.lng);
         editCommentView = view.findViewById(R.id.editComent);
-
     }
 
     @Override
