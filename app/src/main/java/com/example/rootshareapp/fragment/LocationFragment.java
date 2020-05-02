@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,10 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.RouteDetailActivity;
+import com.example.rootshareapp.adapter.LocationListAdapter;
 import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
-import com.example.rootshareapp.adapter.LocationListAdapter;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
     private RecyclerView mRecyclerView;
     private LocationListAdapter mAdapter;
     private LocationDataViewModel mLocationDataViewModel;
-    private FloatingActionButton mStartRecordingFab, mStopRecordingFab;
+    private Button addSpotBtn, addTagBtn;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -100,8 +100,9 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
 
 
     @Override
-    public void onLocationSelected(Local_Location local_location) {
-
+    public void onLocationSelected(Local_Location local_location, int position) {
+        MapFragment fragment = (MapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map_container);
+        fragment.onMarkerSelected(position);
         mLocationDataViewModel.setSelectedLocation(local_location);
 
         FragmentManager fragmentManager = getParentFragmentManager();

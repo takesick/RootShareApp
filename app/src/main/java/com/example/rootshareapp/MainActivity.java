@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        fragment = (RecentPostsFragment) mPagerAdapter.getItem(mViewPager.getCurrentItem());
 //
 
-
     }
 
     // 位置情報許可の確認、外部ストレージのPermissionにも対応できるようにしておく

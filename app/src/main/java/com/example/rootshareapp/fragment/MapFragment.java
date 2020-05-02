@@ -157,7 +157,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     }
                     mMarker = mMap.addMarker(new MarkerOptions()
                             .position(mLatLng)
-                            .title("位置情報" + position)
+                            .title("位置情報" + (position+1))
                             .icon(BitmapDescriptorFactory.defaultMarker(color))
                             .draggable(true));
                     mMarkerList.add(mMarker);
@@ -184,4 +184,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.addPolyline(polyOptions);
     }
 
+    public void onMarkerSelected(int position) {
+        onMarkerClick(mMarkerList.get(position));
+        mMarkerList.get(position).showInfoWindow();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMarker.getPosition(), 20));
+    }
 }
