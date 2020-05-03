@@ -1,11 +1,12 @@
 package com.example.rootshareapp.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,17 +23,31 @@ import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.adapter.LocationListAdapter;
 import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
+import java.util.Arrays;
 import java.util.List;
 
-public class LocationFragment extends Fragment implements LocationListAdapter.OnLocationSelectedListener {
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
+
+public class LocationFragment extends Fragment implements View.OnClickListener, LocationListAdapter.OnLocationSelectedListener {
+
+    public static final int AUTOCOMPLETE_REQUEST_CODE = 1;
+    private static final String TAG = "LocationList";
 
     private int route_id;
     private View view;
     private RecyclerView mRecyclerView;
-    private LocationListAdapter mAdapter;
+    private LocationListAdapter mLocationListAdapter;
     private LocationDataViewModel mLocationDataViewModel;
-    private Button addSpotBtn, addTagBtn;
+    private TextView addSpotBtn, addTagsBtn, addReviewBtn;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -49,8 +64,16 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAdapter = new LocationListAdapter(getActivity(), this);
-        mRecyclerView.setAdapter(mAdapter);
+        addSpotBtn = view.findViewById(R.id.addSpotBtn);
+        addTagsBtn = view.findViewById(R.id.addTagsBtn);
+        addReviewBtn = view.findViewById(R.id.addReviewBtn);
+
+        addSpotBtn.setOnClickListener(this);
+        addTagsBtn.setOnClickListener(this);
+        addReviewBtn.setOnClickListener(this);
+
+        mLocationListAdapter = new LocationListAdapter(getActivity(), this);
+        mRecyclerView.setAdapter(mLocationListAdapter);
         route_id = getActivity().getIntent().getExtras().getInt(RouteDetailActivity.KEY_ROUTE_ID);
         Log.e("res2", String.valueOf(route_id));
 //
@@ -64,38 +87,29 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
             @Override
             public void onChanged(@Nullable final List<Local_Location> local_locationList) {
                 // Update the cached copy of the words in the adapter.
-                mAdapter.setLocationDataList(local_locationList);
+                mLocationListAdapter.setLocationDataList(local_locationList);
             }
         });
 
-//        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(getActivity());
-//        //        データベースファイルの削除
-////        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
-//        Log.e("tag1", String.valueOf(getActivity().getIntent().getExtras().getLong(KEY_ROOT_ID)));
-//        final SQLiteDatabase db = locationOpenHelper.getWritableDatabase();
-//        mAdapter = new LocationAdapter(getContext(),getAllItems(db), this);
+    }
 
-//        mStartRecordingFab = getActivity().findViewById(R.id.StartRecordingFab);
-//        mStartRecordingFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
-//
-//                // API 26 以降
-//                getActivity().startForegroundService(intent);
-//            }
-//        });
-//
-//        mStopRecordingFab  = getActivity().findViewById(R.id.StopRecordingFab);
-//        mStopRecordingFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Serviceの停止
-//                Intent intent = new Intent(getActivity().getApplication(), LocationService.class);
-//                getActivity().stopService(intent);
-//            }
-//        });
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                setSpot(place);
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+                Log.e(TAG, "Place: " );
+            }
+        }
     }
 
 
@@ -110,5 +124,50 @@ public class LocationFragment extends Fragment implements LocationListAdapter.On
         fragmentTransaction.replace(R.id.location_container, LocationDetailFragment.newInstance());
         fragmentTransaction.commit();
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v != null) {
+            switch (v.getId()) {
+                case R.id.addSpotBtn:
+
+                    // Set the fields to specify which types of place data to
+                    // return after the user has made a selection.
+                    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+
+                    // Start the autocomplete intent.
+                    Intent intent = new Autocomplete.IntentBuilder(
+                            AutocompleteActivityMode.OVERLAY, fields)
+                            .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                            .setHint("店舗名、または施設名")
+                            .build(getActivity());
+                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+//                    Intent intent = new Intent(getActivity(), AddSpotActivity.class);
+//                    startActivity(intent);
+                    break;
+
+                case R.id.addTagsBtn:
+
+                    break;
+
+                case R.id.addReviewBtn:
+//                    FragmentManager fragmentManager = getParentFragmentManager();
+//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                    fragmentTransaction.replace(R.id.container, SignInFragment.newInstance());
+//                    fragmentTransaction.commit();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    public void setSpot(Place place){
+        addSpotBtn.setText(place.getName());
+//        MapFragment fragment = (MapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map_container);
+//        fragment.addSpotMarker();
     }
 }

@@ -1,13 +1,11 @@
 package com.example.rootshareapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -16,35 +14,38 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.rootshareapp.fragment.LocationFragment;
 import com.example.rootshareapp.fragment.MapFragment;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
-
-import java.util.Objects;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 
 public class RouteDetailActivity extends AppCompatActivity {
 
-    private static final String TAG = "LocationDetail";
     public static final String KEY_ROUTE_ID = "key_route_id";
     public static final String KEY_LOCATION_ID = "key_location_id";
 
     private LocationDataViewModel mLocationDataViewModel;
+    private EditText routeTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_detail);
+
+        routeTitle =findViewById(R.id.setTitle);
+
         mLocationDataViewModel = ViewModelProviders.of(this).get(LocationDataViewModel.class);
-        EditText edit =findViewById(R.id.setTitle);
+
+        // Initialize the SDK
+        Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
+        // Create a new Places client instance
+        PlacesClient placesClient = Places.createClient(getApplicationContext());
+
         if (savedInstanceState == null) {
 
             // FragmentManagerのインスタンス生成
             FragmentManager fragmentManager = getSupportFragmentManager();
-            // FragmentTransactionのインスタンスを取得
             FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
-            MapFragment mapFragment = new MapFragment();
-            // インスタンスに対して張り付け方を指定する
-            fragmentTransaction1.add(R.id.map_container, mapFragment);
-            // 張り付けを実行
+            fragmentTransaction1.add(R.id.map_container, new MapFragment());
             fragmentTransaction1.commit();
-
             FragmentTransaction fragmentTransaction2 = fragmentManager.beginTransaction();
             fragmentTransaction2.add(R.id.location_container, new LocationFragment());
             fragmentTransaction2.commit();
@@ -80,15 +81,6 @@ public class RouteDetailActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-//        if (requestCode != REQUEST_MAIN_ACTIVITY)
-//            return;
-//        if (resultCode != RESULT_OK)
-//            return;
-
-    }
 }
 

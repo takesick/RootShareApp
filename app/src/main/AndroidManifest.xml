@@ -41,6 +41,7 @@
 
         <activity android:name=".RouteDetailActivity"
                        android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".AddSpotActivity" />
         <service android:name=".LocationService" />
     </application>
 
