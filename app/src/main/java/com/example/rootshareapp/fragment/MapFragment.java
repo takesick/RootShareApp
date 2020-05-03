@@ -189,4 +189,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMarkerList.get(position).showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mMarker.getPosition(), 20));
     }
+
+//    public void addSpotMarker() {
+//        mMarker = mMap.addMarker(new MarkerOptions()
+//                .position(mLatLng)
+//                .title("位置情報" + (position+1))
+//                .icon(BitmapDescriptorFactory.defaultMarker(color))
+//                .draggable(true));
+//    }
 }
