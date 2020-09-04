@@ -37,7 +37,7 @@ import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_AZUR
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_VIOLET;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
+public class LocalMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
 
     private static final String[] LOCATION_PERMISSION = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -67,7 +67,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //        return fragment;
 //    }
 
-    public MapFragment() {
+    public LocalMapFragment() {
         // Required empty public constructor
     }
 

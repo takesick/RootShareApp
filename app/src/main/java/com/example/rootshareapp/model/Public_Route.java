@@ -1,32 +1,17 @@
 package com.example.rootshareapp.model;
 
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "route_table")
-public class Local_Route {
-    @PrimaryKey(autoGenerate = true)
+public class Public_Route {
     public int _id;
-
-    @ColumnInfo(name = "title")
-    @NonNull
     public String title;
-
-    @ColumnInfo(name = "created_at")
-    @NonNull
     public String created_at;
-
-    @ColumnInfo(name = "uid")
-    @NonNull
     public String uid;
+    public String ref;
 
 //    @ColumnInfo(name = "spots")
 //    @NonNull
 //    public String spots;
 
-    public Local_Route(String title, String created_at, String uid) {
+    public Public_Route(String title, String created_at, String uid) {
         this.title = title;
         this.created_at = created_at;
         this.uid = uid;
@@ -59,4 +44,8 @@ public class Local_Route {
 //    public String getSpots() {
 //        return spots;
 //    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
 }

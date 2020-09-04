@@ -9,17 +9,19 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.rootshareapp.model.Guide;
 import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.model.Local_Route;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Local_Route.class, Local_Location.class}, version = 1, exportSchema = false)
+@Database(entities = {Local_Route.class, Local_Location.class, Guide.class}, version = 1, exportSchema = false)
 public abstract class LocationRoomDatabase extends RoomDatabase {
 
     public abstract RouteDao routeDao();
     public abstract LocationDao locationDao();
+    public abstract GuideDao guideDao();
 
     // marking the instance as volatile to ensure atomic access to the variable
     private static volatile LocationRoomDatabase INSTANCE;
@@ -65,7 +67,7 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                     // If you want to start with more words, just add them.
 //                    RouteDao routedao = INSTANCE.routeDao();
 //                    LocationDao locationdao = INSTANCE.locationDao();
-
+//
 //                    routedao.deleteAllRoutes();
 //                    locationdao.deleteAllLocations();
                 }
@@ -83,6 +85,7 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                     RouteContract.Routes.COL_CREATED_AT + " String," +
                     RouteContract.Routes.COL_TITLE + " String," +
                     RouteContract.Routes.COL_UID + " String)"
+//                    RouteContract.Routes.COL_SPOTS + " Sting)"
             );
             database.execSQL("create table " + "location_table" + "(" +
                     LocationContract.Locations._ID + " integer primary key autoincrement," +
@@ -93,6 +96,13 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                     LocationContract.Locations.COL_COMMENT + " String," +
                     LocationContract.Locations.COL_UID + " String ," +
                     LocationContract.Locations.COL_ROUTE_ID + " integer)"
+            );
+            database.execSQL("create table " + "guide_table" + "(" +
+                            GuideContract.Guide._ID + " integer primary key autoincrement," +
+                            GuideContract.Guide.COL_CREATED_AT + " String," +
+                            GuideContract.Guide.COL_SPOT_NAME + " String," +
+                            GuideContract.Guide.COL_BODY + " String," +
+                            GuideContract.Guide.COL_ROUTE_ID + " integer)"
             );
         }
     };

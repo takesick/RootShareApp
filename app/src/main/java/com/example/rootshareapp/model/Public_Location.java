@@ -3,7 +3,7 @@ package com.example.rootshareapp.model;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class LocationData {
+public class Public_Location {
 
         public static final String FIELD_DESTINATION = "destination";
         public static final String FIELD_TITLE = "tag";
@@ -13,23 +13,23 @@ public class LocationData {
         public static final String FIELD_CREATE_AT = "created_at";
         public static final String FIELD_UID = "uid";
 
-
         public String tag;
         public double latitude;
         public double longitude;
         public double accuracy;
         public String created_at;
         public String uid;
+        public String comment;
 
-        public LocationData() {}
+        public Public_Location() {}
 
-        public LocationData(String tag, double latitude, double longitude,double accuracy, String created_at, String uid) {
+        public Public_Location(String tag, double latitude, double longitude, double accuracy, String created_at, String comment) {
             this.tag = tag;
             this.latitude = latitude;
             this.longitude = longitude;
             this.accuracy = accuracy;
             this.created_at = created_at;
-            this.uid = uid;
+            this.comment = comment;
         }
 
         public String getTag() {
@@ -70,13 +70,5 @@ public class LocationData {
 
         public void setCreated_at(String created_at) {
             this.created_at = created_at;
-        }
-
-        public void setUid(String uid) {
-            this.uid = uid;
-        }
-
-        public String getUid() {
-            return uid;
         }
 }

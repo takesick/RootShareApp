@@ -12,6 +12,7 @@ public class RouteContract {
         public static final String COL_CREATED_AT = "created_at";
         public static final String COL_TITLE = "title";
         public static final String COL_UID = "uid";
+        public static final String COL_SPOTS = "spots";
 
     }
 }

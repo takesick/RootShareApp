@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.rootshareapp.fragment.LocationFragment;
-import com.example.rootshareapp.fragment.MapFragment;
+import com.example.rootshareapp.fragment.LocalMapFragment;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -44,7 +44,7 @@ public class RouteDetailActivity extends AppCompatActivity {
             // FragmentManagerのインスタンス生成
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
-            fragmentTransaction1.add(R.id.map_container, new MapFragment());
+            fragmentTransaction1.add(R.id.map_container, new LocalMapFragment());
             fragmentTransaction1.commit();
             FragmentTransaction fragmentTransaction2 = fragmentManager.beginTransaction();
             fragmentTransaction2.add(R.id.location_container, new LocationFragment());

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
+import com.example.rootshareapp.model.Guide;
 import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.model.Local_Route;
 
@@ -13,17 +14,21 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class LocationDataRepository {
+public class LocationDataRepository  {
     private LocationDao locationDao;
     private RouteDao routeDao;
+    private GuideDao guideDao;
 
     private LiveData<List<Local_Route>> mLatestRoutes;
     private LiveData<List<Local_Location>> mLatestLocations;
+    private List<Local_Location> mLocationsWithinRoute;
+    private LiveData<List<Guide>> mLatestGuides;
 
     public LocationDataRepository(Application application) {
         LocationRoomDatabase db = LocationRoomDatabase.getDatabase(application);
         routeDao = db.routeDao();
         locationDao = db.locationDao();
+        guideDao = db.guideDao();
     }
 
     // Note that in order to unit test the WordRepository, you have to remove the Application
@@ -40,6 +45,10 @@ public class LocationDataRepository {
     public LiveData<List<Local_Location>> getLatestLocations(int route_id) {
         mLatestLocations = locationDao.getLatestLocations(route_id);
         return mLatestLocations;
+    }
+    public LiveData<List<Guide>> getLatestGuides(int route_id) {
+        mLatestGuides = guideDao.getLatestGuides(route_id);
+        return mLatestGuides;
     }
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
@@ -116,6 +125,47 @@ public class LocationDataRepository {
         });
     }
 
+    public void insertGuide(final Guide guide) {
+        LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                guideDao.insertGuide(guide);
+            }
+        });
+    }
+
+    public void updateGuide(final Guide guide) {
+        LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                guideDao.updateGuide(guide);
+            }
+        });
+    }
+
+    public void deleteGuide(final Guide guide) {
+        LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                guideDao.deleteGuide(guide);
+            }
+        });
+    }
+
+    public void deleteAllGuides() {
+        LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                guideDao.deleteAllGuides();
+            }
+        });
+    }
+
+    public List<Local_Location> getLocationsWithinRoute(Integer route_id) throws ExecutionException, InterruptedException {
+        mLocationsWithinRoute = new getLocationsWithinRouteAsyncTask(locationDao).execute(route_id).get();
+        return mLocationsWithinRoute;
+    }
+
 
 //    private static class InsertLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Long> {
 //        private LocationDao locationDao;
@@ -143,20 +193,20 @@ public class LocationDataRepository {
 //        }
 //    }
 
-    private static class getSelectedLocationAsyncTask extends AsyncTask<Integer, Void, LiveData<Local_Location>> {
+    private static class getLocationsWithinRouteAsyncTask extends AsyncTask<Integer, Void, List<Local_Location>> {
         private LocationDao locationDao;
 
-        private getSelectedLocationAsyncTask(LocationDao locationDao) {
+        private getLocationsWithinRouteAsyncTask(LocationDao locationDao) {
             this.locationDao = locationDao;
         }
 
         @Override
-        protected LiveData<Local_Location> doInBackground(Integer... location_id) {
-            return locationDao.getSelectedLocation(location_id[0]);
+        protected List<Local_Location> doInBackground(Integer... route_id) {
+            return locationDao.getLocationsWithinRoute(route_id);
         }
 
         @Override
-        protected void onPostExecute(LiveData<Local_Location> result) {
+        protected void onPostExecute(List<Local_Location> result) {
             super.onPostExecute(result);
         }
 //

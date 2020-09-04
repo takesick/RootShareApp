@@ -16,15 +16,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.algolia.search.saas.Client;
 import com.algolia.search.saas.Index;
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.model.Post;
+import com.example.rootshareapp.model.Public_Location;
+import com.example.rootshareapp.model.Public_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class NewPostFragment extends Fragment implements View.OnClickListener {
 
@@ -54,24 +57,33 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView mRecyclerView;
     private FirebaseFirestore mDatabase;
-    private CollectionReference postRef;
+    private CollectionReference mPostRef, mRouteRef;
+    private DocumentReference mLocationRef;
 
-    private String uid, created_at, body;
+    private Boolean routeInfo = false;
     private Post post;
-    private Local_Route local_Route;
+    private Local_Route local_Route = null;
+    private List<Local_Location> local_locations;
+    private Public_Route mRoute;
+    private Public_Location mLocation;
+    private List<Public_Location> mLocations = new ArrayList<Public_Location>();
 
     private LocationDataViewModel mLocationDataViewModel;
+
+    interface PostListener {
+        void addNewPost(Public_Route public_route);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_new_post, container, false);
-        mRecyclerView = view.findViewById(R.id.featuredSpots);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
         mDatabase = FirebaseFirestore.getInstance();
+        mPostRef = mDatabase.collection("posts");
+        mRouteRef = mDatabase.collection("routes");
 
         return view;
     }
@@ -114,14 +126,33 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                     break;
 
                 case R.id.submitBtn:
-                    uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    createPost(uid);
-                    mDatabase.collection("posts")
-                        .add(post)
+                    createPost();
+                    mPostRef.add(post)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
                                 Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                                final String post_id = documentReference.getId();
+                                if(local_Route!=null) {
+                                    mRouteRef.add(mRoute)
+                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                @Override
+                                                public void onSuccess(final DocumentReference documentReference) {
+                                                    Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                    mRouteRef.document(documentReference.getId()).update("ref", documentReference.getPath());
+                                                    mPostRef.document(post_id).update("route_ref", documentReference.getPath());
+                                                    for(int i = 0; i < mLocations.size(); i++) {
+                                                        mRouteRef.document(documentReference.getId()).collection("locations").add(mLocations.get(i));
+                                                    }
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error adding document", e);
+                                                }
+                                            });
+                                }
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -160,10 +191,12 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         return df.format(date);
     }
 
-    public void createPost(String uid) {
-        created_at = getNowDate();
-        body = editBodyView.getText().toString();
-        post = new Post(uid, created_at, body);
+    public void createPost() {
+        post = new Post(
+                FirebaseAuth.getInstance().getCurrentUser(),
+                getNowDate(),
+                editBodyView.getText().toString()
+        );
     }
 
     public void showPhoto(Uri photoImage) {
@@ -185,6 +218,40 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
 
     public void setRoute() {
         local_Route = mLocationDataViewModel.getSelectedRoute();
+        try {
+            local_locations = mLocationDataViewModel.getLocationsWithinRoute(local_Route._id);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         selectRouteBtn.setText(local_Route.title);
+        convertRouteToPublic();
+        convertLocationsToPublic();
+
+    }
+
+    public void convertRouteToPublic(){
+        mRoute = new Public_Route(
+                local_Route.title,
+                local_Route.created_at,
+                local_Route.uid
+//                local_Route.spots
+        );
+    }
+
+    public void convertLocationsToPublic(){
+        for(int i = 0; i < local_locations.size(); i++){
+            mLocation = new Public_Location(
+                    local_locations.get(i).created_at,
+                    local_locations.get(i).latitude,
+                    local_locations.get(i).longitude,
+                    local_locations.get(i).accuracy,
+                    local_locations.get(i).created_at,
+                    local_locations.get(i).comment
+            );
+            mLocations.add(mLocation);
+        }
     }
 }

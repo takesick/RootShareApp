@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.rootshareapp.PostDetailActivity;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.adapter.PostListAdapter;
+import com.example.rootshareapp.model.Post;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -151,9 +152,12 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
     }
 
     @Override
-    public void onPostSelected(DocumentSnapshot post) {
+    public void onPostSelected(DocumentSnapshot snapshot) {
+        Post post = snapshot.toObject(Post.class);
         Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-        intent.putExtra(PostDetailActivity.KEY_SNAPSHOT, post.getId());
+        intent.putExtra("uid", post.uid);
+        intent.putExtra("created_at", post.created_at);
+        intent.putExtra("body", post.body);
         startActivity(intent);
     }
 

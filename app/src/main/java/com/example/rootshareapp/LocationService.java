@@ -9,7 +9,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -26,7 +25,6 @@ import androidx.core.app.ActivityCompat;
 import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
-//import com.example.rootshareapp.sqlite.LocationOpenHelper;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DateFormat;
@@ -35,6 +33,8 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
+//import com.example.rootshareapp.sqlite.LocationOpenHelper;
+
 public class LocationService extends Service implements LocationListener {
     private LocationManager locationManager;
     private Context context;
@@ -42,12 +42,9 @@ public class LocationService extends Service implements LocationListener {
     private static final int MinTime = 10;
     private static final float MinDistance = 1;
 
-////    private StorageReadWrite fileReadWrite;
-//    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
-    private SQLiteDatabase db;
     private LocationDataViewModel mLocationDataViewModel = new LocationDataViewModel(getApplication());
-    
 
+    int num = 1;
     private String startDate;
     private double latitude;
     private double longitude;
@@ -234,140 +231,17 @@ public class LocationService extends Service implements LocationListener {
         Local_Location local_location = new Local_Location(latitude, longitude, accuracy, created_at, uid, route_id, comment);
         mLocationDataViewModel.insertLocation(local_location);
 
-
-
-        //        open db
-//        LocationOpenHelper locationOpenHelper = new LocationOpenHelper(this);
-//        データベースファイルの削除
-//        SQLiteDatabase.deleteDatabase(context.getDatabasePath(locationOpenHelper.getDatabaseName()));
-//        db = locationOpenHelper.getWritableDatabase();
-//
-////        処理(select, insert, delete, update)
-//        ContentValues newLocation = new ContentValues();
-//        newLocation.put(LocationContract.Locations.COL_LATITUDE, latitude);
-//        newLocation.put(LocationContract.Locations.COL_LONGITUDE, longitude);
-//        newLocation.put(LocationContract.Locations.COL_ACCURACY, accuracy);
-//        newLocation.put(LocationContract.Locations.COL_CREATED_AT, created_at);
-//        newLocation.put(LocationContract.Locations.COL_COMMENT, "");
-//        newLocation.put(LocationContract.Locations.COL_UID, uid);
-//        newLocation.put(LocationContract.Locations.COL_ROOT_ID, root_id);
-//
-//        long newLocationId = db.insert(
-//                LocationContract.Locations.TABLE_NAME,
-//                null,
-//                newLocation
-//        );
-//        Cursor cursor = null;
-//        cursor = db.query(
-//                LocationContract.Locations.TABLE_NAME,
-//                null,
-//                LocationContract.Locations.COL_ROOT_ID + " = ?",
-//                new String[]{ String.valueOf(root_id) },
-//                null,
-//                null,
-//                LocationContract.Locations._ID + " desc",
-//                "1"
-//        );
-//        while(cursor.moveToNext()) {
-//            int id = cursor.getInt(cursor.getColumnIndex(LocationContract.Locations._ID));
-//            double db_latitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LATITUDE));
-//            double db_longitude = cursor.getDouble(cursor.getColumnIndex(LocationContract.Locations.COL_LONGITUDE));
-//            String db_created_at = cursor.getString(cursor.getColumnIndex(LocationContract.Locations.COL_CREATED_AT));
-//            Log.e("DB_TEST", "id: " + id + ", created_at: " + db_created_at + ", latitude: " + db_latitude + ", longitude: " + db_longitude);
-//            String message = "Now recording(n=" + num + ")";
-//            toastMake(message);
-//            num++;
-//        }
-//
-//        cursor.close();
-//
-////        close db
-//        db.close();
-
-////        Firestore
-//        Local_Location location = new Local_Location(tag, latitude, longitude, accuracy, created_at, uid);
-//// Add a new document with a generated ID
-//        mDatabase.collection("locations")
-//                .add(location)
-//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                    @Override
-//                    public void onSuccess(DocumentReference documentReference) {
-//                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.w(TAG, "Error adding document", e);
-//                    }
-//                });
-//
-//        mDatabase.collection("locations")
-//                .whereEqualTo("title", startDate)
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                Log.d(TAG, document.getId() + " => " + document.getData());
-//
-//                                final String uid = getUid();
-//                                final String lid = document.getId();
-//
-//                                mDatabase.collection("roots").document(uid)
-//                                        .collection(document.getString("title")).document(lid)
-//                                        .set(document.getData());
-//                            }
-//                        } else {
-//                            Log.d(TAG, "Error getting documents: ", task.getException());
-//                        }
-//                    }
-//                });
+        String message = "Now recording(n=" + num + ")";
+        toastMake(message);
+        num++;
 
     }
 
     private Long writeRouteDataToDb(String title, String created_at, String uid) throws ExecutionException, InterruptedException {
         Local_Route local_route = new Local_Route(title, created_at, uid);
+        String message = "Start recording";
+        toastMake(message);
         return mLocationDataViewModel.insertRoute(local_route);
-
-//        RouteOpenHelper routeOpenHelper = new RouteOpenHelper(this);
-//
-////        SQLiteDatabase.deleteDatabase(context.getDatabasePath(routeOpenHelper.getDatabaseName()));
-//        db = routeOpenHelper.getWritableDatabase();
-//
-//        ContentValues newRoute = new ContentValues();
-//        newRoute.put(RouteContract.Routes.COL_TITLE, title);
-//        newRoute.put(RouteContract.Routes.COL_CREATED_AT, created_at);
-//        newRoute.put(RouteContract.Routes.COL_UID, uid);
-//        long newRouteId = db.insert(
-//                RouteContract.Routes.TABLE_NAME,
-//                null,
-//                newRoute
-//        );
-//        Cursor cursor = null;
-//        cursor = db.query(
-//                RouteContract.Routes.TABLE_NAME,
-//                null,
-//                null,
-//                null,
-//                null,
-//                null,
-//                RouteContract.Routes._ID + " desc",
-//                "1"
-//        );
-//        while(cursor.moveToNext()) {
-//            int id = cursor.getInt(cursor.getColumnIndex(RouteContract.Routes._ID));
-//            String db_created_at = cursor.getString(cursor.getColumnIndex(RouteContract.Routes.COL_CREATED_AT));
-//            String db_title = cursor.getString(cursor.getColumnIndex(RouteContract.Routes.COL_TITLE));
-//            Log.e("DB_TEST", "id: " + id + ", created_at: " + db_created_at + ", title: " + db_title);
-//            String message = "Start recording";
-//            toastMake(message);
-//        }
-//        cursor.close();
-//
-////        close db
-//        db.close()
     }
 
     public static String getNowDate(){
