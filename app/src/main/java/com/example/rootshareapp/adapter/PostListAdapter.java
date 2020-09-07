@@ -227,7 +227,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             String locations = new String(path);
             String camera = new String(center_and_zoom);
 
-            String url = "https://maps.googleapis.com/maps/api/staticmap?size=200x200" +
+            String url = "https://maps.googleapis.com/maps/api/staticmap?size=200x200&scale=2" +
                     camera + "&path=color:0xff0000ff|weight:3" + locations + "&key=" + mContext.getString(R.string.google_maps_key);
 
             Glide.with(mContext)
