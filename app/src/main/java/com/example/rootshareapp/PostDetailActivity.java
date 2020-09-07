@@ -1,8 +1,14 @@
 package com.example.rootshareapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.rootshareapp.fragment.PostDetailFragment;
 
 public class PostDetailActivity extends AppCompatActivity {
 
@@ -14,6 +20,21 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
+        if (savedInstanceState == null) {
+
+            // FragmentManagerのインスタンス生成
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.postDetailFragment, PostDetailFragment.newInstance());
+            fragmentTransaction.commit();
+
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
     }
 }

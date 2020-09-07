@@ -1,28 +1,50 @@
 package com.example.rootshareapp.model;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Post {
 
     public String _id;
     public String uid;
+    public String uname;
     public String body;
     public String created_at;
     public String tag;
+    public DocumentReference route_ref;
     public int starCount = 0;
 
     public Post() {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String created_at, String body) {
-        this.uid = uid;
+    public Post(FirebaseUser user, String created_at, String body) {
+        this.uid = user.getUid();
+        this.uname = user.getDisplayName();
         this.created_at = created_at;
-        this.body = body;
+        this.body = body;;
     }
+
+//    public Post(Parcel source) {
+//        uid = source.readString();
+//        created_at = source.readString();
+//        body = source.readString();
+//    }
+//
+//    public static final Creator<Post> CREATOR = new Creator<Post>() {
+//        @Override
+//        public Post createFromParcel(Parcel in) {
+//            return new Post(in);
+//        }
+//
+//        @Override
+//        public Post[] newArray(int size) {
+//            return new Post[size];
+//        }
+//    };
 
     public void setId(String _id) {
         this._id = _id;
@@ -40,6 +62,10 @@ public class Post {
         this.body = body;
     }
 
+//    public void setRoute(Boolean route) {
+//        this.route = route;
+//    }
+
     public String getId() {
         return _id;
     }
@@ -56,14 +82,35 @@ public class Post {
         return body;
     }
 
+    public DocumentReference getRef() {
+        return route_ref;
+    }
+
+//    public Boolean getRoute() {
+//        return route;
+//    }
+
     @Exclude
-    public Map<String, Object> toMap() {
+    public HashMap<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("uid", uid);
         result.put("created_at", created_at);
         result.put("body", body);
+//        result.put("route", route);
 //        result.put("starCount", starCount);
 //        result.put("stars", stars);
         return result;
     }
+
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(Parcel dest, int flags) {
+//        dest.writeString(uid);
+//        dest.writeString(created_at);
+//        dest.writeString(body);
+//    }
 }

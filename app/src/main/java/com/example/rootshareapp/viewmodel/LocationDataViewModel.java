@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.rootshareapp.model.Guide;
 import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.room.LocationDataRepository;
@@ -22,7 +23,9 @@ public class LocationDataViewModel extends AndroidViewModel {
     // - Repository is completely separated from the UI through the ViewModel.
     private LiveData<List<Local_Route>> mLatestRoutes;
     private LiveData<List<Local_Location>> mLatestLocations;
+    private LiveData<List<Guide>> mLatestGuides;
     private Local_Route mSelectedRoute;
+    private List<Local_Location> mLocationsWithinRoute;
     private Local_Location mSelectedLocation;
 
     public LocationDataViewModel(Application application) {
@@ -39,6 +42,17 @@ public class LocationDataViewModel extends AndroidViewModel {
     public LiveData<List<Local_Location>> getLatestLocations(int route_id) {
         mLatestLocations = mRepository.getLatestLocations(route_id);
         return mLatestLocations;
+    }
+
+    public List<Local_Location> getLocationsWithinRoute(int route_id) throws ExecutionException, InterruptedException {
+        Integer Route_id = new Integer(route_id);
+        mLocationsWithinRoute = mRepository.getLocationsWithinRoute(Route_id);
+        return mLocationsWithinRoute;
+    }
+
+    public LiveData<List<Guide>> getLatestGuides(int route_id) {
+        mLatestGuides = mRepository.getLatestGuides(route_id);
+        return mLatestGuides;
     }
 
     public Long insertRoute(Local_Route local_route) throws ExecutionException, InterruptedException {
@@ -73,6 +87,23 @@ public class LocationDataViewModel extends AndroidViewModel {
         mRepository.deleteAllLocations();
     }
 
+    public void insertGuide(Guide guide) {
+        mRepository.insertGuide(guide);
+    }
+
+    public void updateGuide(Guide guide) {
+        mRepository.updateGuide(guide);
+    }
+
+    public void deleteGuide(Guide guide) {
+        mRepository.deleteGuide(guide);
+    }
+
+    public void deleteAllGuides() {
+        mRepository.deleteAllGuides();
+    }
+
+
     public void setSelectedLocation(Local_Location local_location) {
         mSelectedLocation = local_location;
     }
@@ -88,6 +119,9 @@ public class LocationDataViewModel extends AndroidViewModel {
     public Local_Route getSelectedRoute() {
         return mSelectedRoute;
     }
+
+
+
 }
 
 //class MyRoutesFragment extends Fragment {

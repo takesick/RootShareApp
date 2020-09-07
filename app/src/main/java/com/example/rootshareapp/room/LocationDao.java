@@ -25,6 +25,9 @@ public interface LocationDao {
     @Query("SELECT * from location_table WHERE _id = :location_id")
     LiveData<Local_Location> getSelectedLocation(int location_id);
 
+    @Query("SELECT * from location_table WHERE route_id = :route_id ORDER BY _id")
+    List<Local_Location> getLocationsWithinRoute(Integer[] route_id);
+
     @Insert(onConflict = OnConflictStrategy.IGNORE, entity = Local_Location.class)
     long insertLocation(Local_Location local_location);
 

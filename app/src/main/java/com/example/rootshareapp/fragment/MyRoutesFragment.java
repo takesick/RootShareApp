@@ -31,9 +31,7 @@ public class MyRoutesFragment extends Fragment implements RouteListAdapter.OnRou
     private LocationDataViewModel mLocationDataViewModel;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                           ViewGroup container,
-                           Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.frag_my_route, container, false);
         mRecyclerView = view.findViewById(R.id.RouteList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -64,5 +62,4 @@ public class MyRoutesFragment extends Fragment implements RouteListAdapter.OnRou
         Log.e("rep3", String.valueOf(id));
         startActivity(intent);
     }
-
 }

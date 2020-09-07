@@ -1,13 +1,11 @@
 package com.example.rootshareapp.fragment;
 
-import android.content.Intent;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.RecentPostActivity;
 import com.example.rootshareapp.adapter.PostListSearchedAdapter;
 import com.example.rootshareapp.model.Post;
 import com.google.firebase.firestore.CollectionReference;
@@ -30,16 +28,14 @@ public class RecentPostsFragment extends PostListFragment implements MainActivit
     }
 
     @Override
-    public void onPostSelected(View view, int position) {
-        Intent intent = new Intent(getActivity(), RecentPostActivity.class);
-        intent.putExtra(RecentPostActivity.KEY_SNAPSHOT, position);
-        startActivity(intent);
-    }
-
-    @Override
     public void setQuery(List<Post> postList) {
         PostListSearchedAdapter mSearchAdapter = new PostListSearchedAdapter(postList, this);
         mRecyclerView = getView().findViewById(R.id.PostsList);
         mRecyclerView.setAdapter(mSearchAdapter);
+    }
+
+    @Override
+    public void onPostSelected(View view, int position) {
+
     }
 }

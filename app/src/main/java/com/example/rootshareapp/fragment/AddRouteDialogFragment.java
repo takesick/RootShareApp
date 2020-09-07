@@ -1,6 +1,5 @@
 package com.example.rootshareapp.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +35,6 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
         AddRouteDialogFragment fragment = new AddRouteDialogFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
-
         return fragment;
     }
 

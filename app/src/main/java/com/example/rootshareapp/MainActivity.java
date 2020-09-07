@@ -31,6 +31,7 @@ import com.algolia.search.saas.Query;
 import com.example.rootshareapp.fragment.MyPageFragment;
 import com.example.rootshareapp.fragment.MyRoutesFragment;
 import com.example.rootshareapp.fragment.RecentPostsFragment;
+import com.example.rootshareapp.fragment.StartRecordDialogFragment;
 import com.example.rootshareapp.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -359,14 +360,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 case R.id.StartRecordingFab:
+                    StartRecordDialogFragment newFragment = StartRecordDialogFragment.newInstance();
+                    Log.e("dialog", "show");
+                    newFragment.show(getSupportFragmentManager(), "dialog");
                     mWriteNewPostFab.setVisibility(View.GONE);
                     mStartRecordingFab.setVisibility(View.GONE);
                     mCloseDrawerFab.setVisibility(View.GONE);
                     mSearchFab.setVisibility(View.GONE);
                     mOpenDrawerFab.setVisibility(View.VISIBLE);
                     mStopRecordingFab.setVisibility(View.VISIBLE);
-                    Intent intent_start = new Intent(this, LocationService.class);
-                    startForegroundService(intent_start);
                     break;
 
                 case R.id.StopRecordingFab:
