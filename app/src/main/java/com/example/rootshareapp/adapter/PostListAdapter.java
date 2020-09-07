@@ -207,12 +207,14 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             }
 
             double distance = getDistance(max_lat, min_lat, max_long,min_long);
-            if(distance>0.5) {
-                zoom = 13;
-            } else if(distance> 0.2 && distance<=0.5) {
+            if(distance>1) {
                 zoom = 14;
-            } else {
+            } else if(distance> 0.5 && distance<=1) {
                 zoom = 15;
+            } else if(distance> 0.2 && distance<=0.5) {
+                zoom = 17;
+            } else {
+                zoom = 18;
             }
             latLng1 = new LatLng(max_lat, max_long);
             latLng2 = new LatLng(min_lat, min_long);
@@ -223,10 +225,10 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
 
         public void setMapImage(){
             String locations = new String(path);
-            Log.e(TAG, locations);
             String camera = new String(center_and_zoom);
+
             String url = "https://maps.googleapis.com/maps/api/staticmap?size=200x200" +
-                    camera + "&path=color:0xff0000ff|weight:3" + locations + "&key=" + R.string.google_maps_key;
+                    camera + "&path=color:0xff0000ff|weight:3" + locations + "&key=" + mContext.getString(R.string.google_maps_key);
 
             Glide.with(mContext)
                     .load(url)
