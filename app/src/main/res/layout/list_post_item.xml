@@ -86,6 +86,7 @@
                 android:textSize="16sp" />
 
             <LinearLayout
+                android:id="@+id/map_comment_container"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginTop="8dp"
@@ -102,7 +103,7 @@
                     app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/comment_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="2"

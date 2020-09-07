@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,18 +44,16 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
     }
 
     private OnPostSelectedListener mListener;
-    private FragmentManager mParentFragmentManager;
 
     public PostListAdapter(Query query, OnPostSelectedListener listener, FragmentManager fragmentManager) {
         super(query);
         mListener = listener;
-        mParentFragmentManager = fragmentManager;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_item, parent, false);
-        return new ViewHolder(v, parent.getContext(), mParentFragmentManager);
+        return new ViewHolder(v, parent.getContext());
     }
 
     @Override
@@ -79,17 +78,18 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
         TextView unameView;
         TextView created_atView;
         TextView bodyView;
+        LinearLayout container;
 
-        public ViewHolder(View itemView, Context context, FragmentManager fragmentManager) {
+        public ViewHolder(View itemView, Context context) {
             super(itemView);
             mContext = context;
-            mFragmentManager = fragmentManager;
             uIconBtn = itemView.findViewById(R.id.u_icon);
             authorView = itemView.findViewById(R.id.author);
             unameView = itemView.findViewById(R.id.uname);
             created_atView = itemView.findViewById(R.id.post_created_at);
             bodyView = itemView.findViewById(R.id.body);
             routeView = itemView.findViewById(R.id.route_view);
+            container = itemView.findViewById(R.id.map_comment_container);
         }
 
         public void bind(final DocumentSnapshot snapshot, final OnPostSelectedListener listener) {
@@ -103,86 +103,69 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             final String post_userId = post.getUid();
             mUserRef.document(post_userId)
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("user_icon"));
-                            Glide.with(mContext)
-                                    .load(document.getData().get("user_icon"))
-                                    .into(uIconBtn);
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("user_icon"));
+                                    Glide.with(mContext)
+                                            .load(document.getData().get("user_icon"))
+                                            .into(uIconBtn);
 
-                            authorView.setText(String.valueOf(document.getData().get("display_name")));
-                            unameView.setText(String.valueOf(document.getData().get("user_name")));
+                                    authorView.setText(String.valueOf(document.getData().get("display_name")));
+                                    unameView.setText(String.valueOf(document.getData().get("user_name")));
 
-                            uIconBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    //それぞれのuserのページに飛べるようにする処理を書く
+                                    uIconBtn.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            //それぞれのuserのページに飛べるようにする処理を書く
 
+                                        }
+                                    });
+                                } else {
+                                    Log.d(TAG, "No such document");
                                 }
-                            });
-                        } else {
-                            Log.d(TAG, "No such document");
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
                         }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
+                    });
+            if(mRouteRef != null) {
+                mRouteRef.collection("locations").get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                        Public_Location public_location = document.toObject(Public_Location.class);
+                                        mLocationLists.add(public_location);
+                                    }
+                                    generateString();
+                                    setMapImage();
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+            } else {
+                container.setVisibility(View.GONE);
+            }
+
+            created_atView.setText(post.getCreated_at());
+            bodyView.setText(post.getBody());
+
+
+            // Click listener
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null) {
+                        listener.onPostSelected(snapshot);
                     }
                 }
             });
-
-            if (mRouteRef != null) {
-                mRouteRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                Log.e(TAG, "DocumentSnapshot data: " + document.getData());
-
-                            } else {
-                                Log.d(TAG, "No such document");
-                            }
-                        } else {
-                            Log.d(TAG, "get failed with ", task.getException());
-                        }
-                    }
-                });
-
-                if(mRouteRef != null) {
-                    mRouteRef.collection("locations").get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Log.d(TAG, document.getId() + " => " + document.getData());
-                                            Public_Location public_location = document.toObject(Public_Location.class);
-                                            mLocationLists.add(public_location);
-                                        }
-                                        generateString();
-                                        setMapImage();
-                                    } else {
-                                        Log.d(TAG, "Error getting documents: ", task.getException());
-                                    }
-                                }
-                            });
-                }
-
-                created_atView.setText(post.getCreated_at());
-                bodyView.setText(post.getBody());
-
-                // Click listener
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (listener != null) {
-                            listener.onPostSelected(snapshot);
-                        }
-                    }
-                });
-            }
         }
 
         public void generateString() {
