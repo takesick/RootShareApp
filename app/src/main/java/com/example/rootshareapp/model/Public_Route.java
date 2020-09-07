@@ -1,11 +1,13 @@
 package com.example.rootshareapp.model;
 
+import com.google.firebase.firestore.DocumentReference;
+
 public class Public_Route {
     public int _id;
     public String title;
     public String created_at;
     public String uid;
-    public String ref;
+    public DocumentReference ref;
 
 //    @ColumnInfo(name = "spots")
 //    @NonNull
@@ -45,7 +47,7 @@ public class Public_Route {
 //        return spots;
 //    }
 
-    public void setRef(String ref) {
+    public void setRef(DocumentReference ref) {
         this.ref = ref;
     }
 }

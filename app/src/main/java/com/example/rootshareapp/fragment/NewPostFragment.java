@@ -56,7 +56,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     private Button submitBtn;
 
     private RecyclerView mRecyclerView;
-    private FirebaseFirestore mDatabase;
+    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
     private CollectionReference mPostRef, mRouteRef;
     private DocumentReference mLocationRef;
 
@@ -81,7 +81,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.frag_new_post, container, false);
 
         mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
-        mDatabase = FirebaseFirestore.getInstance();
+
         mPostRef = mDatabase.collection("posts");
         mRouteRef = mDatabase.collection("routes");
 
@@ -140,7 +140,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                                                 public void onSuccess(final DocumentReference documentReference) {
                                                     Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
                                                     mRouteRef.document(documentReference.getId()).update("ref", documentReference.getPath());
-                                                    mPostRef.document(post_id).update("route_ref", documentReference.getPath());
+                                                    mPostRef.document(post_id).update("route_ref", documentReference);
                                                     for(int i = 0; i < mLocations.size(); i++) {
                                                         mRouteRef.document(documentReference.getId()).collection("locations").add(mLocations.get(i));
                                                     }

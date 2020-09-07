@@ -2,6 +2,7 @@ package com.example.rootshareapp.model;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.HashMap;
 
@@ -13,7 +14,7 @@ public class Post {
     public String body;
     public String created_at;
     public String tag;
-    public String route_ref;
+    public DocumentReference route_ref;
     public int starCount = 0;
 
     public Post() {
@@ -79,6 +80,10 @@ public class Post {
 
     public String getBody() {
         return body;
+    }
+
+    public DocumentReference getRef() {
+        return route_ref;
     }
 
 //    public Boolean getRoute() {

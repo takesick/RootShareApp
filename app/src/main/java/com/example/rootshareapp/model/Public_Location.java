@@ -52,7 +52,7 @@ public class Public_Location {
             return longitude;
         }
 
-        public void setLongitude(double Longitude) {
+        public void setLongitude(double longitude) {
             this.longitude = longitude;
         }
 

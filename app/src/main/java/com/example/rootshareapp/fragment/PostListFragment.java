@@ -63,7 +63,7 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
 //                .build();
 
         // RecyclerView
-        mAdapter = new PostListAdapter(postsQuery, this) {
+        mAdapter = new PostListAdapter(postsQuery, this, getActivity().getSupportFragmentManager()) {
             @Override
             protected void onDataChanged() {
                 // Show/hide content if the query returns empty.

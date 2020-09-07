@@ -9,16 +9,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.model.Post;
+import com.example.rootshareapp.model.Public_Location;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * RecyclerView adapter for a list of Restaurants.
@@ -32,16 +43,18 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
     }
 
     private OnPostSelectedListener mListener;
+    private FragmentManager mParentFragmentManager;
 
-    public PostListAdapter(Query query, OnPostSelectedListener listener) {
+    public PostListAdapter(Query query, OnPostSelectedListener listener, FragmentManager fragmentManager) {
         super(query);
         mListener = listener;
+        mParentFragmentManager = fragmentManager;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_item, parent, false);
-        return new ViewHolder(v, parent.getContext());
+        return new ViewHolder(v, parent.getContext(), mParentFragmentManager);
     }
 
     @Override
@@ -49,33 +62,46 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
         holder.bind(getSnapshot(position), mListener);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        FirebaseFirestore mDatabase;
+        CollectionReference mUserRef;
+        DocumentReference mRouteRef;
+        List<Public_Location> mLocationLists = new ArrayList<>();
+        StringBuilder path = new StringBuilder();
+        StringBuilder center_and_zoom = new StringBuilder();
 
         Context mContext;
+        FragmentManager mFragmentManager;
         ImageView uIconBtn;
+        ImageView routeView;
         TextView authorView;
         TextView unameView;
         TextView created_atView;
         TextView bodyView;
 
-        public ViewHolder(View itemView, Context context) {
+        public ViewHolder(View itemView, Context context, FragmentManager fragmentManager) {
             super(itemView);
             mContext = context;
+            mFragmentManager = fragmentManager;
             uIconBtn = itemView.findViewById(R.id.u_icon);
             authorView = itemView.findViewById(R.id.author);
             unameView = itemView.findViewById(R.id.uname);
             created_atView = itemView.findViewById(R.id.post_created_at);
             bodyView = itemView.findViewById(R.id.body);
+            routeView = itemView.findViewById(R.id.route_view);
         }
 
         public void bind(final DocumentSnapshot snapshot, final OnPostSelectedListener listener) {
 
-            FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
-
             Post post = snapshot.toObject(Post.class);
+            mDatabase = FirebaseFirestore.getInstance();
+            mUserRef = mDatabase.collection("users");
+            mRouteRef = post.getRef();
+            Log.e(TAG, String.valueOf(mRouteRef));
 
             final String post_userId = post.getUid();
-            mDatabase.collection("users").document(post_userId)
+            mUserRef.document(post_userId)
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -106,19 +132,122 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                 }
             });
 
-            created_atView.setText(post.getCreated_at());
-            bodyView.setText( post.getBody());
+            if (mRouteRef != null) {
+                mRouteRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.e(TAG, "DocumentSnapshot data: " + document.getData());
 
-            // Click listener
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (listener != null) {
-                        listener.onPostSelected(snapshot);
+                            } else {
+                                Log.d(TAG, "No such document");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
                     }
+                });
+
+                if(mRouteRef != null) {
+                    mRouteRef.collection("locations").get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.d(TAG, document.getId() + " => " + document.getData());
+                                            Public_Location public_location = document.toObject(Public_Location.class);
+                                            mLocationLists.add(public_location);
+                                        }
+                                        generateString();
+                                        setMapImage();
+                                    } else {
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
                 }
-            });
+
+                created_atView.setText(post.getCreated_at());
+                bodyView.setText(post.getBody());
+
+                // Click listener
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (listener != null) {
+                            listener.onPostSelected(snapshot);
+                        }
+                    }
+                });
+            }
         }
 
+        public void generateString() {
+            double latitude, longitude, max_lat = 0, min_lat = 0, max_long = 0, min_long = 0;
+            LatLng latLng1,latLng2, center;
+            int zoom;
+            for(int i=0; i<mLocationLists.size(); i++) {
+                latitude = mLocationLists.get(i).latitude;
+                longitude = mLocationLists.get(i).longitude;
+
+                if(i==0) {
+                    max_lat = min_lat = latitude;
+                    max_long = min_long = longitude;
+                }
+                if(latitude>max_lat) max_lat = latitude;
+                if(latitude<min_lat) min_lat = latitude;
+                if(longitude>max_long) max_long = longitude;
+                if(longitude<min_long) min_long = longitude;
+
+                path.append("|" + latitude + "," + longitude);
+
+            }
+
+            double distance = getDistance(max_lat, min_lat, max_long,min_long);
+            if(distance>0.5) {
+                zoom = 13;
+            } else if(distance> 0.2 && distance<=0.5) {
+                zoom = 14;
+            } else {
+                zoom = 15;
+            }
+            latLng1 = new LatLng(max_lat, max_long);
+            latLng2 = new LatLng(min_lat, min_long);
+
+            center = LatLngBounds.builder().include(latLng1).include(latLng2).build().getCenter();
+            center_and_zoom.append("&center=" + center.latitude + "," + center.longitude +"&zoom=" + zoom);
+        }
+
+        public void setMapImage(){
+            String locations = new String(path);
+            Log.e(TAG, locations);
+            String camera = new String(center_and_zoom);
+            String url = "https://maps.googleapis.com/maps/api/staticmap?size=200x200" +
+                    camera + "&path=color:0xff0000ff|weight:3" + locations + "&key=" + R.string.google_maps_key;
+
+            Glide.with(mContext)
+                    .load(url)
+                    .into(routeView);
+        }
+
+        public double getDistance(double lat1, double lon1, double lat2, double lon2) {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) +  Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+            dist = Math.acos(dist);
+            dist = rad2deg(dist);
+            double dist_km = dist * 60 * 1.1515 * 1.609344;
+            return dist_km;
+        }
+
+        private double rad2deg(double radian) {
+            return radian * (180f / Math.PI);
+        }
+
+        public double deg2rad(double degrees) {
+            return degrees * (Math.PI / 180f);
+        }
     }
 }
