@@ -111,8 +111,15 @@
                     android:paddingLeft="30dp"
                     android:paddingTop="5dp"
                     android:text="口コミ" />
+
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/post_route_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ルートタイトル"
+                android:textSize="12sp" />
         </LinearLayout>
 
     </LinearLayout>

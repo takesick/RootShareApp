@@ -6,25 +6,17 @@
     <item
         android:id="@+id/nav_lists"
         android:icon="@drawable/ic_menu_lists"
-        android:title="Stock"/>
+        android:title="設定"/>
     <item
-        android:id="@+id/nav_favorite"
+        android:id="@+id/nav_logout"
         android:icon="@drawable/ic_menu_favorite"
-        android:title="Favorite"/>
-    <item
-        android:id="@+id/nav_search"
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="Search"/>
-    <item
-        android:id="@+id/nav_mypage"
-        android:icon="@drawable/ic_person_black_24dp"
-        android:title="My page"/>
+        android:title="ログアウト"/>
 
     <item
         android:id="@+id/search_item"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="Search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always|collapseActionView" />
+        app:showAsAction="always|collapseActionView"/>
 
 </menu>

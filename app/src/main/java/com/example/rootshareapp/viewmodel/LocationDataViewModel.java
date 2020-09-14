@@ -27,6 +27,7 @@ public class LocationDataViewModel extends AndroidViewModel {
     private Local_Route mSelectedRoute;
     private List<Local_Location> mLocationsWithinRoute;
     private Local_Location mSelectedLocation;
+    private String mRouteTitle;
 
     public LocationDataViewModel(Application application) {
         super(application);
@@ -67,6 +68,10 @@ public class LocationDataViewModel extends AndroidViewModel {
         mRepository.deleteRoute(local_route);
     }
 
+    public void deleteRoute(int route_id) {
+        mRepository.deleteRoute(route_id);
+    }
+
     public void deleteAllRoutes(Local_Route local_route) {
         mRepository.deleteAllRoutes(local_route);
     }
@@ -81,6 +86,10 @@ public class LocationDataViewModel extends AndroidViewModel {
 
     public void deleteLocation(Local_Location local_location) {
         mRepository.deleteLocation(local_location);
+    }
+
+    public void deleteLocationInRoute(int route_id) {
+        mRepository.deleteLocationInRoute(route_id);
     }
 
     public void deleteAllLocations() {
@@ -119,9 +128,6 @@ public class LocationDataViewModel extends AndroidViewModel {
     public Local_Route getSelectedRoute() {
         return mSelectedRoute;
     }
-
-
-
 }
 
 //class MyRoutesFragment extends Fragment {

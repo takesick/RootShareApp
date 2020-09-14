@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.model.Local_Route;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.Rout
         TextView numberView;
         TextView timeView;
         TextView titleView;
+        FloatingActionButton deleteBtn;
         OnRouteSelectedListener onRouteSelectedListener;
 
         private RouteDataViewHolder(View itemView, OnRouteSelectedListener onRouteSelectedListener) {
@@ -36,15 +38,21 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.Rout
             numberView = itemView.findViewById(R.id.route_id);
             timeView = itemView.findViewById(R.id.route_created_at);
             titleView = itemView.findViewById(R.id.route_title);
+            deleteBtn = itemView.findViewById(R.id.route_delete_button);
             this.onRouteSelectedListener = onRouteSelectedListener;
 
             itemView.setOnClickListener(this);
+            deleteBtn.setOnClickListener(this);
 
         }
 
         @Override
         public void onClick(View v) {
-            onRouteSelectedListener.onRouteSelected(v,getAdapterPosition());
+            if(deleteBtn.isPressed()) {
+                onRouteSelectedListener.onDeleteBtnClicked(mRouteDataList.get(getAdapterPosition())._id);
+            } else {
+                onRouteSelectedListener.onRouteSelected(v, getAdapterPosition());
+            }
         }
     }
 
@@ -64,7 +72,6 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.Rout
             holder.numberView.setText(String.valueOf(current._id));
             holder.timeView.setText("計測日時：" + current.created_at);
             holder.titleView.setText("タイトル：" + current.title);
-
 
         } else {
             // Covers the case of data not being ready yet.
@@ -91,5 +98,6 @@ public class RouteListAdapter extends RecyclerView.Adapter<RouteListAdapter.Rout
 
     public interface OnRouteSelectedListener {
         void onRouteSelected(View view, int position);
+        void onDeleteBtnClicked(int route_id);
     }
 }

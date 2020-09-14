@@ -35,6 +35,7 @@ import com.example.rootshareapp.fragment.StartRecordDialogFragment;
 import com.example.rootshareapp.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,9 +69,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }
 
 //        setContentView(R.layout.activity_main);
-
+    private FirebaseAuth mAuth;
     private ViewPager mViewPager;
     private SetQuery mSetQuery;
+    private Bundle saveInstanceState;
 //    private RecentPostsFragment fragment;
 
     @SuppressLint("RestrictedApi")
@@ -78,6 +80,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        if(mAuth.getCurrentUser() == null) {
+            Intent intent_signIn = new Intent(this, SignInActivity.class);
+            startActivity(intent_signIn);
+        }
 
         // Android 6, API 23以上でパーミッシンの確認
         if (Build.VERSION.SDK_INT >= 23) {
@@ -210,16 +219,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             toastMake("位置情報の許可がないので計測できません");
                         }
                     }
-//                    // 外部ストレージ
-//                    else if (permissions[i].
-//                            equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-//                            // 許可された
-//                        } else {
-//                            // それでも拒否された時の対応
-//                            toastMake("外部書込の許可がないので書き込みできません");
-//                        }
-//                    }
                 }
 //                startLocationService();
             }
@@ -253,6 +252,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getMenuInflater().inflate(R.menu.bottom_navigation_item, menu);
         MenuItem menuItem = menu.findItem(R.id.search_item);
         SearchView searchView = (SearchView) menuItem.getActionView();
+
+        MenuItem item = menu.findItem(R.id.nav_logout);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mAuth.signOut();
+                Log.e("logout", "logout");
+                Intent intent_signIn = new Intent(getApplicationContext(), SignInActivity.class);
+                startActivity(intent_signIn);
+                finish();
+                return true;
+            }
+        });
 
         Client client = new Client(getString(R.string.algolia_id), getString(R.string.algolia_key));
         final Index index = client.getIndex("posts");
@@ -321,12 +334,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @SuppressLint("RestrictedApi")
     @Override
     public void onClick(View v) {
         if (v != null) {
             switch (v.getId()) {
+                case R.id.nav_logout:
+
+                    break;
+
                 case R.id.OpenDrawerFab:
                     if (mStopRecordingFab.getVisibility() == View.VISIBLE) {
                         String nowRecording = "位置情報の記録を停止してください";

@@ -23,6 +23,7 @@ public class RouteDetailActivity extends AppCompatActivity {
     public static final String KEY_LOCATION_ID = "key_location_id";
 
     private LocationDataViewModel mLocationDataViewModel;
+    private int route_id;
     private EditText routeTitle;
 
     @Override
@@ -31,8 +32,9 @@ public class RouteDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route_detail);
 
         routeTitle =findViewById(R.id.setTitle);
-
         mLocationDataViewModel = ViewModelProviders.of(this).get(LocationDataViewModel.class);
+        route_id = getIntent().getExtras().getInt(RouteDetailActivity.KEY_ROUTE_ID);
+        mLocationDataViewModel.getSelectedRoute();
 
         // Initialize the SDK
         Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));

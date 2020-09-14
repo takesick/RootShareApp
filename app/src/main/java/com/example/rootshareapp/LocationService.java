@@ -51,7 +51,7 @@ public class LocationService extends Service implements LocationListener {
     private double accuracy;
     private String created_at;
     private int route_id;
-    String title;
+    String title = null;
     String uid;
 
 
@@ -70,7 +70,13 @@ public class LocationService extends Service implements LocationListener {
 
         int requestCode = 0;
         String channelId = "default";
-        String title = context.getString(R.string.app_name);
+
+        Bundle extras = intent.getExtras();
+        Log.e("intent", String.valueOf(extras));
+        if(extras.get("routeTitle") != null) {
+            title = extras.getString("routeTitle");
+
+        }
 
 //        PendingIntent：
 //        intentを予約して指定したタイミングで発行する。
@@ -133,7 +139,9 @@ public class LocationService extends Service implements LocationListener {
                 if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                title = startDate;
+
+                if(title == null) title = startDate;
+
                 created_at = startDate;
                 route_id = writeRouteDataToDb(title, created_at, uid).intValue();
                 
@@ -207,6 +215,16 @@ public class LocationService extends Service implements LocationListener {
     public void onDestroy() {
         super.onDestroy();
         stopGPS();
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+        Bundle extras = intent.getExtras();
+        Log.e("intent", String.valueOf(extras));
+        if(extras.get("routeTitle") != null) {
+            title = extras.get("routeTitle").toString();
+        }
     }
 
     @Override
