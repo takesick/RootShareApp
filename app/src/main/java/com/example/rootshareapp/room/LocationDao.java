@@ -37,6 +37,9 @@ public interface LocationDao {
     @Delete
     void deleteLocation(Local_Location local_location);
 
+    @Query("DELETE FROM location_table WHERE route_id = :route_id")
+    void deleteLocationInRoute(int route_id);
+
     @Query("DELETE FROM location_table")
     void deleteAllLocations();
 

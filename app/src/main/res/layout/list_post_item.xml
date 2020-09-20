@@ -85,33 +85,14 @@
                 android:text="body"
                 android:textSize="16sp" />
 
-            <LinearLayout
-                android:id="@+id/map_comment_container"
+            <include layout="@layout/incude_photo_container"/>
+
+            <TextView
+                android:id="@+id/post_route_title"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/route_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:cropToPadding="false"
-                    android:scaleType="center"
-                    app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />
-
-                <TextView
-                    android:id="@+id/comment_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="@drawable/kuticomi"
-                    android:paddingLeft="30dp"
-                    android:paddingTop="5dp"
-                    android:text="口コミ" />
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:text="ルートタイトル"
+                android:textSize="12sp" />
 
         </LinearLayout>
 

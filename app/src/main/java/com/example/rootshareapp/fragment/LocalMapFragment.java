@@ -87,7 +87,7 @@ public class LocalMapFragment extends Fragment implements OnMapReadyCallback, Go
             // 許可を得られたことを確認できた段階で初めてsetContentView()を呼ぶ
             // onMapReady()が走るのはこれ以後になる
             //FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-            mMapView = mView.findViewById(R.id.map_container);
+            mMapView = mView.findViewById(R.id.local_map);
             if (mMapView != null) {
                 mMapView.onCreate(null);
                 mMapView.onResume();

@@ -19,7 +19,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.SignInActivity;
 import com.example.rootshareapp.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,12 +41,10 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
     private Button mSignUpButton;
 
     public static SignInFragment newInstance() {
-
         SignInFragment fragment = new SignInFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-
     }
 
     @Nullable
@@ -160,7 +157,6 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        int i = v.getId();
         switch (v.getId()) {
             case R.id.signInBtn:
                 signIn();

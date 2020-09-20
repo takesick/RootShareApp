@@ -35,6 +35,19 @@
             android:paddingVertical="5dp"
             android:text="+ ルートを追加" />
 
+        <TextView
+            android:id="@+id/deselectRouteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:visibility="gone"
+            android:text="+ ルートを削除" />
+
+        <include layout="@layout/incude_photo_container"/>
+
+
     </LinearLayout>
 
     <LinearLayout

@@ -16,8 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RecentPostActivity"></activity>
-        <activity android:name=".NewPostActivity" />
+        <activity
+            android:name=".NewPostActivity"
+            android:windowSoftInputMode="adjustResize"
+            />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -33,14 +35,16 @@
         <activity android:name=".SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
 
-        <activity android:name=".RouteDetailActivity"
-                       android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".RouteDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustPan"
+            />
         <activity android:name=".AddSpotActivity"/>
         <activity android:name=".AddReviewActivity"/>
         <activity android:name=".PostDetailActivity"/>

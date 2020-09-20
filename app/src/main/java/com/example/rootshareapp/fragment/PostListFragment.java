@@ -127,16 +127,6 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
     @Override
     public void onStart() {
         super.onStart();
-
-        // Start sign in if necessary
-//        if (shouldStartSignIn()) {
-//            startSignIn();
-//            return;
-//        }
-
-        // Apply filters
-//        onFilter(mViewModel.getFilters());
-
         // Start listening for Firestore updates
         if (mAdapter != null) {
             mAdapter.startListening();
@@ -158,6 +148,7 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
         intent.putExtra("uid", post.uid);
         intent.putExtra("created_at", post.created_at);
         intent.putExtra("body", post.body);
+        intent.putExtra("route_ref", String.valueOf(post.route_ref));
         startActivity(intent);
     }
 

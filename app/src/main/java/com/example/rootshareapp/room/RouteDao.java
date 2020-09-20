@@ -27,6 +27,9 @@ public interface RouteDao {
     @Delete
     void deleteRoute(Local_Route local_route);
 
+    @Query("DELETE FROM route_table WHERE _id = :route_id")
+    void deleteRoute(int route_id);
+
     @Query("DELETE FROM route_table")
     void deleteAllRoutes();
 }

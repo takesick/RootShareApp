@@ -80,6 +80,15 @@ public class LocationDataRepository  {
         });
     }
 
+    public void deleteRoute(final int route_id) {
+        LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                routeDao.deleteRoute(route_id);
+            }
+        });
+    }
+
     public void deleteAllRoutes(final Local_Route local_route) {
         LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
             @Override
@@ -112,6 +121,15 @@ public class LocationDataRepository  {
             @Override
             public void run() {
                 locationDao.deleteLocation(local_location);
+            }
+        });
+    }
+
+    public void deleteLocationInRoute(final int route_id) {
+        LocationRoomDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                locationDao.deleteLocationInRoute(route_id);
             }
         });
     }

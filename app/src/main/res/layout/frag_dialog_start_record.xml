@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="目的地" />
+            android:text="出発地" />
 
         <TextView
             android:id="@+id/textView8"
@@ -34,24 +34,24 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/routeOrigin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:gravity="center"
-            android:inputType="textPersonName"
-            android:text="Name" />
+            android:hint="出発地"
+            android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/editText4"
+            android:id="@+id/routeDestination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:gravity="center"
-            android:inputType="textPersonName"
-            android:text="Name" />
+            android:hint="目的地"
+            android:inputType="textPersonName" />
     </LinearLayout>
 
 

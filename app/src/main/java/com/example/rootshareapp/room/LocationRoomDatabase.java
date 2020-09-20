@@ -97,13 +97,13 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                     LocationContract.Locations.COL_UID + " String ," +
                     LocationContract.Locations.COL_ROUTE_ID + " integer)"
             );
-            database.execSQL("create table " + "guide_table" + "(" +
-                            GuideContract.Guide._ID + " integer primary key autoincrement," +
-                            GuideContract.Guide.COL_CREATED_AT + " String," +
-                            GuideContract.Guide.COL_SPOT_NAME + " String," +
-                            GuideContract.Guide.COL_BODY + " String," +
-                            GuideContract.Guide.COL_ROUTE_ID + " integer)"
-            );
+//            database.execSQL("create table " + "guide_table" + "(" +
+//                            GuideContract.Guide._ID + " integer primary key autoincrement," +
+//                            GuideContract.Guide.COL_CREATED_AT + " String," +
+//                            GuideContract.Guide.COL_SPOT_NAME + " String," +
+//                            GuideContract.Guide.COL_BODY + " String," +
+//                            GuideContract.Guide.COL_ROUTE_ID + " integer)"
+//            );
         }
     };
 }

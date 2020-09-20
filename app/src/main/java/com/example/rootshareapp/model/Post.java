@@ -1,10 +1,14 @@
 package com.example.rootshareapp.model;
 
+import android.net.Uri;
+
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Post {
 
@@ -14,7 +18,9 @@ public class Post {
     public String body;
     public String created_at;
     public String tag;
+    public String route_name;
     public DocumentReference route_ref;
+    private List<Uri> photos = new ArrayList<>();
     public int starCount = 0;
 
     public Post() {
@@ -25,7 +31,7 @@ public class Post {
         this.uid = user.getUid();
         this.uname = user.getDisplayName();
         this.created_at = created_at;
-        this.body = body;;
+        this.body = body;
     }
 
 //    public Post(Parcel source) {
@@ -62,9 +68,13 @@ public class Post {
         this.body = body;
     }
 
-//    public void setRoute(Boolean route) {
-//        this.route = route;
-//    }
+    public void setRoute_name(String route_name) {
+        this.route_name = route_name;
+    }
+
+    public void setRoute_ref(DocumentReference route_ref) {
+        this.route_ref = route_ref;
+    }
 
     public String getId() {
         return _id;
@@ -86,9 +96,9 @@ public class Post {
         return route_ref;
     }
 
-//    public Boolean getRoute() {
-//        return route;
-//    }
+    public String getRoute_name() {
+        return route_name;
+    }
 
     @Exclude
     public HashMap<String, Object> toMap() {
@@ -96,6 +106,7 @@ public class Post {
         result.put("uid", uid);
         result.put("created_at", created_at);
         result.put("body", body);
+        result.put("route_ref", route_ref);
 //        result.put("route", route);
 //        result.put("starCount", starCount);
 //        result.put("stars", stars);
