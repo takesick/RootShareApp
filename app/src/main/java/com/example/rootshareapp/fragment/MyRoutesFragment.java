@@ -65,7 +65,6 @@ public class MyRoutesFragment extends Fragment implements RouteListAdapter.OnRou
 
     @Override
     public void onDeleteBtnClicked(int route_id) {
-//
         RouteDeleteDialogFragment newFragment = RouteDeleteDialogFragment.newInstance(route_id);
         Log.e("dialog", "show");
         newFragment.show(getChildFragmentManager(), "dialog");
@@ -75,6 +74,5 @@ public class MyRoutesFragment extends Fragment implements RouteListAdapter.OnRou
         mLocationDataViewModel.deleteRoute(route_id);
         mLocationDataViewModel.deleteLocationInRoute(route_id);
     }
-
 
 }

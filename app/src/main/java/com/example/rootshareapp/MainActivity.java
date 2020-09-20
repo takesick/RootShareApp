@@ -36,6 +36,7 @@ import com.example.rootshareapp.model.Post;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,12 +47,13 @@ import java.util.List;
 
 //import com.google.firebase.firestore.Query;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, MenuItem.OnMenuItemClickListener {
 
     private static final int REQUEST_MULTI_PERMISSIONS = 101;
 
     private static final String TAG = "MainActivity";
     private FloatingActionButton mOpenDrawerFab, mCloseDrawerFab, mStartRecordingFab, mStopRecordingFab, mWriteNewPostFab, mSearchFab;
+
 
     public interface SetQuery{
         void setQuery(List<Post> postList);
@@ -70,9 +72,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        setContentView(R.layout.activity_main);
     private FirebaseAuth mAuth;
+    private FirebaseFirestore mDatabase;
     private ViewPager mViewPager;
+    private FragmentPagerAdapter mPagerAdapter;
     private SetQuery mSetQuery;
-    private Bundle saveInstanceState;
 //    private RecentPostsFragment fragment;
 
     @SuppressLint("RestrictedApi")
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseFirestore.getInstance();
 
         if(mAuth.getCurrentUser() == null) {
             Intent intent_signIn = new Intent(this, SignInActivity.class);
@@ -96,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         // Create the adapter that will return a fragment for each section
-        FragmentPagerAdapter mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
+        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             private final Fragment[] mFragments = new Fragment[]{
                     new RecentPostsFragment(),
@@ -166,8 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSearchFab.setOnClickListener(this);
 
         mSetQuery = (SetQuery) mPagerAdapter.getItem(mViewPager.getCurrentItem());
-//        fragment = (RecentPostsFragment) mPagerAdapter.getItem(mViewPager.getCurrentItem());
-//
 
     }
 
@@ -240,13 +242,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toast.show();
     }
 
-    //search data
-//    private Query firebaseSearch(String searchText){
-//        mCollection = db.collection("posts");
-//        firebaseSearchQuery = mCollection.orderBy("body").startAt(searchText).endAt(searchText+"\uf8ff");
-//        return firebaseSearchQuery;
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bottom_navigation_item, menu);
@@ -254,27 +249,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SearchView searchView = (SearchView) menuItem.getActionView();
 
         MenuItem item = menu.findItem(R.id.nav_logout);
-        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                mAuth.signOut();
-                Log.e("logout", "logout");
-                Intent intent_signIn = new Intent(getApplicationContext(), SignInActivity.class);
-                startActivity(intent_signIn);
-                finish();
-                return true;
-            }
-        });
+        item.setOnMenuItemClickListener(this);
 
         Client client = new Client(getString(R.string.algolia_id), getString(R.string.algolia_key));
         final Index index = client.getIndex("posts");
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchText) {
-//                msetQuery.setQuery(firebaseSearch(query));
-//                fragment.setQuery(firebaseSearch(query));
                 Query query = new Query(searchText)
                         .setHitsPerPage(50);
                 index.searchAsync(query, new CompletionHandler() {
@@ -288,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Post post = new Post();
                                 post.setUid(jsonObject.getString("uid"));
                                 post.setCreated_at(jsonObject.getString("created_at"));
+                                post.setRoute_ref(mDatabase.document(jsonObject.getString("route_ref")));
                                 post.setBody(jsonObject.getString("body"));
                                 mPostList.add(post);
                             }
@@ -318,6 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Log.e("post", jsonObject.getString("uid"));
                                 post.setUid(jsonObject.getString("uid"));
                                 post.setCreated_at(jsonObject.getString("created_at"));
+                                post.setRoute_ref(mDatabase.document(jsonObject.getString("route_ref")));
                                 post.setBody(jsonObject.getString("body"));
                                 mPostList.add(post);
                             }
@@ -330,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
         });
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -412,6 +394,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_logout:
+                mAuth.signOut();
+                if(mAuth.getCurrentUser() == null){
+                    Log.d(TAG, "Logout is successful");
+                } else {
+                    Log.d(TAG, "Logout failed");
+                }
+                Intent intent_signIn = new Intent(getApplicationContext(), SignInActivity.class);
+                startActivity(intent_signIn);
+                finish();
+                break;
+
+            case R.id.homeAsUp:
+                mViewPager.setAdapter(mPagerAdapter);
+        }
+        return false;
     }
 }
 

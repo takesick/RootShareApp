@@ -59,14 +59,20 @@
         android:text="body"
         android:textSize="20sp" />
 
-    <ImageView
-        android:id="@+id/imageView4"
+    <FrameLayout
+        android:id="@+id/map_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/colorPrimary"
-        android:cropToPadding="false"
-        android:scaleType="center"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />
+        android:layout_height="180dp">
+    </FrameLayout>
+
+<!--    <ImageView-->
+<!--        android:id="@+id/imageView4"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:background="@color/colorPrimary"-->
+<!--        android:cropToPadding="false"-->
+<!--        android:scaleType="center"-->
+<!--        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />-->
 
     <View
         android:id="@+id/line"

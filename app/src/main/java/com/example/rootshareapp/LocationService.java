@@ -278,15 +278,4 @@ public class LocationService extends Service implements LocationListener {
         toast.setGravity(Gravity.CENTER, 0, 100);
         toast.show();
     }
-
-//    public void swapCursor(Cursor mCursor, Cursor newCursor) {
-//        if (mCursor != null) {
-//            mCursor.close();
-//        }
-//
-//        mCursor = newCursor;
-//        if (newCursor != null){
-//            notifyDataSetChanged();
-//        }
-//    }
 }

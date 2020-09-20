@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.model.Photo;
 import com.example.rootshareapp.model.Post;
 import com.example.rootshareapp.model.Public_Location;
 import com.google.android.gms.maps.model.LatLng;
@@ -64,7 +65,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
     class ViewHolder extends RecyclerView.ViewHolder {
 
         FirebaseFirestore mDatabase;
-        CollectionReference mUserRef;
+        CollectionReference mUserRef, mPhotoRef;
         DocumentReference mRouteRef;
         List<Public_Location> mLocationLists = new ArrayList<>();
         StringBuilder path = new StringBuilder();
@@ -73,12 +74,15 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
         Context mContext;
         FragmentManager mFragmentManager;
         ImageView uIconBtn;
-        ImageView routeView;
+        ImageView imageView1, imageView2, imageView3;
+        List<Photo> mPhotos = new ArrayList<>();
         TextView authorView;
         TextView unameView;
         TextView created_atView;
         TextView bodyView;
-        LinearLayout container;
+        TextView routeTitleView;
+        LinearLayout subImageContainer;
+        Boolean setMap_isStarted = false;
 
         public ViewHolder(View itemView, Context context) {
             super(itemView);
@@ -88,8 +92,11 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             unameView = itemView.findViewById(R.id.uname);
             created_atView = itemView.findViewById(R.id.post_created_at);
             bodyView = itemView.findViewById(R.id.body);
-            routeView = itemView.findViewById(R.id.route_view);
-            container = itemView.findViewById(R.id.map_comment_container);
+            imageView1 = itemView.findViewById(R.id.image_view1);
+            imageView2 = itemView.findViewById(R.id.image_view2);
+            imageView3 = itemView.findViewById(R.id.image_view3);
+            subImageContainer = itemView.findViewById(R.id.sub_image_container);
+            routeTitleView = itemView.findViewById(R.id.post_route_title);
         }
 
         public void bind(final DocumentSnapshot snapshot, final OnPostSelectedListener listener) {
@@ -98,6 +105,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             mDatabase = FirebaseFirestore.getInstance();
             mUserRef = mDatabase.collection("users");
             mRouteRef = post.getRef();
+//            mPhotoRef = mDatabase.collection("posts").document(post._id).collection("photos");
             Log.e(TAG, String.valueOf(mRouteRef));
 
             final String post_userId = post.getUid();
@@ -149,9 +157,28 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                                 }
                             }
                         });
+                routeTitleView.setText(post.route_name);
             } else {
-                container.setVisibility(View.GONE);
+                imageView1.setVisibility(View.GONE);
+                routeTitleView.setVisibility(View.GONE);
             }
+
+//            mPhotoRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                    if (task.isSuccessful()) {
+//                        for (QueryDocumentSnapshot document : task.getResult()) {
+//                            Log.d(TAG, document.getId() + " => " + document.getData());
+//                            Photo photo = document.toObject(Photo.class);
+//                            mPhotos.add(photo);
+//                        }
+//                    } else {
+//                        Log.d(TAG, "Error getting documents: ", task.getException());
+//                    }
+//                }
+//            });
+
+            setImages();
 
             created_atView.setText(post.getCreated_at());
             bodyView.setText(post.getBody());
@@ -215,7 +242,27 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
 
             Glide.with(mContext)
                     .load(url)
-                    .into(routeView);
+                    .into(imageView1);
+            setMap_isStarted = true;
+        }
+
+        public void setImages(){
+            if(setMap_isStarted){
+                switch (mPhotos.size()) {
+                    case 0:
+                        subImageContainer.setVisibility(View.GONE);
+                        break;
+
+                    case 1:
+//                        imageView2.setImageURI(mPhotos.get(0).uri);
+                        imageView3.setVisibility(View.GONE);
+                        break;
+
+                    case 2:
+//                        imageView2.setImageURI(mPhotos.get(0).uri.);
+//                        imageView2.setImageURI(mPhotos.get(0).uri);
+                }
+            }
         }
 
         public double getDistance(double lat1, double lon1, double lat2, double lon2) {
