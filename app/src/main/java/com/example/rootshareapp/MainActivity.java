@@ -47,7 +47,7 @@ import java.util.List;
 
 //import com.google.firebase.firestore.Query;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, MenuItem.OnMenuItemClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, MenuItem.OnMenuItemClickListener, StartRecordDialogFragment.onCancelBtnListener {
 
     private static final int REQUEST_MULTI_PERMISSIONS = 101;
 
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ViewPager mViewPager;
     private FragmentPagerAdapter mPagerAdapter;
     private SetQuery mSetQuery;
+    private  StartRecordDialogFragment.onCancelBtnListener mListener = this;
 //    private RecentPostsFragment fragment;
 
     @SuppressLint("RestrictedApi")
@@ -358,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 case R.id.StartRecordingFab:
-                    StartRecordDialogFragment newFragment = StartRecordDialogFragment.newInstance();
+                    StartRecordDialogFragment newFragment = StartRecordDialogFragment.newInstance(mListener);
                     Log.e("dialog", "show");
                     newFragment.show(getSupportFragmentManager(), "dialog");
                     mWriteNewPostFab.setVisibility(View.GONE);
@@ -416,5 +417,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return false;
     }
+
+    public void cancelRecord(){
+        mStopRecordingFab.isPressed();
+    };
 }
 

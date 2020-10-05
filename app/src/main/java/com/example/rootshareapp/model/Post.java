@@ -1,18 +1,14 @@
 package com.example.rootshareapp.model;
 
-import android.net.Uri;
-
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.firestore.DocumentReference;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Post {
 
-    public String _id;
+    public String id;
     public String uid;
     public String uname;
     public String body;
@@ -20,7 +16,6 @@ public class Post {
     public String tag;
     public String route_name;
     public DocumentReference route_ref;
-    private List<Uri> photos = new ArrayList<>();
     public int starCount = 0;
 
     public Post() {
@@ -53,7 +48,7 @@ public class Post {
 //    };
 
     public void setId(String _id) {
-        this._id = _id;
+        this.id = _id;
     }
 
     public void setUid(String uid) {
@@ -77,7 +72,7 @@ public class Post {
     }
 
     public String getId() {
-        return _id;
+        return id;
     }
 
     public String getUid() {

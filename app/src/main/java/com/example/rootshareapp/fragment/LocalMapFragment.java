@@ -93,7 +93,6 @@ public class LocalMapFragment extends Fragment implements OnMapReadyCallback, Go
                 mMapView.onResume();
                 mMapView.getMapAsync(this);
             }
-
         }
     }
 
