@@ -76,7 +76,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     private LinearLayout imagesView, imagesSubView;
     private ImageView imageView1, imageView2, imageView3;
     private List<String> photosUri = new ArrayList<>();
-    private List<Photo> uploadImagesUri = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
     private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
@@ -85,7 +84,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
 
     private Uri uri;
     private List<Uri> mUri = new ArrayList<>();
-    private Boolean routeInfo = false;
+    private String photos_uri;
     private Post post;
     private Local_Route local_Route = null;
     private List<Local_Location> local_locations;
@@ -99,10 +98,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     private Boolean setMap_isStarted = false;
 
     private LocationDataViewModel mLocationDataViewModel;
-
-    interface PostListener {
-        void addNewPost(Public_Route public_route);
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -167,6 +162,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                 case R.id.deselectRouteBtn:
                     removeMapImage();
                     deselectRouteBtn.setVisibility(View.GONE);
+                    selectRouteBtn.setText("+ ルートを追加");
                     selectRouteBtn.setVisibility(View.VISIBLE);
                     break;
 
@@ -213,14 +209,13 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                 editBodyView.getText().toString()
         );
 
-
-
         mPostRef.add(post)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
                         final String post_id = documentReference.getId();
+                        mPostRef.document(post_id).update("id", post_id);
                         if(local_Route!=null) {
                             mRouteRef.add(mRoute)
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -230,7 +225,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                                             mRouteRef.document(documentReference.getId()).update("ref", documentReference.getPath());
                                             mPostRef.document(post_id).update("route_ref", documentReference);
                                             mPostRef.document(post_id).update("route_name", mRoute.title);
-                                            mPostRef.document(post_id).update("_id", post_id);
                                             for(int i = 0; i < mLocations.size(); i++) {
                                                 mRouteRef.document(documentReference.getId()).collection("locations").add(mLocations.get(i));
                                             }
@@ -248,26 +242,12 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                             if(setMap_isStarted){
                                 Photo photo = new Photo(photosUri.get(0));
                                 mPostRef.document(post_id).collection("photos").add(photo);
-                                for(int i=1; i<photosUri.size(); i++) {
-                                    uploadImages(mUri.get(i));
-                                    mPostRef.document(post_id).collection("photos").add(uploadImagesUri.get(i));
+                                for(int i=0; i<mUri.size(); i++) {
+                                    uploadImages(mUri.get(i), post_id);
                                 }
                             } else {
-                                for (int i = 0; i < photosUri.size(); i++) {
-                                    uploadImages(mUri.get(i));
-                                    mPostRef.document(post_id).collection("photos").add(uploadImagesUri.get(i))
-                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                @Override
-                                                public void onSuccess(final DocumentReference documentReference) {
-                                                    Log.d("bbb", "DocumentSnapshot added with ID: " + documentReference.getId());
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.w("bbb", "Error adding document", e);
-                                                }
-                                            });;
+                                for (int i = 0; i < mUri.size(); i++) {
+                                    uploadImages(mUri.get(i), post_id);
                                 }
                             }
                         } else {
@@ -278,7 +258,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+                        Log.w("aaa", "Error adding document", e);
                     }
                 });
     }
@@ -350,6 +330,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         } else {
             photosUri.clear();
         }
+        mUri.clear();
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);//.ACTION_OPEN_DOCUMENT：ストレージ内のドキュメントプロバイダ内のものを条件として指定
         intent.addCategory(Intent.CATEGORY_OPENABLE);//CATEGORY_OPENABLE開けるものを指定
         intent.setType("image/*");//imageフォルダのjpegを指定
@@ -369,8 +350,8 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                 // 選択画像が単数の場合の処理
                 uri = data.getData();
                 Log.e(TAG, String.valueOf(uri));
-                mUri.add(uri);
                 photosUri.add(uri.toString());
+                mUri.add(uri);
                 showPhoto();
             } else {
                 // 選択画像が複数の場合の処理
@@ -382,6 +363,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                     for (int i = 0; i < 2; i++) {
                         uri = cd.getItemAt(i).getUri();
                         photosUri.add(uri.toString());
+                        mUri.add(uri);
                     }
                     showPhoto();
                 }
@@ -477,32 +459,28 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         String uri = "https://maps.googleapis.com/maps/api/staticmap?size=200x200&scale=2" +
                 camera + "&path=color:0xff0000ff|weight:3" + locations + "&key=" + getContext().getString(R.string.google_maps_key);
 
-        int size = photosUri.size();
-        if(setMap_isStarted == false && size == 0) {
+        int size = mUri.size();
+        if(setMap_isStarted != true && size == 0) {
             photosUri.add(uri);
-            Log.e(TAG, photosUri.get(0));
         } else if (setMap_isStarted) {
             photosUri.set(0, uri);
         } else {
+            photosUri.clear();
+            photosUri.add(uri);
             for(int i = 0; i < size; i++) {
-                photosUri.add(photosUri.get(i));
+                photosUri.add(mUri.get(i).toString());
             }
-            photosUri.set(0, uri);
-            Log.e(TAG, photosUri.get(0));
-            Log.e(TAG, photosUri.get(1));
         }
         setMap_isStarted = true;
         showPhoto();
-//        uploadImagesUri.add(uri);
-
     }
 
     public void removeMapImage(){
         if(photosUri.size() != 0) {
-            for(int i = 0; i < photosUri.size()-1; i++) {
-                photosUri.set(i, photosUri.get(i+1));
+            photosUri.clear();
+            for(int i = 0; i < mUri.size(); i++) {
+                photosUri.add(mUri.get(i).toString());
             }
-            photosUri.remove(photosUri.size()-1);
         }
         setMap_isStarted = false;
         showPhoto();
@@ -531,21 +509,21 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void uploadImages(Uri uri) {
+    private void uploadImages(Uri uri, final String id) {
         StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
                 + "." + getFileExtension(uri));
+
         mUploadTask = fileReference.putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        Toast.makeText(getActivity(), "Upload successful", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Upload successful", Toast.LENGTH_SHORT).show();
                         taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
                                 String imageUri = uri.toString();
                                 Photo photo = new Photo(imageUri);
-                                uploadImagesUri.add(photo);
-                                Log.e("aaa", uploadImagesUri.toString());
+                                mPostRef.document(id).collection("photos").add(photo);
                             }
                         });
                     }
@@ -554,10 +532,11 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
                     }
                 });
     }
+
+
 
     private void hideKeyboard() {
         View view = getActivity().getCurrentFocus();

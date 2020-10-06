@@ -21,12 +21,17 @@ public class StartRecordDialogFragment extends DialogFragment implements View.On
     private EditText route_orig, route_dist;
     private Button permitBtn, cancelBtn;
     private String routeTitle = null, mOrigin, mDestination;
+    private onCancelBtnListener mListener;
 
-    public static StartRecordDialogFragment newInstance() {
+    public static StartRecordDialogFragment newInstance(onCancelBtnListener listener) {
         StartRecordDialogFragment fragment = new StartRecordDialogFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public interface onCancelBtnListener{
+        void cancelRecord();
     }
 
     @Override
@@ -84,7 +89,6 @@ public class StartRecordDialogFragment extends DialogFragment implements View.On
     }
 
     public String createTitle(){
-
         return routeTitle;
     }
 }

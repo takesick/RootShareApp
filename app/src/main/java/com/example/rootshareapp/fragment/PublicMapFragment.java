@@ -19,13 +19,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -39,18 +41,18 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
     private static LocationManager mLocationManager;
     private static GoogleMap mMap;
     private MapView mMapView;
+    private Marker mMarker;
     private PolylineOptions polyOptions;
     private View mView;
 
     private int position = 0;
-    private int recycler = 0;
-    private List<LatLng> mRoute = new ArrayList<LatLng>();
+    private String post_id;
 
-    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();;
-    private CollectionReference mPostRef;
-    private DocumentReference mRouteRef;
+    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+    private DocumentReference mPostRef, mRouteRef;
 
     private List<Public_Location> public_locations = new ArrayList<>();
+    private List<LatLng> mRoute = new ArrayList<>();
 
     // Might be null if Google Play services APK is not available.
 //
@@ -65,11 +67,19 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
         // Required empty public constructor
     }
 
+    public static PublicMapFragment newInstance() {
+        PublicMapFragment fragment = new PublicMapFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.frag_map, container, false);
-        mPostRef = mDatabase.collection("posts");
+        post_id = getActivity().getIntent().getExtras().getString("post_id");
+        mPostRef = mDatabase.collection("posts").document(post_id);
         return mView;
     }
 
@@ -114,15 +124,16 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
 
     //    データベース情報からマーカーを設置
     private void setMapData() {
-        mPostRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mPostRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("user_icon"));
                         Post post = document.toObject(Post.class);
                         mRouteRef = post.route_ref;
-                        if(mRouteRef != null) {
+                        if (mRouteRef != null) {
                             mRouteRef.collection("locations").get()
                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
@@ -140,14 +151,14 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
                                         }
                                     });
                         }
+                    } else {
+                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
+                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
-        Log.e(TAG, String.valueOf(recycler));
-        recycler++;
     }
 
     private void drawTrace() {
@@ -172,6 +183,7 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
 
         LatLng mLatLng = new LatLng(latitude, longitude);
         mRoute.add(mLatLng);
+        addSpotMarker(mLatLng);
 
         if(position == 0){
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
@@ -179,11 +191,11 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
         position++;
     }
 
-//    public void addSpotMarker() {
-//        mMarker = mMap.addMarker(new MarkerOptions()
-//                .position(mLatLng)
-//                .title("位置情報" + (position+1))
-//                .icon(BitmapDescriptorFactory.defaultMarker(color))
-//                .draggable(true));
-//    }
+    public void addSpotMarker(LatLng latLng) {
+        mMarker = mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("位置情報" + (position+1))
+                .icon(BitmapDescriptorFactory.defaultMarker(color))
+                .draggable(true));
+    }
 }

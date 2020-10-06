@@ -18,11 +18,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.model.Photo;
 import com.example.rootshareapp.model.Post;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import static com.android.volley.VolleyLog.TAG;
 
@@ -36,6 +39,7 @@ public class PostDetailFragment extends Fragment {
     TextView unameView;
     TextView created_atView;
     TextView bodyView;
+    TextView routeTitleView;
     ImageView imageView1, imageView2, map_view;
 
     public static PostDetailFragment newInstance() {
@@ -64,6 +68,7 @@ public class PostDetailFragment extends Fragment {
         imageView1 = view.findViewById(R.id.image_view2);
         imageView2 = view.findViewById(R.id.image_view3);
         map_view = view.findViewById(R.id.image_view1);
+        routeTitleView = view.findViewById(R.id.image_view1);
 
     }
 
@@ -79,8 +84,6 @@ public class PostDetailFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         created_atView.setText(intent.getStringExtra("created_at"));
         bodyView.setText(intent.getStringExtra("body"));
-
-
 
         mDatabase.collection("users").document(intent.getStringExtra("uid"))
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -111,5 +114,33 @@ public class PostDetailFragment extends Fragment {
                 }
             }
         });
+
+        if(post.id != null) {
+            if (mRouteRef != null) {
+                routeTitleView.setText(post.route_name);
+                routeTitleView.setVisibility(View.VISIBLE);
+            } else {
+                routeTitleView.setVisibility(View.GONE);
+            }
+            mPostRef.document(post.id).collection("photos").get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.e(TAG, document.getId() + " => " + document.getData());
+                                    Photo photo = document.toObject(Photo.class);
+                                    mPhotos.add(photo.uri);
+                                }
+                                setImages();
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+        } else {
+            imagesView.setVisibility(View.GONE);
+            routeTitleView.setVisibility(View.GONE);
+        }
     }
 }

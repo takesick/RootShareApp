@@ -145,10 +145,12 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
     public void onPostSelected(DocumentSnapshot snapshot) {
         Post post = snapshot.toObject(Post.class);
         Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+        intent.putExtra("id", post.id);
         intent.putExtra("uid", post.uid);
         intent.putExtra("created_at", post.created_at);
         intent.putExtra("body", post.body);
         intent.putExtra("route_ref", String.valueOf(post.route_ref));
+        intent.putExtra("post_ref", String.valueOf(post.id));
         startActivity(intent);
     }
 

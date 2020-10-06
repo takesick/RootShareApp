@@ -67,7 +67,7 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                     // If you want to start with more words, just add them.
 //                    RouteDao routedao = INSTANCE.routeDao();
 //                    LocationDao locationdao = INSTANCE.locationDao();
-//
+////
 //                    routedao.deleteAllRoutes();
 //                    locationdao.deleteAllLocations();
                 }
