@@ -1,7 +1,6 @@
 package com.example.rootshareapp.fragment;
 
 import android.graphics.Color;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,10 +35,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_AZURE;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED;
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_VIOLET;
+
 public class PublicMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener  {
 
     private static final String TAG = "PostMapFragment";
-    private static LocationManager mLocationManager;
     private static GoogleMap mMap;
     private MapView mMapView;
     private Marker mMarker;
@@ -49,19 +52,11 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
     private String post_id;
 
     private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
-    private DocumentReference mPostRef, mRouteRef;
+    private DocumentReference mRouteRef;
+    private CollectionReference mPostRef;
 
-    private List<Public_Location> public_locations = new ArrayList<>();
+    private List<Public_Location> mLocations = new ArrayList<>();
     private List<LatLng> mRoute = new ArrayList<>();
-
-    // Might be null if Google Play services APK is not available.
-//
-//    public static MapFragment newInstance() {
-//        MapFragment fragment = new MapFragment();
-//        Bundle args = new Bundle();
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     public PublicMapFragment() {
         // Required empty public constructor
@@ -74,19 +69,17 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
         return fragment;
     }
 
-    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.frag_map, container, false);
-        post_id = getActivity().getIntent().getExtras().getString("post_id");
-        mPostRef = mDatabase.collection("posts").document(post_id);
+        mView = inflater.inflate(R.layout.frag_public_map, container, false);
         return mView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mMapView = mView.findViewById(R.id.map_container);
+        Log.e("aaaa", "こんにちは");
+        mMapView = mView.findViewById(R.id.public_map);
         if (mMapView != null) {
             mMapView.onCreate(null);
             mMapView.onResume();
@@ -97,7 +90,8 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        post_id = getActivity().getIntent().getStringExtra("id");
+        mPostRef = mDatabase.collection("posts");
     }
 
     //許可されたら位置取得、のところ
@@ -124,7 +118,7 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
 
     //    データベース情報からマーカーを設置
     private void setMapData() {
-        mPostRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mPostRef.document(post_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -176,26 +170,85 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     public void setLocation(Public_Location public_location) {
-        double latitude, longitude;
+        double latitude, longitude, accuracy;
         latitude = public_location.latitude;
         longitude = public_location.longitude;
-//        accuracy = public_location.accuracy;
+        accuracy = public_location.accuracy;
+
+        float color;
+        if (accuracy <= 30){
+            color = HUE_RED;
+        } else if (accuracy > 30){
+            color = HUE_AZURE;
+        } else {
+            color = HUE_VIOLET;
+        }
 
         LatLng mLatLng = new LatLng(latitude, longitude);
         mRoute.add(mLatLng);
-        addSpotMarker(mLatLng);
+        addSpotMarker(mLatLng, color);
+        setCamera(mLatLng);
 
-        if(position == 0){
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
-        }
         position++;
     }
 
-    public void addSpotMarker(LatLng latLng) {
+    public void setCamera(LatLng latLng){
+        int zoom;
+        double latitude, longitude, max_lat = 0, min_lat = 0, max_long = 0, min_long = 0;
+        for(int i=0; i<mLocations.size(); i++) {
+            latitude = mLocations.get(i).latitude;
+            longitude = mLocations.get(i).longitude;
+
+            if(i==0) {
+                max_lat = min_lat = latitude;
+                max_long = min_long = longitude;
+            }
+            if(latitude>max_lat) max_lat = latitude;
+            if(latitude<min_lat) min_lat = latitude;
+            if(longitude>max_long) max_long = longitude;
+            if(longitude<min_long) min_long = longitude;
+
+        }
+
+        double distance = getDistance(max_lat, min_lat, max_long,min_long);
+        if(distance>1) {
+            zoom = 14;
+        } else if(distance> 0.5 && distance<=1) {
+            zoom = 15;
+        } else if(distance> 0.2 && distance<=0.5) {
+            zoom = 17;
+        } else {
+            zoom = 18;
+        }
+
+        if(position == 0){
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        }
+    }
+
+    public void addSpotMarker(LatLng latLng, float color) {
         mMarker = mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title("位置情報" + (position+1))
                 .icon(BitmapDescriptorFactory.defaultMarker(color))
                 .draggable(true));
     }
+
+    public double getDistance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) +  Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        double dist_km = dist * 60 * 1.1515 * 1.609344;
+        return dist_km;
+    }
+
+    private double rad2deg(double radian) {
+        return radian * (180f / Math.PI);
+    }
+
+    public double deg2rad(double degrees) {
+        return degrees * (Math.PI / 180f);
+    }
+
 }

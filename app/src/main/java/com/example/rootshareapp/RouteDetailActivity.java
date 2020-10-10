@@ -42,7 +42,6 @@ public class RouteDetailActivity extends AppCompatActivity {
         PlacesClient placesClient = Places.createClient(getApplicationContext());
 
         if (savedInstanceState == null) {
-
             // FragmentManagerのインスタンス生成
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();

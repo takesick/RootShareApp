@@ -59,14 +59,7 @@
         android:text="body"
         android:textSize="20sp" />
 
-    <FrameLayout
-        android:id="@+id/map_container"
-        android:layout_width="match_parent"
-        android:layout_height="180dp">
-
-    </FrameLayout>
-
-<!--    <ImageView-->
+    <!--    <ImageView-->
 <!--        android:id="@+id/imageView4"-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="200dp"-->
@@ -75,13 +68,22 @@
 <!--        android:scaleType="center"-->
 <!--        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />-->
 
+    <FrameLayout
+        android:id="@+id/map_container"
+        android:layout_width="match_parent"
+        android:layout_height="180dp">
+
+    </FrameLayout>
+
     <Button
         android:id="@+id/download_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:background="@color/colorAccent"
         android:text="このルートをキープ"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
 
     <View
         android:id="@+id/line"
@@ -89,6 +91,30 @@
         android:layout_height="1px"
         android:layout_marginTop="5dp"
         android:background="@color/colorPrimary" />
+
+    <LinearLayout
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp">
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/button_rounded" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/button_rounded" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ReplyPostsList"

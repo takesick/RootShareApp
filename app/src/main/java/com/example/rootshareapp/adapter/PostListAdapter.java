@@ -162,7 +162,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                 } else {
                     routeTitleView.setVisibility(View.GONE);
                 }
-                mPostRef.document(post.id).collection("photos").get()
+                mPostRef.document(post.id).collection("photos").orderBy("created_at", Query.Direction.DESCENDING).get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {

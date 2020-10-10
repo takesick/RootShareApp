@@ -149,8 +149,10 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
         intent.putExtra("uid", post.uid);
         intent.putExtra("created_at", post.created_at);
         intent.putExtra("body", post.body);
-        intent.putExtra("route_ref", String.valueOf(post.route_ref));
-        intent.putExtra("post_ref", String.valueOf(post.id));
+        if (post.route_ref != null) {
+            intent.putExtra("route_ref", String.valueOf(post.route_ref));
+            intent.putExtra("route_name", String.valueOf(post.route_name));
+        }
         startActivity(intent);
     }
 
