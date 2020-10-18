@@ -59,6 +59,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -228,6 +229,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                                             for(int i = 0; i < mLocations.size(); i++) {
                                                 mRouteRef.document(documentReference.getId()).collection("locations").add(mLocations.get(i));
                                             }
+                                            mDatabase.collection("post-route").document(post_id).set(getHashMap(true));
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
@@ -236,22 +238,26 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                                             Log.w(TAG, "Error adding document", e);
                                         }
                                     });
+                        } else {
+                            mDatabase.collection("post-route").document(post_id).set(getHashMap(false));
                         }
 
                         if(photosUri != null){
                             if(setMap_isStarted){
-                                Photo photo = new Photo(photosUri.get(0));
+                                Photo photo = new Photo(photosUri.get(0), getNowDate());
                                 mPostRef.document(post_id).collection("photos").add(photo);
                                 for(int i=0; i<mUri.size(); i++) {
-                                    uploadImages(mUri.get(i), post_id);
+                                    uploadImages(mUri.get(mUri.size()-i-1), post_id);
                                 }
+                                mDatabase.collection("post-photo").document(post_id).set(getHashMap(true));
                             } else {
                                 for (int i = 0; i < mUri.size(); i++) {
-                                    uploadImages(mUri.get(i), post_id);
+                                    uploadImages(mUri.get(mUri.size()-i-1), post_id);
                                 }
                             }
                         } else {
                             Toast.makeText(getActivity(), "No file selected", Toast.LENGTH_SHORT).show();
+                            mDatabase.collection("post-photo").document(post_id).set(getHashMap(false));
                         }
                     }
                 })
@@ -447,7 +453,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         }
         latLng1 = new LatLng(max_lat, max_long);
         latLng2 = new LatLng(min_lat, min_long);
-
+        Log.e("aaabbbb", String.valueOf(distance));
         center = LatLngBounds.builder().include(latLng1).include(latLng2).build().getCenter();
         center_and_zoom.append("&center=" + center.latitude + "," + center.longitude +"&zoom=" + zoom);
     }
@@ -491,7 +497,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) +  Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
-        double dist_km = dist * 60 * 1.1515 * 1.609344;
+        double dist_km = dist * 60 * 1.1515 * 1.609344 / 100000;
         return dist_km;
     }
 
@@ -522,7 +528,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                             @Override
                             public void onSuccess(Uri uri) {
                                 String imageUri = uri.toString();
-                                Photo photo = new Photo(imageUri);
+                                Photo photo = new Photo(imageUri, getNowDate());
                                 mPostRef.document(id).collection("photos").add(photo);
                             }
                         });
@@ -535,6 +541,13 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                     }
                 });
     }
+
+    private HashMap<String, Boolean> getHashMap(Boolean existance){
+        HashMap<String, Boolean> result = new HashMap<>();
+        result.put("existance", true);
+        return result;
+    }
+
 
 
 

@@ -3,7 +3,6 @@ package com.example.rootshareapp.fragment;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,15 +44,13 @@ public class LocalMapFragment extends Fragment implements OnMapReadyCallback, Go
     };
 
     private static final int GRANTED = PackageManager.PERMISSION_GRANTED;
-    private static LocationManager mLocationManager;
     private static GoogleMap mMap;
     private MapView mMapView;
     private PolylineOptions polyOptions;
     private View mView;
-    private String mProvider;
 
     private Marker mMarker;
-    private List<LatLng> mRoot = new ArrayList<LatLng>();
+    private List<LatLng> mRoot = new ArrayList<>();
     private ArrayList<Marker> mMarkerList = new ArrayList<>();
 
     private LocationDataViewModel mLocationDataViewModel;

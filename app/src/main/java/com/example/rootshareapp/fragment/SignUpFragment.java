@@ -20,11 +20,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.model.User;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -109,7 +107,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-//        showProgressBar();
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
 
@@ -185,8 +182,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     private void writeNewUser(String userId, String email, String user_icon) {
         String username = "@" + mUserNameField.getText().toString();
         String displayname = mDisplayName.getText().toString();
-//        InputStream stream = getActivity().getContentResolver().openInputStream(mIconUri);
-//        Bitmap bitmap = BitmapFactory.decodeStream(new BufferedInputStream(stream));
         User user = new User(username, displayname, email, user_icon);
 
         mDatabase.collection("users").document(userId)
@@ -204,25 +199,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                     }
                 });
 
-//        StorageReference storageRef = storage.getReference();
-//        StorageReference riversRef = storageRef.child("images/user_icons/"+mIconUri.getLastPathSegment());
-//        UploadTask uploadTask = riversRef.putFile(mIconUri);
-//        uploadTask.addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle unsuccessful uploads
-//            }
-//        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-//                // ...
-//                Intent intent = new Intent(getActivity(), SignInActivity.class);
-//                startActivity(intent);
-//            }
-//        });
     }
-    // [END basic_write]
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -280,15 +257,8 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            Handler handler = new Handler();
-//                            handler.postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    mProgressBar.setProgress(0);
-//                                }
-//                            }, 500);
 
-//                            Toast.makeText(getActivity(), "Upload successful", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Upload successful", Toast.LENGTH_LONG).show();
                             taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
@@ -302,18 +272,11 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-//                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-//                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-//                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-//                            mProgressBar.setProgress((int) progress);
-//                        }
-//                    });
         } else {
-//            Toast.makeText(getActivity(), "No file selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No file selected", Toast.LENGTH_SHORT).show();
         }
     }
 

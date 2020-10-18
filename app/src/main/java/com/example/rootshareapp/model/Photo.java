@@ -3,13 +3,15 @@ package com.example.rootshareapp.model;
 public class Photo {
     public String name;
     public String uri;
+    public String created_at;
 
     public Photo() {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Photo(String uri) {
+    public Photo(String uri, String created_at) {
         this.uri = uri;
+        this.created_at = created_at;
     }
 
     public void setName(String name) {

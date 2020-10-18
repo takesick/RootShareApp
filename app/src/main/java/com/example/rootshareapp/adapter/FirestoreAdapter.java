@@ -1,7 +1,8 @@
 package com.example.rootshareapp.adapter;
 
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -75,7 +76,6 @@ public abstract class FirestoreAdapter<VH extends RecyclerView.ViewHolder> exten
             mRegistration.remove();
             mRegistration = null;
         }
-
         mSnapshots.clear();
         notifyDataSetChanged();
     }

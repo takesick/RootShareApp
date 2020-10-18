@@ -17,7 +17,6 @@ import com.example.rootshareapp.R;
 public class PhotoDetailDialogFragment extends DialogFragment {
     public static final String TAG = "AddRouteDialog";
     private ImageView imageView;
-    private String url;
 
     public static PhotoDetailDialogFragment newInstance(String url) {
         PhotoDetailDialogFragment fragment = new PhotoDetailDialogFragment();
@@ -38,7 +37,7 @@ public class PhotoDetailDialogFragment extends DialogFragment {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         Bundle args = getArguments();
-        url = args.getString("imageUrl");
+        String url = args.getString("imageUrl");
         Glide.with(getContext())
                 .load(url)
                 .into(imageView);

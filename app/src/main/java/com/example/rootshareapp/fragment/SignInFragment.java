@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInFragment extends Fragment implements View.OnClickListener {
@@ -78,7 +77,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
 
         // Check auth on Activity start
         if (mAuth.getCurrentUser() != null) {
-            onAuthSuccess(mAuth.getCurrentUser());
+            onAuthSuccess();
         }
     }
 
@@ -100,7 +99,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
 //                        hideProgressBar();
 
                         if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
+                            onAuthSuccess();
                         } else {
                             Toast.makeText(getContext(), "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
@@ -109,12 +108,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-    private void onAuthSuccess(FirebaseUser user) {
-//        String username = usernameFromEmail(user.getEmail());
-
-        // Write new user
-//        writeNewUser(user.getUid(), username, user.getEmail());
-
+    private void onAuthSuccess() {
         // Go to MainActivity
         startActivity(new Intent(getContext(), MainActivity.class));
         getActivity().finish();
