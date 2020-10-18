@@ -73,8 +73,8 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
 
         ImageView uIconBtn;
         ImageView imageView1, imageView2, imageView3;
-        List<String> mPhotos = new ArrayList<>();
         List<ImageView> imageViewList = new ArrayList<>();
+        List<String> photoList = new ArrayList<>();
         TextView authorView;
         TextView unameView;
         TextView created_atView;
@@ -113,6 +113,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
 
         public void bind(final DocumentSnapshot snapshot, final OnPostSelectedListener listener) {
 
+            final List<String> mPhotos = new ArrayList<>();
             Post post = snapshot.toObject(Post.class);
             mDatabase = FirebaseFirestore.getInstance();
             mUserRef = mDatabase.collection("users");
@@ -172,7 +173,8 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                                         Photo photo = document.toObject(Photo.class);
                                         mPhotos.add(photo.uri);
                                     }
-                                    setImages();
+                                    setImages(mPhotos);
+                                    photoList = mPhotos;
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                 }
@@ -198,8 +200,8 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             });
         }
 
-        public void setImages(){
-            switch (mPhotos.size()){
+        public void setImages(List<String> photos){
+            switch (photos.size()){
                 case 0:
                     imagesView.setVisibility(View.GONE);
                     imagesSubView.setVisibility(View.GONE);
@@ -209,7 +211,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                     imagesView.setVisibility(View.VISIBLE);
                     imageView1.setVisibility(View.VISIBLE);
                     Glide.with(mContext)
-                            .load(mPhotos.get(0))
+                            .load(photos.get(0))
                             .into(imageViewList.get(0));
                     imagesSubView.setVisibility(View.GONE);
                     imageView2.setVisibility(View.GONE);
@@ -222,10 +224,10 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                     imagesSubView.setVisibility(View.VISIBLE);
                     imageView2.setVisibility(View.VISIBLE);
                     Glide.with(mContext)
-                            .load(mPhotos.get(1))
+                            .load(photos.get(1))
                             .into(imageViewList.get(0));
                     Glide.with(mContext)
-                            .load(mPhotos.get(0))
+                            .load(photos.get(0))
                             .into(imageViewList.get(1));
                     imageView3.setVisibility(View.GONE);
                     break;
@@ -237,15 +239,19 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                     imageView2.setVisibility(View.VISIBLE);
                     imageView3.setVisibility(View.VISIBLE);
                     Glide.with(mContext)
-                            .load(mPhotos.get(2))
+                            .load(photos.get(2))
                             .into(imageViewList.get(0));
                     Glide.with(mContext)
-                            .load(mPhotos.get(1))
+                            .load(photos.get(1))
                             .into(imageViewList.get(1));
                     Glide.with(mContext)
-                            .load(mPhotos.get(0))
+                            .load(photos.get(0))
                             .into(imageViewList.get(2));
+
                     break;
+            }
+            for(int i =0; i< photos.size(); i++){
+                imageViewList.get(i).setDrawingCacheEnabled(true);
             }
         }
 
@@ -253,21 +259,21 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.image_view1:
-                    openDialogForPhoto(0);
-                    break;
-
-                case R.id.image_view2:
                     openDialogForPhoto(1);
                     break;
 
-                case R.id.image_view3:
+                case R.id.image_view2:
                     openDialogForPhoto(2);
+                    break;
+
+                case R.id.image_view3:
+                    openDialogForPhoto(3);
                     break;
             }
         }
 
         public void openDialogForPhoto(int num){
-            PhotoDetailDialogFragment newFragment = PhotoDetailDialogFragment.newInstance(mPhotos.get(mPhotos.size()-num-1));
+            PhotoDetailDialogFragment newFragment = PhotoDetailDialogFragment.newInstance(photoList.get(photoList.size()-num));
             newFragment.show(mFragmentManager, "dialog");
         }
     }
