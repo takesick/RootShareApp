@@ -58,9 +58,6 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
         super.onActivityCreated(savedInstanceState);
 
         postsQuery = getQuery(mCollectionReference);
-//        FirestoreRecyclerOptions<Post> Option = new FirestoreRecyclerOptions.Builder<Post>()
-//                .setQuery(query, Post.class)
-//                .build();
 
         // RecyclerView
         mAdapter = new PostListAdapter(postsQuery, this, getActivity().getSupportFragmentManager()) {
@@ -130,6 +127,7 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
         // Start listening for Firestore updates
         if (mAdapter != null) {
             mAdapter.startListening();
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -155,6 +153,7 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
         }
         startActivity(intent);
     }
+
 
     public String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();

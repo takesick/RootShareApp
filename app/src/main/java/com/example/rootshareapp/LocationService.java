@@ -36,11 +36,12 @@ import java.util.concurrent.ExecutionException;
 //import com.example.rootshareapp.sqlite.LocationOpenHelper;
 
 public class LocationService extends Service implements LocationListener {
-    private LocationManager locationManager;
-    private Context context;
 
-    private static final int MinTime = 10;
-    private static final float MinDistance = 1;
+    private Context context;
+    private LocationManager locationManager;
+
+    private static final int MinTime = 20;
+    private static final float MinDistance = 10;
 
     private LocationDataViewModel mLocationDataViewModel = new LocationDataViewModel(getApplication());
 

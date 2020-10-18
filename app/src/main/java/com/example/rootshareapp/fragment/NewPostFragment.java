@@ -453,7 +453,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         }
         latLng1 = new LatLng(max_lat, max_long);
         latLng2 = new LatLng(min_lat, min_long);
-
+        Log.e("aaabbbb", String.valueOf(distance));
         center = LatLngBounds.builder().include(latLng1).include(latLng2).build().getCenter();
         center_and_zoom.append("&center=" + center.latitude + "," + center.longitude +"&zoom=" + zoom);
     }
@@ -497,7 +497,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) +  Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
-        double dist_km = dist * 60 * 1.1515 * 1.609344;
+        double dist_km = dist * 60 * 1.1515 * 1.609344 / 100000;
         return dist_km;
     }
 

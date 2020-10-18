@@ -1,13 +1,12 @@
 package com.example.rootshareapp.fragment;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,11 +20,9 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bumptech.glide.Glide;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.model.Photo;
-import com.example.rootshareapp.model.Public_Location;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -36,10 +33,9 @@ import java.util.List;
 
 import static com.android.volley.VolleyLog.TAG;
 
-public class PostDetailFragment extends Fragment implements View.OnClickListener {
+public class PostDetailFragment extends Fragment {
 
     private View view;
-    private Uri uri;
     private Intent intent;
     private String post_id;
     private ImageView uIconBtn;
@@ -49,16 +45,12 @@ public class PostDetailFragment extends Fragment implements View.OnClickListener
     private TextView bodyView;
     private TextView routeTitleView;
     private LinearLayout imagesView;
-    private Button downloadBtn;
     private ImageView imageView1, imageView2;
+    private FrameLayout mapContainer;
 
     private FirebaseFirestore mDatabase;
-    private DocumentReference mRouteRef;
     private CollectionReference mPostRef;
-
     private Boolean mRouteExist, mPhotoExist;
-
-    private List<Public_Location> mLocationList = new ArrayList<>();
     private List<String> mPhotos = new ArrayList<>();
 
 
@@ -80,6 +72,7 @@ public class PostDetailFragment extends Fragment implements View.OnClickListener
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         uIconBtn = view.findViewById(R.id.u_icon);
         authorView = view.findViewById(R.id.author);
         unameView = view.findViewById(R.id.uname);
@@ -90,9 +83,8 @@ public class PostDetailFragment extends Fragment implements View.OnClickListener
         imageView2 = view.findViewById(R.id.imageView2);
         imageView1.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView2.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        mapContainer = view.findViewById(R.id.map_container);
         routeTitleView = view.findViewById(R.id.image_view1);
-        downloadBtn = view.findViewById(R.id.download_btn);
-        downloadBtn.setOnClickListener(this);
 
     }
 
@@ -138,24 +130,26 @@ public class PostDetailFragment extends Fragment implements View.OnClickListener
 
         mDatabase.collection("post-route").document(post_id)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("existance"));
-                        mRouteExist = (Boolean) document.getData().get("existance");
-                        if(mRouteExist == true){
-                            setRoute();
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("existance"));
+                                mRouteExist = (Boolean) document.getData().get("existance");
+                                if (mRouteExist == true) {
+                                    setRoute();
+                                } else {
+                                    mapContainer.setVisibility(View.GONE);
+                                }
+                            } else {
+                                Log.d(TAG, "No such document");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
                         }
-                    } else {
-                        Log.d(TAG, "No such document");
                     }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
+                });
 
         mDatabase.collection("post-photo").document(post_id)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -168,6 +162,8 @@ public class PostDetailFragment extends Fragment implements View.OnClickListener
                                 mPhotoExist = (Boolean) document.getData().get("existance");
                                 if(mPhotoExist == true){
                                     getImages();
+                                } else {
+                                    imagesView.setVisibility(View.GONE);
                                 }
                             } else {
                                 Log.d(TAG, "No such document");
@@ -242,6 +238,7 @@ public class PostDetailFragment extends Fragment implements View.OnClickListener
                 break;
 
             case 2:
+                mapContainer.setVisibility(View.GONE);
                 imagesView.setVisibility(View.VISIBLE);
                 imageView1.setVisibility(View.VISIBLE);
                 imageView2.setVisibility(View.VISIBLE);
@@ -261,21 +258,9 @@ public class PostDetailFragment extends Fragment implements View.OnClickListener
                         .load(mPhotos.get(1))
                         .into(imageView1);
                 Glide.with(getContext())
-                        .load(mPhotos.get(2))
+                        .load(mPhotos.get(0))
                         .into(imageView2);
                 break;
         }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.download_btn:
-                downloadRoute();
-        }
-    }
-
-    public void downloadRoute(){
-
     }
 }
