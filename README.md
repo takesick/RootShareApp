@@ -16,6 +16,6 @@
 
 ## API
 1. GoogleMapAPI：
-  - PlaceAPIで地図と位置情報の取得
-  - StaticsMapAPIでタイムライン用の静的地図データの取得
+    - PlaceAPIで地図と位置情報の取得
+    - StaticsMapAPIでタイムライン用の静的地図データの取得
 2. AlgoliaAPI： データベース上での全文検索機能用(Firestoreには全文検索機能がないため)
