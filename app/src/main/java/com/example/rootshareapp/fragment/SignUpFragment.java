@@ -115,7 +115,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-//                        hideProgressBar();
 
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
@@ -264,7 +263,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                                 public void onSuccess(Uri uri) {
                                     String user_icon = uri.toString();
                                     writeNewUser(user.getUid(), user.getEmail(), user_icon);
-                                    //Do what you want with the url
                                 }
                             });
                         }
@@ -277,6 +275,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                     });
         } else {
             Toast.makeText(getActivity(), "No file selected", Toast.LENGTH_SHORT).show();
+            writeNewUser(user.getUid(), user.getEmail(), null);
         }
     }
 

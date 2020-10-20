@@ -7,16 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 
-@Entity(tableName = "location_table"
-//        ,
-//        foreignKeys = @ForeignKey(
-//                entity = Local_RouteData.class,
-//                parentColumns = "_id",
-//                childColumns =  "route_id",
-//                onDelete = CASCADE
-//        )
-)
-
+@Entity(tableName = "location_table")
 public class Local_Location {
     @PrimaryKey(autoGenerate = true)
     public int _id;

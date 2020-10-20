@@ -6,7 +6,6 @@ public class Photo {
     public String created_at;
 
     public Photo() {
-        // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
     public Photo(String uri, String created_at) {

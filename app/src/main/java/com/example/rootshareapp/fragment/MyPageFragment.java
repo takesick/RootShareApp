@@ -81,7 +81,7 @@ public class MyPageFragment extends Fragment {
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             private final Fragment[] mFragments = new Fragment[]{
                     new MyPostFragment(),
-                    new MyFavoriteFragment(),
+                    new MyFavoriteFragment()
             };
             private final String[] mFragmentNames = new String[]{
                     getString(R.string.my_page_tab_1_label),
@@ -110,8 +110,6 @@ public class MyPageFragment extends Fragment {
         mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mViewPager);
-//        tabLayout.getTabAt(0).setIcon(R.drawable.ic_person_black_24dp);
-//        tabLayout.getTabAt(1).setIcon(R.drawable.ic_favorite_black_24dp);
     }
 
     public String getUid() {

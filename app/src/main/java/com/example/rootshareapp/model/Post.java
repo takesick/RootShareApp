@@ -19,7 +19,6 @@ public class Post {
     public int starCount = 0;
 
     public Post() {
-        // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
     public Post(FirebaseUser user, String created_at, String body) {
@@ -28,24 +27,6 @@ public class Post {
         this.created_at = created_at;
         this.body = body;
     }
-
-//    public Post(Parcel source) {
-//        uid = source.readString();
-//        created_at = source.readString();
-//        body = source.readString();
-//    }
-//
-//    public static final Creator<Post> CREATOR = new Creator<Post>() {
-//        @Override
-//        public Post createFromParcel(Parcel in) {
-//            return new Post(in);
-//        }
-//
-//        @Override
-//        public Post[] newArray(int size) {
-//            return new Post[size];
-//        }
-//    };
 
     public void setId(String _id) {
         this.id = _id;
@@ -102,21 +83,6 @@ public class Post {
         result.put("created_at", created_at);
         result.put("body", body);
         result.put("route_ref", route_ref);
-//        result.put("route", route);
-//        result.put("starCount", starCount);
-//        result.put("stars", stars);
         return result;
     }
-
-//    @Override
-//    public int describeContents() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public void writeToParcel(Parcel dest, int flags) {
-//        dest.writeString(uid);
-//        dest.writeString(created_at);
-//        dest.writeString(body);
-//    }
 }

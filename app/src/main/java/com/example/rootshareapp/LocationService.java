@@ -60,7 +60,6 @@ public class LocationService extends Service implements LocationListener {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        // LocationManager インスタンス生成
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         startDate = getNowDate();
         uid = getUid();
@@ -275,7 +274,6 @@ public class LocationService extends Service implements LocationListener {
 
     private void toastMake(String message){
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-        // 位置調整
         toast.setGravity(Gravity.CENTER, 0, 100);
         toast.show();
     }

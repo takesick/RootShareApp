@@ -59,7 +59,6 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
     private static GoogleMap mMap;
     private MapView mMapView;
     private Marker mMarker;
-    private PolylineOptions polyOptions;
 
     private String post_id;
     private String route_title;
@@ -83,7 +82,6 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
     private Button downloadBtn;
 
     public PublicMapFragment() {
-        // Required empty public constructor
     }
 
     public static PublicMapFragment newInstance() {
@@ -119,11 +117,6 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
         post_id = getActivity().getIntent().getStringExtra("id");
         route_title = getActivity().getIntent().getStringExtra("route_name");
         mPostRef = mDatabase.collection("posts");
-    }
-
-    //許可されたら位置取得、のところ
-    private void setMapFragment() {
-
     }
 
     @Override
@@ -186,7 +179,7 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
     private void drawTrace() {
         // Set a listener for marker click.
         //mMap.setOnMarkerClickListener(this);
-        polyOptions = new PolylineOptions();
+        PolylineOptions polyOptions = new PolylineOptions();
         //mRunListの要素である緯度経度つまりLatLngをポリラインの要素として登録
         for (LatLng polyLatLng : mRoute) {
             polyOptions.add(polyLatLng);
@@ -240,7 +233,6 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
         } else {
             zoom = 18;
         }
-        Log.e("aaabbbb", String.valueOf(distance));
         latLng1 = new LatLng(max_lat, max_long);
         latLng2 = new LatLng(min_lat, min_long);
         center = LatLngBounds.builder().include(latLng1).include(latLng2).build().getCenter();
@@ -317,10 +309,6 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
         );
         mViewModel.insertLocation(local_location);
 
-//        String message = "Now recording(n=" + num + ")";
-//        toastMake(message);
-//        num++;
-
     }
 
     private Long writeRouteDataToDb(String title, String created_at, String uid) throws ExecutionException, InterruptedException {
@@ -340,7 +328,6 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
 
     private void toastMake(String message){
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
-        // 位置調整
         toast.setGravity(Gravity.CENTER, 0, 100);
         toast.show();
     }

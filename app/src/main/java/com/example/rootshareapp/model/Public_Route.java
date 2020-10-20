@@ -9,10 +9,6 @@ public class Public_Route {
     public String uid;
     public DocumentReference ref;
 
-//    @ColumnInfo(name = "spots")
-//    @NonNull
-//    public String spots;
-
     public Public_Route(String title, String created_at, String uid) {
         this.title = title;
         this.created_at = created_at;
@@ -35,19 +31,12 @@ public class Public_Route {
         this.uid = uid;
     }
 
-//    public void setSpots(@NonNull String spots) {
-//        this.spots = spots;
-//    }
+    public void setRef(DocumentReference ref) {
+        this.ref = ref;
+    }
 
     public int get_id() {
         return _id;
     }
 
-//    public String getSpots() {
-//        return spots;
-//    }
-
-    public void setRef(DocumentReference ref) {
-        this.ref = ref;
-    }
 }

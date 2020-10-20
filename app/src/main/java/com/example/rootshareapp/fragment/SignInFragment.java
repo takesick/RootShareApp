@@ -19,7 +19,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.rootshareapp.MainActivity;
 import com.example.rootshareapp.R;
-import com.example.rootshareapp.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -86,8 +85,6 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         if (!validateForm()) {
             return;
         }
-
-//        showProgressBar();
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
 
@@ -96,7 +93,6 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
-//                        hideProgressBar();
 
                         if (task.isSuccessful()) {
                             onAuthSuccess();
@@ -140,14 +136,6 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
 
         return result;
     }
-
-    // [START basic_write]
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
-
-        mDatabase.collection("users").document(userId).set(user);
-    }
-    // [END basic_write]
 
     @Override
     public void onClick(View v) {

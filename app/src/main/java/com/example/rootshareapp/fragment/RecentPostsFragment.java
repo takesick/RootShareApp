@@ -15,7 +15,7 @@ import java.util.List;
 
 public class RecentPostsFragment extends PostListFragment implements MainActivity.SetQuery, PostListSearchedAdapter.OnPostSelectedListener{
 
-    public static final int LIMIT = 50;
+    public static final int LIMIT = 30;
 
     private RecyclerView mRecyclerView;
 

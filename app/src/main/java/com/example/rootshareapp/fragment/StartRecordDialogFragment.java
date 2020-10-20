@@ -21,17 +21,12 @@ public class StartRecordDialogFragment extends DialogFragment implements View.On
     private EditText route_orig, route_dist;
     private Button permitBtn, cancelBtn;
     private String routeTitle = null, mOrigin, mDestination;
-    private onCancelBtnListener mListener;
 
-    public static StartRecordDialogFragment newInstance(onCancelBtnListener listener) {
+    public static StartRecordDialogFragment newInstance(onCancelBtnListener mListener) {
         StartRecordDialogFragment fragment = new StartRecordDialogFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public interface onCancelBtnListener{
-        void cancelRecord();
     }
 
     @Override
@@ -63,15 +58,15 @@ public class StartRecordDialogFragment extends DialogFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonPermit:
-                onSubmitClicked(v);
+                onSubmitClicked();
                 break;
             case R.id.buttonCancel:
-                onCancelClicked(v);
+                onCancelClicked();
                 break;
         }
     }
 
-    public void onSubmitClicked(View view) {
+    public void onSubmitClicked() {
         mOrigin = route_orig.getText().toString();
         mDestination = route_dist.getText().toString();
         if((mOrigin != null) || (mDestination != null)) {
@@ -84,11 +79,10 @@ public class StartRecordDialogFragment extends DialogFragment implements View.On
         dismiss();
     }
 
-    public void onCancelClicked(View view) {
+    public void onCancelClicked() {
         dismiss();
     }
 
-    public String createTitle(){
-        return routeTitle;
+    public interface onCancelBtnListener {
     }
 }

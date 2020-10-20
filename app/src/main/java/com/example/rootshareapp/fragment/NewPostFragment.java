@@ -110,7 +110,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
 
         mPostRef = mDatabase.collection("posts");
         mRouteRef = mDatabase.collection("routes");
-
         mStorageRef = FirebaseStorage.getInstance().getReference("images").child("photos");
 
         return view;
@@ -443,13 +442,13 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
 
         double distance = getDistance(max_lat, min_lat, max_long,min_long);
         if(distance>1) {
-            zoom = 14;
+            zoom = 13;
         } else if(distance> 0.5 && distance<=1) {
-            zoom = 15;
+            zoom = 14;
         } else if(distance> 0.2 && distance<=0.5) {
-            zoom = 17;
+            zoom = 15;
         } else {
-            zoom = 18;
+            zoom = 16;
         }
         latLng1 = new LatLng(max_lat, max_long);
         latLng2 = new LatLng(min_lat, min_long);
