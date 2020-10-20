@@ -9,13 +9,13 @@
 ## 使用技術
 1. Android Java(Kotlinではありません)
 2. GCP：
-  ・ FirebaseAuth： ユーザーのログイン管理
-  ・ Firestore： NoSQLベースのデータベースである
-  ・ Firestrage： 画像の保存用にストレージ
+    - FirebaseAuth： ユーザーのログイン管理
+    - Firestore： NoSQLベースのデータベースである
+    - Firestrage： 画像の保存用にストレージ
 3. Realm： SQLiteベースのAndroidの内部データベース
 
 ## API
 1. GoogleMapAPI：
-  ・ PlaceAPIで地図と位置情報の取得
-  ・ StaticsMapAPIでタイムライン用の静的地図データの取得
+  - PlaceAPIで地図と位置情報の取得
+  - StaticsMapAPIでタイムライン用の静的地図データの取得
 2. AlgoliaAPI： データベース上での全文検索機能用(Firestoreには全文検索機能がないため)
