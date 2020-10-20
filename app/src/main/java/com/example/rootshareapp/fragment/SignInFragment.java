@@ -38,6 +38,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
     private EditText mPasswordField;
     private Button mSignInButton;
     private Button mSignUpButton;
+    private Button mGuestSignInButton;
 
     public static SignInFragment newInstance() {
         SignInFragment fragment = new SignInFragment();
@@ -65,10 +66,12 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         mPasswordField = view.findViewById(R.id.fieldPassword);
         mSignInButton = view.findViewById(R.id.signInBtn);
         mSignUpButton = view.findViewById(R.id.toSignUpBtn);
+        mGuestSignInButton = view.findViewById(R.id.buttonGuestSignIn);
 
         // Click listeners
         mSignInButton.setOnClickListener(this);
         mSignUpButton.setOnClickListener(this);
+        mGuestSignInButton.setOnClickListener(this);
     }
 
     @Override
@@ -163,8 +166,33 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
                 fragmentTransaction.commit();
                 break;
 
+            case R.id.buttonGuestSignIn:
+                signInForGuest();
+                break;
+
             default:
                 break;
         }
+    }
+
+    private void signInForGuest() {
+        String email = "";
+        String password = "guest";
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
+//                        hideProgressBar();
+
+                        if (task.isSuccessful()) {
+                            onAuthSuccess();
+                        } else {
+                            Toast.makeText(getContext(), "Sign In Failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

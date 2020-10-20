@@ -74,6 +74,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     private TextView selectRouteBtn, deselectRouteBtn, addSpotBtn;
     private ImageButton cameraBtn, galleryBtn;
     private Button submitBtn;
+    private LinearLayout newPost;
     private LinearLayout imagesView, imagesSubView;
     private ImageView imageView1, imageView2, imageView3;
     private List<String> photosUri = new ArrayList<>();
@@ -128,6 +129,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         cameraBtn = view.findViewById(R.id.cameraBtn);
         galleryBtn = view.findViewById(R.id.galleryBtn);
 
+        newPost = view.findViewById(R.id.newPost);
         imagesView = view.findViewById(R.id.media_container);
         imagesSubView = view.findViewById(R.id.sub_image_container);
         imageView1 = view.findViewById(R.id.image_view1);
@@ -137,6 +139,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         imageView2.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView3.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
+        newPost.setOnClickListener(this);
         submitBtn.setOnClickListener(this);
         selectRouteBtn.setOnClickListener(this);
         deselectRouteBtn.setOnClickListener(this);
@@ -191,6 +194,9 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                     showPicker();
                     break;
 
+                case R.id.newPost:
+                    hideKeyboard();
+                    break;
                 default:
                     break;
             }

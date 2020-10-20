@@ -277,8 +277,4 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             newFragment.show(mFragmentManager, "dialog");
         }
     }
-
-    public void Redirect(){
-        notifyDataSetChanged();
-    }
 }

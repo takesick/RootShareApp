@@ -33,38 +33,6 @@ public class NewPostActivity extends AppCompatActivity
         }
     }
 
-//    private Task<Void> addNewPost(final DocumentReference restaurantRef, final Public_Route public_route) {
-//        // TODO(developer): Implement
-//        return Tasks.forException(new Exception("not yet implemented"));
-//    }
-//
-//    @Override
-//    public void onRating(Public_Route public_route) {
-//        // In a transaction, add the new rating and update the aggregate totals
-//        addNewPost(mPostRef, public_route)
-//                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        Log.d(TAG, "Post added");
-//
-//                        // Hide keyboard and scroll to top
-//                        hideKeyboard();
-//                        mRatingsRecycler.smoothScrollToPosition(0);
-//                    }
-//                })
-//                .addOnFailureListener(this, new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.w(TAG, "Add Post failed", e);
-//
-//                        // Show failure message and hide keyboard
-//                        hideKeyboard();
-//                        Snackbar.make(findViewById(android.R.id.content), "Failed to add rating",
-//                                Snackbar.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
-//
 //    private void hideKeyboard() {
 //        View view = getCurrentFocus();
 //        if (view != null) {

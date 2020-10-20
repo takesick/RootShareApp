@@ -127,7 +127,6 @@ public abstract class PostListFragment extends Fragment implements PostListAdapt
         // Start listening for Firestore updates
         if (mAdapter != null) {
             mAdapter.startListening();
-            mAdapter.notifyDataSetChanged();
         }
     }
 

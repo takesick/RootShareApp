@@ -47,7 +47,6 @@ public class PhotoDetailDialogFragment extends DialogFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         Log.e("dialog", "show");
     }
 
@@ -57,7 +56,5 @@ public class PhotoDetailDialogFragment extends DialogFragment {
         getDialog().getWindow().setLayout(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-
     }
-
 }

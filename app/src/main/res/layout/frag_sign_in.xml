@@ -47,12 +47,6 @@
             android:layout_marginTop="10dp"
             android:text="パスワードを表示" />
 
-        <CheckBox
-            android:id="@+id/cont_checkBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ログインしたままにする" />
-
         <Button
             android:id="@+id/signInBtn"
             android:layout_width="match_parent"
@@ -154,7 +148,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/buttonGestSignIn"
+            android:id="@+id/buttonGuestSignIn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
