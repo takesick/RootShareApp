@@ -12,7 +12,7 @@
     - FirebaseAuth： ユーザーのログイン管理
     - Firestore： NoSQLベースのデータベースである
     - Firestrage： 画像の保存用にストレージ
-3. Realm： SQLiteベースのAndroidの内部データベース
+3. Room： SQLiteベースのAndroidの内部データベース
 
 ## API
 1. GoogleMapAPI：
