@@ -1,6 +1,5 @@
 package com.example.rootshareapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,12 +25,4 @@ public class SignInActivity extends AppCompatActivity  {
             fragmentTransaction.commit();
         }
     }
-
-
-    public void finishWithResult(boolean result) {
-        Intent intent = new Intent(this, SignInActivity.class);
-        setResult((result) ? RESULT_OK : RESULT_CANCELED, intent);
-        finish();
-    }
-
 }

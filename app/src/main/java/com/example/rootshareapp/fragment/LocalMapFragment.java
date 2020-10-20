@@ -55,17 +55,7 @@ public class LocalMapFragment extends Fragment implements OnMapReadyCallback, Go
 
     private LocationDataViewModel mLocationDataViewModel;
 
-     // Might be null if Google Play services APK is not available.
-//
-//    public static MapFragment newInstance() {
-//        MapFragment fragment = new MapFragment();
-//        Bundle args = new Bundle();
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
     public LocalMapFragment() {
-        // Required empty public constructor
     }
 
     @Nullable
@@ -96,12 +86,6 @@ public class LocalMapFragment extends Fragment implements OnMapReadyCallback, Go
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-    }
-
-    //許可されたら位置取得、のところ
-    private void setMapFragment() {
-
     }
 
     @Override

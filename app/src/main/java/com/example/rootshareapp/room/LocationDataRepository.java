@@ -31,13 +31,6 @@ public class LocationDataRepository  {
         guideDao = db.guideDao();
     }
 
-    // Note that in order to unit test the WordRepository, you have to remove the Application
-    // dependency. This adds complexity and much more code, and this sample is not about testing.
-    // See the BasicSample in the android-architecture-components repository at
-    // https://github.com/googlesamples
-
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
     public LiveData<List<Local_Route>> getLatestRoutes() {
         mLatestRoutes = routeDao.getLatestRoutes();
         return mLatestRoutes;
@@ -51,8 +44,6 @@ public class LocationDataRepository  {
         return mLatestGuides;
     }
 
-    // You must call this on a non-UI thread or your app will throw an exception. Room ensures
-    // that you're not doing any long running operations on the main thread, blocking the UI.
     public Long insertRoute(final Local_Route local_route) throws ExecutionException, InterruptedException {
         Future<Long> future = LocationRoomDatabase.databaseWriteExecutor.submit(new Callable<Long>() {
             public Long call() {
@@ -184,33 +175,6 @@ public class LocationDataRepository  {
         return mLocationsWithinRoute;
     }
 
-
-//    private static class InsertLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Long> {
-//        private LocationDao locationDao;
-//
-//        private InsertLocationAsyncTask(LocationDao locationDao) {
-//            this.locationDao = locationDao;
-//        }
-//
-//        @Override
-//        protected Long doInBackground(Local_LocationData... local_locationData) {
-//            return locationDao.insertLocation(local_locationData[0]);
-//        }
-//    }
-//
-//    private static class UpdateLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Long> {
-//        private LocationDao locationDao;
-//
-//        private UpdateLocationAsyncTask(LocationDao locationDao) {
-//            this.locationDao = locationDao;
-//        }
-//
-//        @Override
-//        protected Long doInBackground(Local_LocationData... local_locationData) {
-//            return locationDao.updateLocation(local_locationData[0]);
-//        }
-//    }
-
     private static class getLocationsWithinRouteAsyncTask extends AsyncTask<Integer, Void, List<Local_Location>> {
         private LocationDao locationDao;
 
@@ -227,21 +191,6 @@ public class LocationDataRepository  {
         protected void onPostExecute(List<Local_Location> result) {
             super.onPostExecute(result);
         }
-//
-//    private static class DeleteLocationAsyncTask extends AsyncTask<Local_LocationData, Void, Void> {
-//        private LocationDao locationDao;
-//
-//        private DeleteLocationAsyncTask(LocationDao locationDao) {
-//            this.locationDao = locationDao;
-//        }
-//
-//
-//        @Override
-//        protected Void doInBackground(Local_LocationData... local_locationData) {
-//            locationDao.delete(local_locationData[0]);
-//            return null;
-//        }
-//    }
     }
 
 }

@@ -12,7 +12,6 @@ public class User {
     public String user_icon;
 
     public User() {
-        //empty constructor needed
     }
 
     public User(String user_name, String email) {

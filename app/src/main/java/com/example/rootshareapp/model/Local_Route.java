@@ -22,10 +22,6 @@ public class Local_Route {
     @NonNull
     public String uid;
 
-//    @ColumnInfo(name = "spots")
-//    @NonNull
-//    public String spots;
-
     public Local_Route(String title, String created_at, String uid) {
         this.title = title;
         this.created_at = created_at;
@@ -48,15 +44,8 @@ public class Local_Route {
         this.uid = uid;
     }
 
-//    public void setSpots(@NonNull String spots) {
-//        this.spots = spots;
-//    }
-
     public int get_id() {
         return _id;
     }
 
-//    public String getSpots() {
-//        return spots;
-//    }
 }

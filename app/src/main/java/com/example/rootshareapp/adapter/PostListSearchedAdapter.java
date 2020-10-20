@@ -105,7 +105,6 @@ public class PostListSearchedAdapter extends RecyclerView.Adapter<PostListSearch
             created_atView.setText(post.getCreated_at());
             bodyView.setText(post.getBody());
 
-            // Click listener
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

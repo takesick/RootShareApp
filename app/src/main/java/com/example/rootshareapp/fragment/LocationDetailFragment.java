@@ -30,8 +30,6 @@ public class LocationDetailFragment extends Fragment {
     private FloatingActionButton saveFab, deleteFab;
     private Local_Location mLocal_Location;
     private LocationDataViewModel mLocationDataViewModel;
-// 口コミの記入
-//    int id = this.getArguments().getInt(KEY_LOCATION_ID);
 
     public static LocationDetailFragment newInstance() {
         LocationDetailFragment fragment = new LocationDetailFragment();

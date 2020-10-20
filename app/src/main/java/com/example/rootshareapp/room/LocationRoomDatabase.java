@@ -23,7 +23,6 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
     public abstract LocationDao locationDao();
     public abstract GuideDao guideDao();
 
-    // marking the instance as volatile to ensure atomic access to the variable
     private static volatile LocationRoomDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
 
@@ -58,8 +57,7 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
 
-            // If you want to keep data through app restarts,
-            // comment out the following block
+//            内部データベースリセット用コード
             databaseWriteExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -67,7 +65,7 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                     // If you want to start with more words, just add them.
 //                    RouteDao routedao = INSTANCE.routeDao();
 //                    LocationDao locationdao = INSTANCE.locationDao();
-////
+//
 //                    routedao.deleteAllRoutes();
 //                    locationdao.deleteAllLocations();
                 }
@@ -85,7 +83,6 @@ public abstract class LocationRoomDatabase extends RoomDatabase {
                     RouteContract.Routes.COL_CREATED_AT + " String," +
                     RouteContract.Routes.COL_TITLE + " String," +
                     RouteContract.Routes.COL_UID + " String)"
-//                    RouteContract.Routes.COL_SPOTS + " Sting)"
             );
             database.execSQL("create table " + "location_table" + "(" +
                     LocationContract.Locations._ID + " integer primary key autoincrement," +

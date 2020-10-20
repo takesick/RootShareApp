@@ -27,18 +27,15 @@ import com.example.rootshareapp.adapter.LocationListAdapter;
 import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
-import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 
@@ -100,20 +97,6 @@ public class LocationFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                setSpot(place);
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
-                Log.e(TAG, "Place: " );
-            }
-        }
 
         if (requestCode == PHOTO_URI_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -165,8 +148,7 @@ public class LocationFragment extends Fragment implements View.OnClickListener, 
                             .setHint("店舗名、または施設名")
                             .build(getActivity());
                     startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-//                    Intent intent = new Intent(getActivity(), AddSpotActivity.class);
-//                    startActivity(intent);
+
                     break;
 
                 case R.id.addTagsBtn:
@@ -185,12 +167,11 @@ public class LocationFragment extends Fragment implements View.OnClickListener, 
     }
 
 
-    public void setSpot(Place place){
-        addSpotBtn.setText(place.getName());
-
+//    public void setSpot(Place place){
+//        addSpotBtn.setText(place.getName());
 //        mRoute_Data.setSpots(place.toString());
-        mLocationDataViewModel.updateRoute(mRoute_Data);
+//        mLocationDataViewModel.updateRoute(mRoute_Data);
 //        MapFragment fragment = (MapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map_container);
 //        fragment.addSpotMarker();
-    }
+//    }
 }

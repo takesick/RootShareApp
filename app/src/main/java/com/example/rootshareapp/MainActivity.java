@@ -59,25 +59,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         void setQuery(List<Post> postList);
     }
 
-//        if(savedInstanceState == null){
-//            // FragmentManagerのインスタンス生成
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            // FragmentTransactionのインスタンスを取得
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            // インスタンスに対して張り付け方を指定する
-//            fragmentTransaction.replace(R.id.container, new MyRoutesFragment());
-//            // 張り付けを実行
-//            fragmentTransaction.commit();
-//        }
-
-//        setContentView(R.layout.activity_main);
     private FirebaseAuth mAuth;
     private FirebaseFirestore mDatabase;
     private ViewPager mViewPager;
     private FragmentPagerAdapter mPagerAdapter;
     private SetQuery mSetQuery;
     private  StartRecordDialogFragment.onCancelBtnListener mListener = this;
-//    private RecentPostsFragment fragment;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -108,28 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     new MyRoutesFragment(),
                     new MyPageFragment(),
             };
-//            private final String[] mFragmentNames = new String[]{
-//                    getString(R.string.home_heading_recent),
-//                    getString(R.string.home_heading_my_routes),
-//                    getString(R.string.home_heading_my_page)
-//            };
-//
-//            private int[] imageResId = {
-//                    R.drawable.ic_home_black_24dp,
-//                    R.drawable.ic_place_black_24dp,
-//                    R.drawable.ic_person_black_24dp
-//            };
 
-//            @Override
-//            public CharSequence getPageTitle(int position) {
-//
-//                Drawable image = ContextCompat.getDrawable(getApplicationContext(), imageResId[position]);
-//                image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
-//                SpannableString sb = new SpannableString(mFragmentNames[position]);
-//                ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
-//                sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                return sb;
-//            }
             @Override
             public Fragment getItem(int position) {
                 return mFragments[position];
@@ -139,15 +105,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public int getCount() {
                 return mFragments.length;
             }
-//
-//            @Override
-//            public CharSequence getPageTitle(int position) {
-//                return mFragmentNames[position];
-//            }
 
         };
 
-// Set up the ViewPager with the sections adapter.
+
         mViewPager = findViewById(R.id.pager);
         mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
@@ -178,9 +139,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void checkMultiPermissions() {
         // 位置情報の Permission
         int permissionLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        // 外部ストレージ書き込みの Permission
-//        int permissionExtStorage = ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         ArrayList reqPermissions = new ArrayList<>();
 
@@ -191,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 未許可
             reqPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-        // 未許可
+        // 未許可の場合もう一度確認
         if (!reqPermissions.isEmpty()) {
             ActivityCompat.requestPermissions(this,
                     (String[]) reqPermissions.toArray(new String[0]),
@@ -223,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
-//                startLocationService();
             }
         } else {
 
@@ -238,11 +195,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // トーストの生成
     private void toastMake(String message) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-        // 位置調整
         toast.setGravity(Gravity.CENTER, 0, 200);
         toast.show();
     }
-
+// ヘッダー部のメニュー作成
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bottom_navigation_item, menu);
@@ -252,9 +208,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MenuItem item = menu.findItem(R.id.nav_logout);
         item.setOnMenuItemClickListener(this);
 
+//        全文検索機能がfirebaseにはないため、AlgoliaAPIを使用
         Client client = new Client(getString(R.string.algolia_id), getString(R.string.algolia_key));
         final Index index = client.getIndex("posts");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            検索ワードの決定時の処理
             @Override
             public boolean onQueryTextSubmit(String searchText) {
                 Query query = new Query(searchText)
@@ -282,11 +240,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 return false;
             }
-
+//            検索ワードの入力中の処理
             @Override
             public boolean onQueryTextChange(String newText) {
-//                msetQuery.setQuery(firebaseSearch(newText));
-//                fragment.setQuery(firebaseSearch(newText));
                 Query query = new Query(newText)
                         .setHitsPerPage(50);
                 index.searchAsync(query, new CompletionHandler() {
@@ -321,11 +277,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v != null) {
+//            右下のドロワーメニューのクリック処理
             switch (v.getId()) {
-                case R.id.nav_logout:
-
-                    break;
-
                 case R.id.OpenDrawerFab:
                     if (mStopRecordingFab.getVisibility() == View.VISIBLE) {
                         String nowRecording = "位置情報の記録を停止してください";
@@ -397,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+//ヘッダー右のドロップダウンメニューのクリック処理
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {

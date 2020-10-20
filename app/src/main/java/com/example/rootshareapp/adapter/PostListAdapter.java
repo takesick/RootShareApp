@@ -134,9 +134,11 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
                                     Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("user_icon"));
-                                    Glide.with(mContext)
-                                            .load(document.getData().get("user_icon"))
-                                            .into(uIconBtn);
+                                    if(document.getData().get("user_icon") != null) {
+                                        Glide.with(mContext)
+                                                .load(document.getData().get("user_icon"))
+                                                .into(uIconBtn);
+                                    }
 
                                     authorView.setText(String.valueOf(document.getData().get("display_name")));
                                     unameView.setText(String.valueOf(document.getData().get("user_name")));

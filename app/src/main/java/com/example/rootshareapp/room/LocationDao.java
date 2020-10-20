@@ -15,10 +15,6 @@ import java.util.List;
 @Dao
 public interface LocationDao {
 
-    // LiveData is a data holder class that can be observed within a given lifecycle.
-    // Always holds/caches latest version of data. Notifies its active observers when the
-    // data has changed. Since we are getting all the contents of the database,
-    // we are notified whenever any of the database contents have changed.
     @Query("SELECT * from location_table WHERE route_id = :route_id ORDER BY _id DESC")
     LiveData<List<Local_Location>> getLatestLocations(int route_id);
 

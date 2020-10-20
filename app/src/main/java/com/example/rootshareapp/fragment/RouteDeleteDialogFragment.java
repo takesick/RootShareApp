@@ -66,21 +66,21 @@ public class RouteDeleteDialogFragment extends DialogFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonPermit:
-                onSubmitClicked(v);
+                onSubmitClicked();
                 break;
             case R.id.buttonCancel:
-                onCancelClicked(v);
+                onCancelClicked();
                 break;
         }
     }
 
-    public void onSubmitClicked(View view) {
+    public void onSubmitClicked() {
         MyRoutesFragment fragment = (MyRoutesFragment) getParentFragment();
         fragment.onDeleteRoute(route_id);
         dismiss();
     }
 
-    public void onCancelClicked(View view) {
+    public void onCancelClicked() {
         dismiss();
     }
 

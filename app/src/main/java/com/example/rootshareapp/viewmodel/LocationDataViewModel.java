@@ -17,17 +17,12 @@ import java.util.concurrent.ExecutionException;
 public class LocationDataViewModel extends AndroidViewModel {
 
     private LocationDataRepository mRepository;
-    // Using LiveData and caching what getAlphabetizedWords returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes) and only update the
-    //   the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
     private LiveData<List<Local_Route>> mLatestRoutes;
     private LiveData<List<Local_Location>> mLatestLocations;
     private LiveData<List<Guide>> mLatestGuides;
     private Local_Route mSelectedRoute;
     private List<Local_Location> mLocationsWithinRoute;
     private Local_Location mSelectedLocation;
-    private String mRouteTitle;
 
     public LocationDataViewModel(Application application) {
         super(application);
@@ -129,15 +124,3 @@ public class LocationDataViewModel extends AndroidViewModel {
         return mSelectedRoute;
     }
 }
-
-//class MyRoutesFragment extends Fragment {
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        LocationDataViewModel model = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
-//        model.getSelectedLocation();
-////        model.getSelected().observe(this, { item ->
-////                // Update the UI.
-////        });
-//
-//    }
-//}

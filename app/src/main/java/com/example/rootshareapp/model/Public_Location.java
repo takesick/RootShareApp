@@ -5,14 +5,6 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class Public_Location {
 
-        public static final String FIELD_DESTINATION = "destination";
-        public static final String FIELD_TITLE = "tag";
-        public static final String FIELD_LATITUDE = "latitude";
-        public static final String FIELD_LONGITUDE = "longitude";
-        public static final String FIELD_ACCURACY = "accuracy";
-        public static final String FIELD_CREATE_AT = "created_at";
-        public static final String FIELD_UID = "uid";
-
         public String tag;
         public double latitude;
         public double longitude;
