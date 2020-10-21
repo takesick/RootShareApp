@@ -351,8 +351,8 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void setRoute() throws ExecutionException, InterruptedException {
-        local_Route = mLocationDataViewModel.getSelectedRoute(local_Route._id);
+    public void setRoute() {
+        local_Route = mLocationDataViewModel.getSelectedRoute();
         try {
             local_locations = mLocationDataViewModel.getLocationsWithinRoute(local_Route._id);
         } catch (ExecutionException e) {

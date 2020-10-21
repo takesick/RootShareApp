@@ -126,7 +126,7 @@ public class LocationDataViewModel extends AndroidViewModel {
         mSelectedRoute = local_route;
     }
 
-//    public Local_Route getSelectedRoute() {
-//        return mSelectedRoute;
-//    }
+    public Local_Route getSelectedRoute() {
+        return mSelectedRoute;
+    }
 }
