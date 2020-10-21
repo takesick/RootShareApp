@@ -75,17 +75,15 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     private ImageButton cameraBtn, galleryBtn;
     private Button submitBtn;
     private LinearLayout imagesView, imagesSubView;
-    private ImageView imageView1, imageView2, imageView3;
-    private List<String> photosUri = new ArrayList<>();
+    private ImageView mapView, imageView1, imageView2, imageView3;
 
     private RecyclerView mRecyclerView;
     private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
     private CollectionReference mPostRef, mRouteRef;
     private DocumentReference mLocationRef;
 
-    private Uri uri;
     private List<Uri> mUri = new ArrayList<>();
-    private String photos_uri;
+    private String mapUri;
     private Post post;
     private Local_Route local_Route = null;
     private List<Local_Location> local_locations;
@@ -122,11 +120,12 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         editBodyView = view.findViewById(R.id.fieldBody);
         selectRouteBtn = view.findViewById(R.id.selectRouteBtn);
         deselectRouteBtn  = view.findViewById(R.id.deselectRouteBtn);
-        addSpotBtn = view.findViewById(R.id.addSpotBtn);
+//        addSpotBtn = view.findViewById(R.id.addSpotBtn);
         submitBtn = view.findViewById(R.id.submitBtn);
         cameraBtn = view.findViewById(R.id.cameraBtn);
         galleryBtn = view.findViewById(R.id.galleryBtn);
 
+        mapView = view.findViewById(R.id.map_view1);
         imagesView = view.findViewById(R.id.media_container);
         imagesSubView = view.findViewById(R.id.sub_image_container);
         imageView1 = view.findViewById(R.id.image_view1);
@@ -166,8 +165,8 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                     selectRouteBtn.setVisibility(View.VISIBLE);
                     break;
 
-                case R.id.addSpotBtn:
-                    break;
+//                case R.id.addSpotBtn:
+//                    break;
 
                 case R.id.submitBtn:
                     createPost();
@@ -216,7 +215,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
                         final String post_id = documentReference.getId();
                         mPostRef.document(post_id).update("id", post_id);
-                        if(local_Route!=null) {
+                        if(setMap_isStarted) {
                             mRouteRef.add(mRoute)
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         @Override
@@ -237,22 +236,16 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                                             Log.w(TAG, "Error adding document", e);
                                         }
                                     });
+                            Photo photo = new Photo(mapUri, getNowDate());
+                            mPostRef.document(post_id).collection("map").add(photo);
                         } else {
                             mDatabase.collection("post-route").document(post_id).set(getHashMap(false));
                         }
 
-                        if(photosUri != null){
-                            if(setMap_isStarted){
-                                Photo photo = new Photo(photosUri.get(0), getNowDate());
-                                mPostRef.document(post_id).collection("photos").add(photo);
-                                for(int i=0; i<mUri.size(); i++) {
-                                    uploadImages(mUri.get(mUri.size()-i-1), post_id);
-                                }
-                                mDatabase.collection("post-photo").document(post_id).set(getHashMap(true));
-                            } else {
-                                for (int i = 0; i < mUri.size(); i++) {
-                                    uploadImages(mUri.get(mUri.size()-i-1), post_id);
-                                }
+                        if(mUri.size() != 0){
+                            mDatabase.collection("post-photo").document(post_id).set(getHashMap(true));
+                            for (int i = 0; i < mUri.size(); i++) {
+                                uploadImages(mUri.get(i), post_id);
                             }
                         } else {
                             Toast.makeText(getActivity(), "No file selected", Toast.LENGTH_SHORT).show();
@@ -263,62 +256,56 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("aaa", "Error adding document", e);
+                        Log.w(TAG, "Error adding document", e);
                     }
                 });
     }
 
     public void showPhoto() {
-        switch (photosUri.size()) {
+        imageView1.setImageDrawable(null);
+        imageView2.setImageDrawable(null);
+        imageView3.setImageDrawable(null);
+        switch (mUri.size()) {
             case 0:
-                imagesView.setVisibility(View.GONE);
+                imagesSubView.setVisibility(View.GONE);
                 break;
 
             case 1:
-                imagesView.setVisibility(View.VISIBLE);
-                imageView1.setVisibility(View.VISIBLE);
-                Glide.with(getContext())
-                        .load(photosUri.get(0))
-                        .into(imageView1);
-//                imageView1.setImageURI(photosUri.get(0));
-                imagesSubView.setVisibility(View.GONE);
-//                imageView2.setVisibility(View.GONE);
-//                imageView3.setVisibility(View.GONE);
+                if(setMap_isStarted){
+                    imagesView.setVisibility(View.VISIBLE);
+                    imageView1.setVisibility(View.GONE);
+                    imagesSubView.setVisibility(View.VISIBLE);
+                    imageView2.setVisibility(View.VISIBLE);
+                    imageView2.setImageURI(mUri.get(0));
+                    imageView3.setVisibility(View.GONE);
+                } else {
+                    imagesView.setVisibility(View.VISIBLE);
+                    imageView1.setVisibility(View.VISIBLE);
+                    imageView1.setImageURI(mUri.get(0));
+                    imagesSubView.setVisibility(View.GONE);
+                    imageView2.setVisibility(View.GONE);
+                    imageView3.setVisibility(View.GONE);
+                }
                 break;
 
             case 2:
-                imagesView.setVisibility(View.VISIBLE);
-                imagesSubView.setVisibility(View.VISIBLE);
-                imageView1.setVisibility(View.VISIBLE);
-                imageView2.setVisibility(View.VISIBLE);
-                Glide.with(getContext())
-                        .load(photosUri.get(0))
-                        .into(imageView1);
-                Glide.with(getContext())
-                        .load(photosUri.get(1))
-                        .into(imageView2);
-//                imageView2.setImageURI(photosUri.get(1));
-                imageView3.setVisibility(View.GONE);
-                break;
-
-            case 3:
-                imagesView.setVisibility(View.VISIBLE);
-                imagesSubView.setVisibility(View.VISIBLE);
-                imageView1.setVisibility(View.VISIBLE);
-                imageView2.setVisibility(View.VISIBLE);
-                imageView3.setVisibility(View.VISIBLE);
-                Glide.with(getContext())
-                        .load(photosUri.get(0))
-                        .into(imageView1);
-                Glide.with(getContext())
-                        .load(photosUri.get(1))
-                        .into(imageView2);
-                Glide.with(getContext())
-                        .load(photosUri.get(2))
-                        .into(imageView3);
-//                imageView1.setImageURI(photosUri.get(0));
-//                imageView2.setImageURI(photosUri.get(1));
-//                imageView3.setImageURI(photosUri.get(2));
+                if(setMap_isStarted){
+                    imagesView.setVisibility(View.VISIBLE);
+                    imagesSubView.setVisibility(View.VISIBLE);
+                    imageView2.setVisibility(View.VISIBLE);
+                    imageView3.setVisibility(View.VISIBLE);
+                    imageView2.setImageURI(mUri.get(0));
+                    imageView3.setImageURI(mUri.get(1));
+                    imageView1.setVisibility(View.GONE);
+                } else {
+                    imagesView.setVisibility(View.VISIBLE);
+                    imagesSubView.setVisibility(View.VISIBLE);
+                    imageView1.setVisibility(View.VISIBLE);
+                    imageView2.setVisibility(View.VISIBLE);
+                    imageView1.setImageURI(mUri.get(0));
+                    imageView2.setImageURI(mUri.get(1));
+                    imageView3.setVisibility(View.GONE);
+                }
                 break;
         }
     }
@@ -326,15 +313,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
     public void showPicker() {
         //intentとは意図：新しく欲しいものの条件(他のアプリに伝える条件)
         //Intent.~意図(伝える条件)の編集ができる
-        if(setMap_isStarted) {
-            int size = photosUri.size();
-            Log.e(TAG, String.valueOf(size));
-            for (int i = 1; i < size; i++) {
-                photosUri.remove(1);
-            }
-        } else {
-            photosUri.clear();
-        }
         mUri.clear();
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);//.ACTION_OPEN_DOCUMENT：ストレージ内のドキュメントプロバイダ内のものを条件として指定
         intent.addCategory(Intent.CATEGORY_OPENABLE);//CATEGORY_OPENABLE開けるものを指定
@@ -353,9 +331,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         if (resultCode == RESULT_OK) {
             if (data.getData() != null) {
                 // 選択画像が単数の場合の処理
-                uri = data.getData();
-                Log.e(TAG, String.valueOf(uri));
-                photosUri.add(uri.toString());
+                Uri uri = data.getData();
                 mUri.add(uri);
                 showPhoto();
             } else {
@@ -366,8 +342,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
                     toastMake("画像は3枚以上選択できません。");
                 } else {
                     for (int i = 0; i < 2; i++) {
-                        uri = cd.getItemAt(i).getUri();
-                        photosUri.add(uri.toString());
+                        Uri uri = cd.getItemAt(i).getUri();
                         mUri.add(uri);
                     }
                     showPhoto();
@@ -376,8 +351,8 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void setRoute() {
-        local_Route = mLocationDataViewModel.getSelectedRoute();
+    public void setRoute() throws ExecutionException, InterruptedException {
+        local_Route = mLocationDataViewModel.getSelectedRoute(local_Route._id);
         try {
             local_locations = mLocationDataViewModel.getLocationsWithinRoute(local_Route._id);
         } catch (ExecutionException e) {
@@ -387,25 +362,13 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         }
 
         selectRouteBtn.setText(local_Route.title);
-        convertRouteToPublic();
-        convertLocationsToPublic();
-
-        generateString();
-        setMapImage();
-        selectRouteBtn.setVisibility(View.GONE);
-        deselectRouteBtn.setVisibility(View.VISIBLE);
-    }
-
-    public void convertRouteToPublic(){
         mRoute = new Public_Route(
                 local_Route.title,
                 local_Route.created_at,
                 local_Route.uid
 //                local_Route.spots
         );
-    }
 
-    public void convertLocationsToPublic(){
         for(int i = 0; i < local_locations.size(); i++){
             mLocation = new Public_Location(
                     local_locations.get(i).created_at,
@@ -417,6 +380,11 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
             );
             mLocations.add(mLocation);
         }
+
+        generateString();
+        setMapImage();
+        selectRouteBtn.setVisibility(View.GONE);
+        deselectRouteBtn.setVisibility(View.VISIBLE);
     }
 
     public void generateString() {
@@ -452,7 +420,6 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         }
         latLng1 = new LatLng(max_lat, max_long);
         latLng2 = new LatLng(min_lat, min_long);
-        Log.e("aaabbbb", String.valueOf(distance));
         center = LatLngBounds.builder().include(latLng1).include(latLng2).build().getCenter();
         center_and_zoom.append("&center=" + center.latitude + "," + center.longitude +"&zoom=" + zoom);
     }
@@ -461,32 +428,20 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
         String locations = new String(path);
         String camera = new String(center_and_zoom);
 
-        String uri = "https://maps.googleapis.com/maps/api/staticmap?size=200x200&scale=2" +
+        mapUri = "https://maps.googleapis.com/maps/api/staticmap?size=200x200&scale=2" +
                 camera + "&path=color:0xff0000ff|weight:3" + locations + "&key=" + getContext().getString(R.string.google_maps_key);
 
-        int size = mUri.size();
-        if(setMap_isStarted != true && size == 0) {
-            photosUri.add(uri);
-        } else if (setMap_isStarted) {
-            photosUri.set(0, uri);
-        } else {
-            photosUri.clear();
-            photosUri.add(uri);
-            for(int i = 0; i < size; i++) {
-                photosUri.add(mUri.get(i).toString());
-            }
-        }
+        mapView.setVisibility(View.VISIBLE);
+        Glide.with(getContext())
+                .load(mapUri)
+                .into(mapView);
         setMap_isStarted = true;
         showPhoto();
     }
 
     public void removeMapImage(){
-        if(photosUri.size() != 0) {
-            photosUri.clear();
-            for(int i = 0; i < mUri.size(); i++) {
-                photosUri.add(mUri.get(i).toString());
-            }
-        }
+        mapView.setImageDrawable(null);
+        mapView.setVisibility(View.GONE);
         setMap_isStarted = false;
         showPhoto();
     }
@@ -543,7 +498,7 @@ public class NewPostFragment extends Fragment implements View.OnClickListener {
 
     private HashMap<String, Boolean> getHashMap(Boolean existance){
         HashMap<String, Boolean> result = new HashMap<>();
-        result.put("existance", true);
+        result.put("existance", existance);
         return result;
     }
 

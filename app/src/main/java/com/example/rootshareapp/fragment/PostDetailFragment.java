@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -203,7 +204,7 @@ public class PostDetailFragment extends Fragment {
     }
 
     public void getImages(){
-        mPostRef.document(post_id).collection("photos").get()
+        mPostRef.document(post_id).collection("photos").orderBy("created_at", Query.Direction.DESCENDING).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -213,7 +214,6 @@ public class PostDetailFragment extends Fragment {
                                 Photo photo = document.toObject(Photo.class);
                                 mPhotos.add(photo.uri);
                             }
-                            Log.e("aaaa", mPhotos.get(0));
                             showPhoto();
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -229,6 +229,11 @@ public class PostDetailFragment extends Fragment {
                 break;
 
             case 1:
+                if(mRouteExist){
+                    mapContainer.setVisibility(View.VISIBLE);
+                } else {
+                    mapContainer.setVisibility(View.GONE);
+                }
                 imagesView.setVisibility(View.VISIBLE);
                 imageView1.setVisibility(View.VISIBLE);
                 Glide.with(getContext())
@@ -238,27 +243,20 @@ public class PostDetailFragment extends Fragment {
                 break;
 
             case 2:
-                mapContainer.setVisibility(View.GONE);
-                imagesView.setVisibility(View.VISIBLE);
-                imageView1.setVisibility(View.VISIBLE);
-                imageView2.setVisibility(View.VISIBLE);
-                Glide.with(getContext())
-                        .load(mPhotos.get(0))
-                        .into(imageView1);
-                Glide.with(getContext())
-                        .load(mPhotos.get(1))
-                        .into(imageView2);
-                break;
+                if(mRouteExist){
+                    mapContainer.setVisibility(View.VISIBLE);
+                } else {
+                    mapContainer.setVisibility(View.GONE);
+                }
 
-            case 3:
                 imagesView.setVisibility(View.VISIBLE);
                 imageView1.setVisibility(View.VISIBLE);
                 imageView2.setVisibility(View.VISIBLE);
                 Glide.with(getContext())
-                        .load(mPhotos.get(1))
+                        .load(mPhotos.get(0))
                         .into(imageView1);
                 Glide.with(getContext())
-                        .load(mPhotos.get(0))
+                        .load(mPhotos.get(1))
                         .into(imageView2);
                 break;
         }

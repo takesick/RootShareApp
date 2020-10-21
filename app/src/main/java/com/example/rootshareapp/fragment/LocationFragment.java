@@ -20,21 +20,16 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.rootshareapp.AddReviewActivity;
 import com.example.rootshareapp.R;
 import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.adapter.LocationListAdapter;
 import com.example.rootshareapp.model.Local_Location;
 import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -69,13 +64,13 @@ public class LocationFragment extends Fragment implements View.OnClickListener, 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        addSpotBtn = view.findViewById(R.id.addSpotBtn);
-        addTagsBtn = view.findViewById(R.id.addTagsBtn);
-        addReviewBtn = view.findViewById(R.id.addReviewBtn);
+//        addSpotBtn = view.findViewById(R.id.addSpotBtn);
+//        addTagsBtn = view.findViewById(R.id.addTagsBtn);
+//        addReviewBtn = view.findViewById(R.id.addReviewBtn);
 
-        addSpotBtn.setOnClickListener(this);
-        addTagsBtn.setOnClickListener(this);
-        addReviewBtn.setOnClickListener(this);
+//        addSpotBtn.setOnClickListener(this);
+//        addTagsBtn.setOnClickListener(this);
+//        addReviewBtn.setOnClickListener(this);
 
         mLocationListAdapter = new LocationListAdapter(getActivity(), this);
         mRecyclerView.setAdapter(mLocationListAdapter);
@@ -83,7 +78,13 @@ public class LocationFragment extends Fragment implements View.OnClickListener, 
         Log.e("res2", String.valueOf(route_id));
 
         mLocationDataViewModel = ViewModelProviders.of(getActivity()).get(LocationDataViewModel.class);
-        mRoute_Data = mLocationDataViewModel.getSelectedRoute();
+        try {
+            mRoute_Data = mLocationDataViewModel.getSelectedRoute(route_id);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         mLocationDataViewModel.getLatestLocations(route_id).observe(this, new Observer<List<Local_Location>>() {
             @Override
@@ -135,30 +136,30 @@ public class LocationFragment extends Fragment implements View.OnClickListener, 
     public void onClick(View v) {
         if (v != null) {
             switch (v.getId()) {
-                case R.id.addSpotBtn:
+//                case R.id.addSpotBtn:
+//
+//                    // Set the fields to specify which types of place data to
+//                    // return after the user has made a selection.
+//                    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+//
+//                    // Start the autocomplete intent.
+//                    Intent intent = new Autocomplete.IntentBuilder(
+//                            AutocompleteActivityMode.OVERLAY, fields)
+//                            .setTypeFilter(TypeFilter.ESTABLISHMENT)
+//                            .setHint("店舗名、または施設名")
+//                            .build(getActivity());
+//                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+//
+//                    break;
 
-                    // Set the fields to specify which types of place data to
-                    // return after the user has made a selection.
-                    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-
-                    // Start the autocomplete intent.
-                    Intent intent = new Autocomplete.IntentBuilder(
-                            AutocompleteActivityMode.OVERLAY, fields)
-                            .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                            .setHint("店舗名、または施設名")
-                            .build(getActivity());
-                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-
-                    break;
-
-                case R.id.addTagsBtn:
-
-                    break;
-
-                case R.id.addReviewBtn:
-                    Intent intent1 = new Intent(getActivity(), AddReviewActivity.class);
-                    startActivity(intent1);
-                    break;
+//                case R.id.addTagsBtn:
+//
+//                    break;
+//
+//                case R.id.addReviewBtn:
+//                    Intent intent1 = new Intent(getActivity(), AddReviewActivity.class);
+//                    startActivity(intent1);
+//                    break;
 
                 default:
                     break;

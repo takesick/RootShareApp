@@ -2,7 +2,6 @@ package com.example.rootshareapp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +14,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.rootshareapp.RouteDetailActivity;
 import com.example.rootshareapp.R;
+import com.example.rootshareapp.RouteDetailActivity;
+import com.example.rootshareapp.adapter.RouteListAdapter;
 import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
-import com.example.rootshareapp.adapter.RouteListAdapter;
 
 import java.util.List;
 
@@ -59,14 +58,12 @@ public class MyRoutesFragment extends Fragment implements RouteListAdapter.OnRou
         int id = (int) view.getTag();
         Intent intent = new Intent(getActivity(), RouteDetailActivity.class);
         intent.putExtra(RouteDetailActivity.KEY_ROUTE_ID, id);
-        Log.e("rep3", String.valueOf(id));
         startActivity(intent);
     }
 
     @Override
     public void onDeleteBtnClicked(int route_id) {
         RouteDeleteDialogFragment newFragment = RouteDeleteDialogFragment.newInstance(route_id);
-        Log.e("dialog", "show");
         newFragment.show(getChildFragmentManager(), "dialog");
     }
 

@@ -8,7 +8,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/image_view1"
+        android:id="@+id/map_view1"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:layout_marginRight="5dp"
@@ -18,6 +18,19 @@
         android:scaleType="center"
         android:visibility="gone"
         app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />
+
+    <ImageView
+        android:id="@+id/image_view1"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="4"
+        android:background="@color/colorPrimary"
+        android:cropToPadding="false"
+        android:scaleType="center"
+        android:visibility="gone"
+        app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal_background" />
+
 
     <LinearLayout
         android:id="@+id/sub_image_container"

@@ -154,13 +154,13 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/buttonGestSignIn"
+            android:id="@+id/signInForGuestBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/button_rounded"
-            android:text="gest ログイン"
+            android:text="Guest ログイン"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold" />

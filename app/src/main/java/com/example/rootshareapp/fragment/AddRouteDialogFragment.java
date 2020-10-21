@@ -21,6 +21,7 @@ import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class AddRouteDialogFragment extends DialogFragment implements View.OnClickListener, RouteDialogAdapter.OnRouteSelectedListener {
 
@@ -103,7 +104,13 @@ public class AddRouteDialogFragment extends DialogFragment implements View.OnCli
 
     public void onSubmitClicked(View view) {
         NewPostFragment fragment = (NewPostFragment) getParentFragment();
-        fragment.setRoute();
+        try {
+            fragment.setRoute();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         dismiss();
     }
 

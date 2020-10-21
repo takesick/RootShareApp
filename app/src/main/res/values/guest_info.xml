@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="guest_mail">t7s.calls@gmail.com</string>
-    <string name="guest_pass">guest</string>
+    <string name="guest_pass">guestsan</string>
 
     <string name="guest_uname">guest</string>
     <string name="guest_display_name">ゲストさん</string>

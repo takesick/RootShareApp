@@ -72,8 +72,8 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
         FragmentManager mFragmentManager;
 
         ImageView uIconBtn;
-        ImageView imageView1, imageView2, imageView3;
-        List<ImageView> imageViewList = new ArrayList<>();
+        ImageView mapView, imageView1, imageView2, imageView3;
+        String mapUri;
         List<String> photoList = new ArrayList<>();
         TextView authorView;
         TextView unameView;
@@ -93,6 +93,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             created_atView = itemView.findViewById(R.id.post_created_at);
             bodyView = itemView.findViewById(R.id.body);
 
+            mapView = itemView.findViewById(R.id.map_view1);
             imagesView = itemView.findViewById(R.id.media_container);
             imagesSubView = itemView.findViewById(R.id.sub_image_container);
             imageView1 = itemView.findViewById(R.id.image_view1);
@@ -103,9 +104,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
             imageView3.setScaleType(ImageView.ScaleType.CENTER_CROP);
             routeTitleView = itemView.findViewById(R.id.post_route_title);
 
-            imageViewList.add(imageView1);
-            imageViewList.add(imageView2);
-            imageViewList.add(imageView3);
+            mapView.setOnClickListener(this);
             imageView1.setOnClickListener(this);
             imageView2.setOnClickListener(this);
             imageView3.setOnClickListener(this);
@@ -122,7 +121,6 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                 mPhotoRef = mPostRef.document(post.id).collection("posts");
             }
             mRouteRef = post.getRef();
-//            mPhotoRef = mDatabase.collection("posts").document(post._id).collection("photos");
             Log.e(TAG, String.valueOf(mRouteRef));
 
             final String post_userId = post.getUid();
@@ -134,6 +132,7 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
                                     Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("user_icon"));
+
                                     if(document.getData().get("user_icon") != null) {
                                         Glide.with(mContext)
                                                 .load(document.getData().get("user_icon"))
@@ -158,13 +157,39 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
                             }
                         }
                     });
+
             if(post.id != null) {
                 if (mRouteRef != null) {
                     routeTitleView.setText(post.route_name);
                     routeTitleView.setVisibility(View.VISIBLE);
+                    mPostRef.document(post.id).collection("map").get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.e(TAG, document.getId() + " => " + document.getData());
+                                            Photo map = document.toObject(Photo.class);
+
+                                            String uri = map.uri;
+                                            mapView.setVisibility(View.VISIBLE);
+                                            Glide.with(mContext)
+                                                    .load(uri)
+                                                    .into(mapView);
+                                            mapUri = uri;
+                                        }
+
+                                    } else {
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
                 } else {
+                    mapView.setImageDrawable(null);
+                    mapView.setVisibility(View.GONE);
                     routeTitleView.setVisibility(View.GONE);
                 }
+
                 mPostRef.document(post.id).collection("photos").orderBy("created_at", Query.Direction.DESCENDING).get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -203,79 +228,97 @@ public class PostListAdapter extends FirestoreAdapter<PostListAdapter.ViewHolder
         }
 
         public void setImages(List<String> photos){
+            imageView1.setImageDrawable(null);
+            imageView2.setImageDrawable(null);
+            imageView3.setImageDrawable(null);
             switch (photos.size()){
                 case 0:
-                    imagesView.setVisibility(View.GONE);
                     imagesSubView.setVisibility(View.GONE);
                     break;
 
                 case 1:
-                    imagesView.setVisibility(View.VISIBLE);
-                    imageView1.setVisibility(View.VISIBLE);
-                    Glide.with(mContext)
-                            .load(photos.get(0))
-                            .into(imageViewList.get(0));
-                    imagesSubView.setVisibility(View.GONE);
-                    imageView2.setVisibility(View.GONE);
-                    imageView3.setVisibility(View.GONE);
+                    if(mRouteRef != null) {
+                        imagesView.setVisibility(View.VISIBLE);
+                        imageView1.setVisibility(View.GONE);
+                        imagesSubView.setVisibility(View.VISIBLE);
+                        imageView2.setVisibility(View.VISIBLE);
+                        Glide.with(mContext)
+                                .load(photos.get(0))
+                                .into(imageView2);
+                        imageView3.setVisibility(View.GONE);
+                    } else {
+                        imagesView.setVisibility(View.VISIBLE);
+                        imageView1.setVisibility(View.VISIBLE);
+                        Glide.with(mContext)
+                                .load(photos.get(0))
+                                .into(imageView1);
+                        imagesSubView.setVisibility(View.GONE);
+                        imageView2.setVisibility(View.GONE);
+                        imageView3.setVisibility(View.GONE);
+                    }
                     break;
 
                 case 2:
-                    imagesView.setVisibility(View.VISIBLE);
-                    imageView1.setVisibility(View.VISIBLE);
-                    imagesSubView.setVisibility(View.VISIBLE);
-                    imageView2.setVisibility(View.VISIBLE);
-                    Glide.with(mContext)
-                            .load(photos.get(1))
-                            .into(imageViewList.get(0));
-                    Glide.with(mContext)
-                            .load(photos.get(0))
-                            .into(imageViewList.get(1));
-                    imageView3.setVisibility(View.GONE);
+                    if(mRouteRef != null) {
+                        imagesView.setVisibility(View.VISIBLE);
+                        imageView1.setVisibility(View.GONE);
+                        imagesSubView.setVisibility(View.VISIBLE);
+                        imageView2.setVisibility(View.VISIBLE);
+                        imageView3.setVisibility(View.VISIBLE);
+                        Glide.with(mContext)
+                                .load(photos.get(0))
+                                .into(imageView2);
+                        Glide.with(mContext)
+                                .load(photos.get(1))
+                                .into(imageView3);
+                    } else {
+                        imagesView.setVisibility(View.VISIBLE);
+                        imageView1.setVisibility(View.VISIBLE);
+                        imagesSubView.setVisibility(View.VISIBLE);
+                        imageView2.setVisibility(View.VISIBLE);
+                        Glide.with(mContext)
+                                .load(photos.get(0))
+                                .into(imageView1);
+                        Glide.with(mContext)
+                                .load(photos.get(1))
+                                .into(imageView2);
+                        imageView3.setVisibility(View.GONE);
+                    }
                     break;
-
-                case 3:
-                    imagesView.setVisibility(View.VISIBLE);
-                    imageView1.setVisibility(View.VISIBLE);
-                    imagesSubView.setVisibility(View.VISIBLE);
-                    imageView2.setVisibility(View.VISIBLE);
-                    imageView3.setVisibility(View.VISIBLE);
-                    Glide.with(mContext)
-                            .load(photos.get(2))
-                            .into(imageViewList.get(0));
-                    Glide.with(mContext)
-                            .load(photos.get(1))
-                            .into(imageViewList.get(1));
-                    Glide.with(mContext)
-                            .load(photos.get(0))
-                            .into(imageViewList.get(2));
-
-                    break;
-            }
-            for(int i =0; i< photos.size(); i++){
-                imageViewList.get(i).setDrawingCacheEnabled(true);
             }
         }
 
         @Override
         public void onClick(View v) {
             switch (v.getId()){
+                case R.id.map_view1:
+                    openDialogForPhoto(mapUri);
+                    break;
+
                 case R.id.image_view1:
-                    openDialogForPhoto(1);
+                    openDialogForPhoto(photoList.get(0));
                     break;
 
                 case R.id.image_view2:
-                    openDialogForPhoto(2);
+                    if(mRouteRef != null) {
+                        openDialogForPhoto(photoList.get(0));
+                    } else {
+                        openDialogForPhoto(photoList.get(1));
+                    }
                     break;
 
                 case R.id.image_view3:
-                    openDialogForPhoto(3);
+                    if(mRouteRef != null) {
+                        openDialogForPhoto(photoList.get(1));
+                    } else {
+                        openDialogForPhoto(photoList.get(2));
+                    }
                     break;
             }
         }
 
-        public void openDialogForPhoto(int num){
-            PhotoDetailDialogFragment newFragment = PhotoDetailDialogFragment.newInstance(photoList.get(photoList.size()-num));
+        public void openDialogForPhoto(String uri){
+            PhotoDetailDialogFragment newFragment = PhotoDetailDialogFragment.newInstance(uri);
             newFragment.show(mFragmentManager, "dialog");
         }
     }

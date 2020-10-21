@@ -61,9 +61,11 @@ public class MyPageFragment extends Fragment {
                      DocumentSnapshot document = task.getResult();
                      if (document.exists()) {
                          Log.e(TAG, "DocumentSnapshot data: " + document.getData().get("user_icon"));
-                         Glide.with(getContext())
-                                 .load(document.getData().get("user_icon"))
-                                 .into(mUserIcon);
+                         if(document.getData().get("user_icon") != null) {
+                             Glide.with(getContext())
+                                     .load(document.getData().get("user_icon"))
+                                     .into(mUserIcon);
+                         }
 
                          mDisplayName.setText(String.valueOf(document.getData().get("display_name")));
                          mUserName.setText(String.valueOf(document.getData().get("user_name")));

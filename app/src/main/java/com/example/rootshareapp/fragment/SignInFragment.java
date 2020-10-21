@@ -37,6 +37,7 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
     private EditText mPasswordField;
     private Button mSignInButton;
     private Button mSignUpButton;
+    private Button mSignInForGuestButton;
 
     public static SignInFragment newInstance() {
         SignInFragment fragment = new SignInFragment();
@@ -64,10 +65,12 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         mPasswordField = view.findViewById(R.id.fieldPassword);
         mSignInButton = view.findViewById(R.id.signInBtn);
         mSignUpButton = view.findViewById(R.id.toSignUpBtn);
+        mSignInForGuestButton = view.findViewById(R.id.signInForGuestBtn);
 
         // Click listeners
         mSignInButton.setOnClickListener(this);
         mSignUpButton.setOnClickListener(this);
+        mSignInForGuestButton.setOnClickListener(this);
     }
 
     @Override
@@ -87,6 +90,26 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
         }
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
+
+                        if (task.isSuccessful()) {
+                            onAuthSuccess();
+                        } else {
+                            Toast.makeText(getContext(), "Sign In Failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void signInForGuest() {
+        String email = getString(R.string.guest_mail);
+        String password = getString(R.string.guest_pass);
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -147,8 +170,12 @@ public class SignInFragment extends Fragment implements View.OnClickListener {
             case R.id.toSignUpBtn:
                 FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.signInfragment, SignUpFragment.newInstance());
+                fragmentTransaction.replace(R.id.signInFragment, SignUpFragment.newInstance());
                 fragmentTransaction.commit();
+                break;
+
+            case R.id.signInForGuestBtn:
+                signInForGuest();
                 break;
 
             default:
