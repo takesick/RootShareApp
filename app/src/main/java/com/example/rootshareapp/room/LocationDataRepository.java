@@ -21,6 +21,7 @@ public class LocationDataRepository  {
 
     private LiveData<List<Local_Route>> mLatestRoutes;
     private LiveData<List<Local_Location>> mLatestLocations;
+    private Local_Route mLocal_Route;
     private List<Local_Location> mLocationsWithinRoute;
     private LiveData<List<Guide>> mLatestGuides;
 
@@ -189,6 +190,29 @@ public class LocationDataRepository  {
 
         @Override
         protected void onPostExecute(List<Local_Location> result) {
+            super.onPostExecute(result);
+        }
+    }
+
+    public Local_Route getSelectedRoute(Integer route_id) throws ExecutionException, InterruptedException {
+        mLocal_Route = new getSelectedRouteAsyncTask(routeDao).execute(route_id).get();
+        return mLocal_Route;
+    }
+
+    private static class getSelectedRouteAsyncTask extends AsyncTask<Integer, Void, Local_Route> {
+        private RouteDao routeDao;
+
+        private getSelectedRouteAsyncTask(RouteDao routeDao) {
+            this.routeDao = routeDao;
+        }
+
+        @Override
+        protected Local_Route doInBackground(Integer... route_id) {
+            return routeDao.getSelectedRoute(route_id);
+        }
+
+        @Override
+        protected void onPostExecute(Local_Route result) {
             super.onPostExecute(result);
         }
     }

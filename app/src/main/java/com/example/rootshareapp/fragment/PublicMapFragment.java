@@ -38,6 +38,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -148,7 +149,7 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
                         Post post = document.toObject(Post.class);
                         mRouteRef = post.route_ref;
                         if (mRouteRef != null) {
-                            mRouteRef.collection("locations").get()
+                            mRouteRef.collection("locations").orderBy("created_at", Query.Direction.ASCENDING).get()
                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -156,6 +157,7 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
                                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                                     Log.d(TAG, document.getId() + " => " + document.getData());
                                                     Public_Location public_location = document.toObject(Public_Location.class);
+                                                    mLocations.add(public_location);
                                                     setLocation(public_location);
                                                     setCamera();
                                                     drawTrace();
@@ -287,6 +289,7 @@ public class PublicMapFragment extends Fragment implements OnMapReadyCallback, G
         local_route_id = writeRouteDataToDb(route_title, getNowDate(), getUid()).intValue();
         for(int i = 0; i < mLocations.size(); i++) {
             writeLocationDataToDb(mLocations.get(i), local_route_id);
+            Log.e("AAAA", mLocations.toString());
         }
     }
 

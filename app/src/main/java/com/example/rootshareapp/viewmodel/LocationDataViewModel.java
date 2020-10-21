@@ -116,6 +116,12 @@ public class LocationDataViewModel extends AndroidViewModel {
         return mSelectedLocation;
     }
 
+    public Local_Route getSelectedRoute(int route_id) throws ExecutionException, InterruptedException {
+        Integer Route_id = new Integer(route_id);
+        mSelectedRoute = mRepository.getSelectedRoute(Route_id);
+        return mSelectedRoute;
+    }
+
     public void setSelectedRoute(Local_Route local_route) {
         mSelectedRoute = local_route;
     }

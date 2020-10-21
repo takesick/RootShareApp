@@ -10,7 +10,10 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.rootshareapp.fragment.LocalMapFragment;
 import com.example.rootshareapp.fragment.LocationFragment;
+import com.example.rootshareapp.model.Local_Route;
 import com.example.rootshareapp.viewmodel.LocationDataViewModel;
+
+import java.util.concurrent.ExecutionException;
 
 public class RouteDetailActivity extends AppCompatActivity {
 
@@ -19,6 +22,7 @@ public class RouteDetailActivity extends AppCompatActivity {
 
     private LocationDataViewModel mLocationDataViewModel;
     private int route_id;
+    private Local_Route local_route;
     private EditText routeTitle;
 
     @Override
@@ -26,10 +30,17 @@ public class RouteDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_detail);
 
-        routeTitle =findViewById(R.id.setTitle);
+        routeTitle = findViewById(R.id.routeTitle);
         mLocationDataViewModel = ViewModelProviders.of(this).get(LocationDataViewModel.class);
         route_id = getIntent().getExtras().getInt(RouteDetailActivity.KEY_ROUTE_ID);
-        mLocationDataViewModel.getSelectedRoute();
+        try {
+            local_route = mLocationDataViewModel.getSelectedRoute(route_id);
+            routeTitle.setText(local_route.title);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         if (savedInstanceState == null) {
             FragmentManager fragmentManager = getSupportFragmentManager();

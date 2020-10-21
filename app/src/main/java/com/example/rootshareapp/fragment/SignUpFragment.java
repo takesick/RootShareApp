@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +103,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     }
 
     private void signUp() {
-        Log.d(TAG, "signUp");
         if (!validateForm()) {
             return;
         }
@@ -115,12 +115,10 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
                         } else {
-                            Toast.makeText(getContext(), "Sign Up Failed",
-                                    Toast.LENGTH_SHORT).show();
+                            toastMake("Sign Up Failed");
                         }
                     }
                 });
@@ -132,7 +130,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
 
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.signInfragment, SignInFragment.newInstance());
+        fragmentTransaction.replace(R.id.signInFragment, SignInFragment.newInstance());
         fragmentTransaction.commit();
     }
 
@@ -183,8 +181,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         String displayname = mDisplayName.getText().toString();
         User user = new User(username, displayname, email, user_icon);
 
-        mDatabase.collection("users").document(userId)
-                .set(user)
+        mDatabase.collection("users").document(userId).set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -210,7 +207,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         /* data の getData() で選択された画像の URI が取れるので、
         それを ImageView に設定すれば画像が表示される。 */
         Uri uri = data.getData();
-        Log.e("s", String.valueOf(uri));
         /* Layout に入れた ImageView に java コードからアクセスするには
         findViewById() を使ってインスタンスを取得すればよい。 */
         showPhoto(uri);
@@ -256,8 +252,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                            Toast.makeText(getActivity(), "Upload successful", Toast.LENGTH_LONG).show();
                             taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
@@ -270,11 +264,12 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            toastMake(e.getMessage());
                         }
                     });
+
         } else {
-            Toast.makeText(getActivity(), "No file selected", Toast.LENGTH_SHORT).show();
+            toastMake("No file selected");
             writeNewUser(user.getUid(), user.getEmail(), null);
         }
     }
@@ -294,5 +289,11 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         写真選択リクエストの意味の変数名にしておくとよい。
         結果が欲しいので ForResult の方を使う */
         startActivityForResult(intent, REQUEST_PICK_PHOTO);//引数：(出来上がった条件, 意図の送信元のActivityのidみたいなもの)
+    }
+
+    private void toastMake(String message){
+        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 100);
+        toast.show();
     }
 }

@@ -21,7 +21,7 @@ public class SignInActivity extends AppCompatActivity  {
         if(savedInstanceState == null){
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.signInfragment, SignInFragment.newInstance());
+            fragmentTransaction.replace(R.id.signInFragment, SignInFragment.newInstance());
             fragmentTransaction.commit();
         }
     }
