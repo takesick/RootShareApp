@@ -228,7 +228,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Post post = new Post();
                                 post.setUid(jsonObject.getString("uid"));
                                 post.setCreated_at(jsonObject.getString("created_at"));
-                                post.setRoute_ref(mDatabase.document(jsonObject.getString("route_ref")));
                                 post.setBody(jsonObject.getString("body"));
                                 mPostList.add(post);
                             }
@@ -257,7 +256,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Log.e("post", jsonObject.getString("uid"));
                                 post.setUid(jsonObject.getString("uid"));
                                 post.setCreated_at(jsonObject.getString("created_at"));
-                                post.setRoute_ref(mDatabase.document(jsonObject.getString("route_ref")));
                                 post.setBody(jsonObject.getString("body"));
                                 mPostList.add(post);
                             }
